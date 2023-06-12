@@ -27,9 +27,18 @@
                             cerrada.
                         </div>
                     @else
-                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalData">
-                            Operaciones del Día
-                        </button>
+                        <div class="row">
+                            <div class="col-12 col-md-6 d-grid">
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalData">
+                                    Operaciones del Día
+                                </button>
+                            </div>
+                            <div class="col-12 col-md-6 d-grid">
+                                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalCierre">
+                                    Cierre de Caja
+                                </button>
+                            </div>
+                        </div>
                     @endif
 
                 </div>
@@ -41,7 +50,7 @@
                         <th>ID</th>
                         <th>FECHA</th>
                         <th>SUCURSAL</th>
-                        <th></th>
+                        <th>REPORTES</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,7 +63,10 @@
                                 <td align="right">
                                     <button class="btn btn-info btn-sm" title="Reimprimir Comprobante"
                                         wire:click='pdf({{ $cierre->id }})'><i class="uil-print"></i>
-                                        Reimprimir</button>
+                                        Cierre</button>
+                                    <button class="btn btn-primary btn-sm" title="Reimprimir Comprobante"
+                                        wire:click='ventasPDF({{ $cierre->id }})'><i class="uil-print"></i>
+                                        Ventas</button>
                                     {{-- <button class="btn btn-success btn-sm" title="Reporte de Ventas"
                                         wire:click='ventasPDF({{ $cierre->id }})'><i class="uil-usd-square"></i>
                                         Ventas</button> --}}
@@ -66,6 +78,86 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <div wire:ignore.self class="modal fade" id="modalCierre" tabindex="-1" role="dialog"
+        aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h4 class="modal-title" id="myLargeModalLabel">Cierre de Caja</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12 col-md-2"><strong>OPERADOR:</strong></div>
+                        <div class="col-12 col-md-3">{{ Auth::user()->name }}</div>
+                    </div>
+                    <div class="row mt-1 mb-2">
+                        <div class="col-12 col-md-2"><strong>FECHA:</strong></div>
+                        <div class="col-12 col-md-3">{{ date('Y-m-d') }}</div>
+                    </div>
+                    <hr>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-sm">
+                            <thead class="table-info">
+                                <tr align="center">
+                                    <th>Nro.</th>
+                                    <th>TIPO PAGOCANTIDAD</th>
+                                    <th>CANTIDAD</th>
+                                    <th>IMPORTE BS.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $i = 1;
+                                    $total = 0;
+                                @endphp
+                                @foreach ($montosHOY as $item)
+                                    <tr>
+                                        <td align="center">{{ $i }}</td>
+                                        <td>{{ $item->tipopago }}</td>
+                                        <td align="center">{{ $item->cantidad }}</td>
+                                        <td align="right">{{ $item->importe }}</td>
+                                    </tr>
+                                    @php
+                                        $i++;
+                                        $total = $total + $item->importe;
+                                    @endphp
+                                @endforeach
+
+                                <tr class="table-info">
+                                    <td colspan="2"></td>
+                                    <td align="right"><strong>TOTAL</strong></td>
+                                    <td align="right"><strong>{{ number_format($total, 2, '.', ',') }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td align="right"><strong>EN CAJA:</strong></td>
+                                    <td><input type="number" step="0.00" min="0"
+                                            class="form-control form-control-sm text-end" id="encaja"
+                                            wire:model='encaja'>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td align="right"><strong>FALTANTE:</strong></td>
+                                    <td><input type="number" readonly step="0.00" min="0"
+                                            class="form-control form-control-sm text-end bg-white" id="faltante"
+                                            wire:model='faltante'></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    @if (!cajaCerrada(Auth::user()->id, Auth::user()->sucursale_id))
+                        <button type="button" class="btn btn-info" onclick="registrar()">GENERAR CIERRE DE
+                            CAJA</button>
+                    @endif
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div>
 
     @php
@@ -153,19 +245,6 @@
                                         <td colspan="6" align="right"><strong>TOTAL:</strong></td>
                                         <td align="right">{{ number_format($totalpr, 2, '.', ',') }}</td>
                                     </tr>
-                                    <tr>
-                                        <td colspan="6" align="right"><strong>EN CAJA:</strong></td>
-                                        <td><input type="number" step="0.00" min="0"
-                                                class="form-control form-control-sm text-end" id="encaja"
-                                                wire:model='encaja'>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6" align="right"><strong>FALTANTE:</strong></td>
-                                        <td><input type="number" readonly step="0.00" min="0"
-                                                class="form-control form-control-sm text-end bg-white" id="faltante"
-                                                wire:model='faltante'></td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -199,11 +278,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    @if (!cajaCerrada(Auth::user()->id, Auth::user()->sucursale_id))
-                        <button type="button" class="btn btn-info" onclick="registrar()">GENERAR CIERRE DE
-                            CAJA</button>
-                    @endif
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CERRAR</button>
+                    
                 </div>
             </div>
         </div>

@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-6 ">
-                    @if (cajaCerrada(Auth::user()->id, Auth::user()->sucursale_id))
+                    @if (cajaCerradaPOS(Auth::user()->id, Auth::user()->sucursale_id))
                         <div class="alert alert-warning" role="alert">
                             <i class="dripicons-warning me-2"></i> <strong>Atención - </strong> La caja se encuentra
                             cerrada.
@@ -160,7 +160,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    @if (!cajaCerrada(Auth::user()->id, Auth::user()->sucursale_id))
+                    @if (!cajaCerradaPOS(Auth::user()->id, Auth::user()->sucursale_id))
                         <button type="button" class="btn btn-info" onclick="registrar()">GENERAR CIERRE DE
                             CAJA</button>
                     @endif
@@ -179,7 +179,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
                 </div>
                 <div class="modal-body">
-                    @if (cajaCerrada(Auth::user()->id, Auth::user()->sucursale_id))
+                    @if (cajaCerradaPOS(Auth::user()->id, Auth::user()->sucursale_id))
                         <div class="alert alert-warning" role="alert">
                             <i class="dripicons-warning me-2"></i> <strong>Atención - </strong> La caja se encuentra
                             cerrada.

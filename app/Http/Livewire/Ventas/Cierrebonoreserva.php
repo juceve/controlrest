@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Ventas;
 
 use App\Models\Cierrereservabono;
 use App\Models\Detallecierrereservabono;
+use App\Models\Detallemontocierreresbono;
 use App\Models\Tipopago;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
@@ -29,9 +30,20 @@ class Cierrebonoreserva extends Component
         GROUP BY v.fecha,dv.descripcion,tp.abreviatura, dv.preciounitario, dv.observacion,p.user_id,p.sucursal_id,p.estado";
         $ingresosHOY = DB::select($sql);
         $this->ingresos = $ingresosHOY;
+        
+
+        $sql2 = "SELECT p.tipopago_id, p.tipopago, count(*) cantidad, SUM(p.importe) importe from pagos p
+        INNER JOIN ventas v on v.id = p.venta_id
+        WHERE p.fecha = '" . date('Y-m-d') . "'
+        AND v.cliente <> 'VENTA POS'
+        AND p.user_id = " . Auth::user()->id . "
+        AND p.estado = 1
+        GROUP BY p.tipopago_id, p.tipopago";
+        $montosHOY = DB::select($sql2);
+        $this->montos = $montosHOY;
         $this->reset(['totalpr', 'totalpp']);
-        foreach ($ingresosHOY as $ingreso) {
-            $this->totalpr = $this->totalpr + $ingreso->subtotal;
+        foreach ($montosHOY as $ingreso) {
+            $this->totalpr = $this->totalpr + $ingreso->importe;
         }
 
         $cierres = Cierrereservabono::where('user_id', Auth::user()->id)
@@ -40,13 +52,13 @@ class Cierrebonoreserva extends Component
             ->get();
 
         $this->emit('datatableRender');
-        return view('livewire.ventas.cierrebonoreserva', compact('ingresosHOY', 'cierres'))->extends('layouts.app');
+        return view('livewire.ventas.cierrebonoreserva', compact('ingresosHOY', 'cierres','montosHOY'))->extends('layouts.app');
     }
 
 
 
 
-    public $totalpr = 0, $totalpp = 0, $encaja = 0, $faltante = 0, $ingresos;
+    public $totalpr = 0, $totalpp = 0, $encaja = 0, $faltante = 0, $ingresos,$montos;
 
     public function updatedEncaja()
     {
@@ -75,7 +87,7 @@ class Cierrebonoreserva extends Component
             ]);
             foreach ($this->ingresos as $ingreso) {
                 $detallecierre = Detallecierrereservabono::create([
-                    'cierrecaja_id' => $cierre->id,
+                    'cierrereservabono_id' => $cierre->id,
                     'descripcion' => $ingreso['descripcion'],
                     'tipopago' => $ingreso['abreviatura'],
                     'descuento' => $ingreso['descuento'],
@@ -84,8 +96,18 @@ class Cierrebonoreserva extends Component
                     'importe' => $ingreso['subtotal'],
                 ]);
             }
+
+            foreach ($this->montos as $monto) {
+                $detallemontos = Detallemontocierreresbono::create([
+                    "cierrereservabono_id" => $cierre->id,
+                    "tipopago_id" => $monto['tipopago_id'],
+                    "tipopago" => $monto['tipopago'],
+                    "cantidad" => $monto['cantidad'],
+                    "importe" => $monto['importe'],
+                ]);
+            }
             DB::commit();
-            return redirect()->route('ventas.cierrecaja')->with('success', 'Cierre generado correctamente.');
+            return redirect()->route('ventas.cierres')->with('success', 'Cierre generado correctamente.');
         } catch (\Throwable $th) {
             DB::rollback();
             $this->emit('unLoading');
@@ -96,8 +118,22 @@ class Cierrebonoreserva extends Component
     public function pdf($id)
     {
         $cierre = Cierrereservabono::find($id);
+        // dd($cierre->detallemontocierreresbonos);
         if ($cierre) {
-            $detalles = $cierre->detallecierres;
+            $detalles = $cierre->detallemontocierreresbonos;
+        }
+        $pdf = Pdf::loadView('reports.cierrecajamontos2', compact('cierre', 'detalles'))->output();
+        return response()->streamDownload(
+            fn () => print($pdf),
+            "Reporte_CierreBonoReservas_" . $cierre->fecha . ".pdf"
+        );
+    }
+
+    public function ventasPDF($id)
+    {
+        $cierre = Cierrereservabono::find($id);
+        if ($cierre) {
+            $detalles = $cierre->detallecierrereservabonos;
         }
         $totalEfectivo = 0;
         $totalQr = 0;
@@ -119,41 +155,11 @@ class Cierrebonoreserva extends Component
                     break;
             }
         }
-        $pdf = Pdf::loadView('reports.cierrecaja', compact('cierre', 'detalles', 'totalEfectivo', 'totalQr', 'totalTr','totalGa'))->output();
+        $pdf = Pdf::loadView('reports.cierrecaja2', compact('cierre', 'detalles', 'totalEfectivo', 'totalQr', 'totalTr','totalGa'))->output();
         return response()->streamDownload(
             fn () => print($pdf),
-            "Reporte_CierreCaja_" . $cierre->fecha . ".pdf"
+            "Reporte_OperacionesBonoReservas_" . $cierre->fecha . ".pdf"
         );
-    }
-
-    public function ventasPDF($id)
-    {
-        $cierre = Cierrereservabono::find($id);
-
-        $tipopagos = Tipopago::all();
-        $resultados = array();
-        foreach ($tipopagos as $tipopago) {
-            $sql = "SELECT v.fecha, dv.descripcion, tp.id tipopago_id,tp.nombre tipopago, ep.id estadopago_id, ep.nombre estadopago, count(*) cantidad,SUM(dv.subtotal) subtotal FROM ventas v
-            INNER JOIN pagos p on p.venta_id = v.id
-            INNER JOIN detalleventas dv on dv.venta_id = v.id
-            INNER JOIN estadopagos ep on ep.id = v.estadopago_id
-            INNER JOIN tipopagos tp on tp.id = p.tipopago_id            
-            WHERE v.fecha = '" . $cierre->fecha . "'
-            AND p.tipopago_id = " . $tipopago->id . "
-            AND p.user_id = " . $cierre->user_id . "
-            AND v.sucursale_id = " . $cierre->sucursale_id . "
-            GROUP BY v.fecha, dv.descripcion, tp.id, tp.nombre, ep.id, estadopago_id, ep.nombre";
-            $ventas = DB::select($sql);
-            // if($ventas){
-            $resultados[] = array($tipopago->nombre, $ventas);
-            // }
-
-        }
-
-        $pdf = Pdf::loadView('reports.ventas', compact('resultados', 'cierre'))->output();
-        return response()->streamDownload(
-            fn () => print($pdf),
-            "Reporte_Ventas_" . $cierre->fecha . ".pdf"
-        );
+        
     }
 }

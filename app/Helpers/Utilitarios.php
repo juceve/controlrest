@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Cierrecaja;
+use App\Models\Cierrereservabono;
 use App\Models\Feriado;
 
  function contarDiasSemana($fechaInicio, $fechaFin) {
@@ -51,6 +52,18 @@ function cantidadDiasMes($mes,$anio){
 }
 
 function cajaCerrada($user_id,$sucursale_id){
+        $cierre = Cierrereservabono::where('fecha',date('Y-m-d'))
+                            ->where('user_id',$user_id)
+                            ->where('sucursale_id',$sucursale_id)
+                            ->first();
+        if($cierre){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    function cajaCerradaPOS($user_id,$sucursale_id){
         $cierre = Cierrecaja::where('fecha',date('Y-m-d'))
                             ->where('user_id',$user_id)
                             ->where('sucursale_id',$sucursale_id)

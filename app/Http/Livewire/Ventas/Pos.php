@@ -183,6 +183,11 @@ class Pos extends Component
                 $row =  substr($row, 0, -1);
                 DB::commit();
                 // dd($row);
+                // $this->alert('success', 'Hello!', [
+                //     'position' => 'center',
+                //     'timer' => 3000,
+                //     'toast' => true,
+                //    ]);
                 redirect('http://127.0.0.1/gprinter/public/printPOS1/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE                
                 // return redirect()->route('ventas.pos')->with('success', 'Venta registrada correctamente.');
             } catch (\Throwable $th) {

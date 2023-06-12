@@ -3,7 +3,9 @@
 namespace App\Http\Livewire\Ventas;
 
 use App\Models\Cierrecaja as ModelsCierrecaja;
+use App\Models\Cierrereservabono;
 use App\Models\Detallecierre;
+use App\Models\Detallecierrereservabono;
 use App\Models\Detallemontocierre;
 use App\Models\Tipopago;
 use Illuminate\Support\Facades\Auth;
@@ -154,32 +156,6 @@ class Cierrecaja extends Component
             fn () => print($pdf),
             "Reporte_Operaciones_" . $cierre->fecha . ".pdf"
         );
-        // $cierre = ModelsCierrecaja::find($id);
-
-        // $tipopagos = Tipopago::all();
-        // $resultados = array();
-        // foreach ($tipopagos as $tipopago) {
-        //     $sql = "SELECT v.fecha, dv.descripcion, tp.id tipopago_id,tp.nombre tipopago, ep.id estadopago_id, ep.nombre estadopago, count(*) cantidad,SUM(dv.subtotal) subtotal FROM ventas v
-        //     INNER JOIN pagos p on p.venta_id = v.id
-        //     INNER JOIN detalleventas dv on dv.venta_id = v.id
-        //     INNER JOIN estadopagos ep on ep.id = v.estadopago_id
-        //     INNER JOIN tipopagos tp on tp.id = p.tipopago_id            
-        //     WHERE v.fecha = '" . $cierre->fecha . "'
-        //     AND p.tipopago_id = " . $tipopago->id . "
-        //     AND p.user_id = " . $cierre->user_id . "
-        //     AND v.sucursale_id = " . $cierre->sucursale_id . "
-        //     GROUP BY v.fecha, dv.descripcion, tp.id, tp.nombre, ep.id, estadopago_id, ep.nombre";
-        //     $ventas = DB::select($sql);
-        //     // if($ventas){
-        //     $resultados[] = array($tipopago->nombre, $ventas);
-        //     // }
-
-        // }
-
-        // $pdf = Pdf::loadView('reports.ventas', compact('resultados', 'cierre'))->output();
-        // return response()->streamDownload(
-        //     fn () => print($pdf),
-        //     "Reporte_Ventas_" . $cierre->fecha . ".pdf"
-        // );
+        
     }
 }

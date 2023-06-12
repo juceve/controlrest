@@ -5,33 +5,30 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Detallecierrereservabono
+ * Class Detallemontocierreresbono
  *
  * @property $id
- * @property $cierrereservabono_id
- * @property $descripcion
+ * @property $cierrereservabonos_id
+ * @property $tipopago_id
  * @property $tipopago
- * @property $descuento
  * @property $cantidad
- * @property $preciounitario
  * @property $importe
  * @property $created_at
  * @property $updated_at
  *
  * @property Cierrereservabono $cierrereservabono
+ * @property Tipopago $tipopago
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-class Detallecierrereservabono extends Model
+class Detallemontocierreresbono extends Model
 {
     
     static $rules = [
 		'cierrereservabono_id' => 'required',
-		'descripcion' => 'required',
+		'tipopago_id' => 'required',
 		'tipopago' => 'required',
-		'descuento' => 'required',
 		'cantidad' => 'required',
-		'preciounitario' => 'required',
 		'importe' => 'required',
     ];
 
@@ -42,7 +39,7 @@ class Detallecierrereservabono extends Model
      *
      * @var array
      */
-    protected $fillable = ['cierrereservabono_id','descripcion','tipopago','descuento','cantidad','preciounitario','importe'];
+    protected $fillable = ['cierrereservabono_id','tipopago_id','tipopago','cantidad','importe'];
 
 
     /**
@@ -51,6 +48,14 @@ class Detallecierrereservabono extends Model
     public function cierrereservabono()
     {
         return $this->hasOne('App\Models\Cierrereservabono', 'id', 'cierrereservabono_id');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function tipopago()
+    {
+        return $this->hasOne('App\Models\Tipopago', 'id', 'tipopago_id');
     }
     
 

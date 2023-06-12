@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property $created_at
  * @property $updated_at
  *
+ * @property Detallecierrereservabono[] $detallecierrereservabonos
+ * @property Detallemontocierreresbono[] $detallemontocierreresbonos
  * @property Sucursale $sucursale
  * @property User $user
  * @package App
@@ -40,6 +42,22 @@ class Cierrereservabono extends Model
     protected $fillable = ['fecha','hora','user_id','sucursale_id'];
 
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function detallecierrereservabonos()
+    {
+        return $this->hasMany('App\Models\Detallecierrereservabono', 'cierrereservabono_id', 'id');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function detallemontocierreresbonos()
+    {
+        return $this->hasMany('App\Models\Detallemontocierreresbono', 'cierrereservabono_id', 'id');
+    }
+    
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */

@@ -13,14 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('detallecierrereservabonos', function (Blueprint $table) {
+        Schema::create('detallemontocierreresbonos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cierrereservabono_id')->constrained();
-            $table->string('descripcion',100);
+            $table->foreignId('tipopago_id')->constrained();
             $table->string('tipopago');
-            $table->string('descuento');
             $table->integer('cantidad');
-            $table->float('preciounitario');
             $table->float('importe');
             $table->timestamps();
         });
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('detallecierrereservabonos');
+        Schema::dropIfExists('detallemontocierreresbonos');
     }
 };

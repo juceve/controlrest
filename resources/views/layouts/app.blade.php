@@ -88,7 +88,15 @@
     @yield('js')
     @if (session('success'))
     <script>
-        Swal.fire("Excelente!", '{{session('success')}}','success');
+        // Swal.fire("Excelente!", '{{session('success')}}','success');
+        Swal.fire({
+                position: 'middle',
+                icon: 'success',
+                title: 'Excelente',
+                text: '{{session('success')}}',
+                showConfirmButton: false,
+                timer: 1500
+            })
     </script>
     @endif
     @if (session('error'))
@@ -164,10 +172,19 @@
         });   
    
         Livewire.on('success', message =>{        
-            Swal.fire('Excelente!',message,'success');        
+            // Swal.fire('Excelente!',message,'success');  
+            Swal.fire({
+                position: 'middle',
+                icon: 'success',
+                title: 'Excelente',
+                text: message,
+                showConfirmButton: false,
+                timer: 1500
+            })      
         });
         Livewire.on('error', message =>{        
-            Swal.fire('Error!',message,'error');        
+            Swal.fire('Error!',message,'error');  
+                  
         });
         Livewire.on('warning', message =>{        
             Swal.fire('Atención!',message,'warning');        

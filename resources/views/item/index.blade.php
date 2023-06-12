@@ -30,7 +30,7 @@ Productos
 
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover dataTable">
+                        <table class="table table-striped table-hover dataTable ">
                             <thead class="thead">
                                 <tr class="table-primary">
                                     <th>No</th>
