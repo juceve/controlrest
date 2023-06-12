@@ -1,0 +1,8 @@
+CREATE VIEW vw_cierre_pos as
+SELECT "POS" as operacion, p.user_id,p.sucursal_id, p.estado, p.fecha,p.tipopago_id,p.tipopago, tp.abreviatura ,p.estadopago_id, ep.nombre estadopago, count(DISTINCT(p.id)) cantidad, SUM(p.importe) importe FROM pagos p  
+INNER JOIN estadopagos ep on ep.id = p.estadopago_id
+INNER JOIN tipopagos	 tp on tp.id = p.tipopago_id
+WHERE p.estado = 1
+AND sucursal_id = 1
+AND p.venta_id IN (SELECT DISTINCT(v.id) FROM ventas v WHERE cliente = 'VENTA POS')
+GROUP BY tp.abreviatura,p.user_id,p.sucursal_id, p.estado, p.fecha,p.tipopago_id,p.tipopago,p.estadopago_id, ep.nombre

@@ -1,0 +1,9 @@
+CREATE VIEW vw_cartelera AS
+
+SELECT e.id,e.fecha, e.semana, m.id menu_id, m.nombre menu,m.tipomenu_id,  i.catitem_id, ci.nombre catitem,dm.item_id, i.nombre producto, e.sucursale_id from eventos e
+INNER JOIN detalleeventos de on de.evento_id = e.id
+INNER JOIN menus m on m.id = de.menu_id
+INNER JOIN detallemenus dm on dm.menu_id = m.id	
+INNER JOIN items i on i.id = dm.item_id
+INNER JOIN catitems ci on ci.id = i.catitem_id
+ORDER BY e.id, m.tipomenu_id asc, m.id, fecha, catitem_id 
