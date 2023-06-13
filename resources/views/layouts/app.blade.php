@@ -174,7 +174,6 @@
         Livewire.on('success', message =>{        
             // Swal.fire('Excelente!',message,'success');  
             Swal.fire({
-                position: 'middle',
                 icon: 'success',
                 title: 'Excelente',
                 text: message,

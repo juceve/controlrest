@@ -46,7 +46,7 @@
                             <tr>
                                 <td style="width: 50px;">NRO</td>
                                 <td>ESTUDIANTE</td>
-                                <td>PRODUCTO</td>
+                                <td align="center">PRODUCTO</td>
                                 <td style="width: 100px;" align="center">FALTA</td>
                                 <td style="width: 100px;" align="center">ENTREGA</td>
                                 <td style="width: 100px;" align="center">LICENCIA</td>

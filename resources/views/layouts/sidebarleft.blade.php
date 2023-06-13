@@ -52,7 +52,12 @@
                                 Profesores</a>
                         </li>
                         @endcan
-
+                        @can('entregas.porcurso')
+                        <li>
+                            <a href="{{route('entregas.noentregados')}}"><i class="uil-stopwatch-slash"></i>
+                                No entregados</a>
+                        </li>
+                        @endcan
                     </ul>
                 </div>
             </li>

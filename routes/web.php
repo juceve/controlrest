@@ -25,6 +25,7 @@ use App\Http\Livewire\Clientes\Tutores;
 use App\Http\Livewire\Clientes\Vinculosestudiantes;
 
 use App\Http\Livewire\Entregas\Individual;
+use App\Http\Livewire\Entregas\Noentregados;
 use App\Http\Livewire\Entregas\Porcurso;
 use App\Http\Livewire\Entregas\Profesores;
 use App\Http\Livewire\Masivos;
@@ -121,6 +122,7 @@ Route::resource('feriados',FeriadoController::class)->middleware('auth')->names(
 Route::get('entregas/individual/{indicador?}', Individual::class)->middleware('auth')->middleware('can:entregas.individual')->name('entregas.individual');
 Route::get('entregas/porcurso', Porcurso::class)->middleware('auth')->middleware('can:entregas.porcurso')->name('entregas.porcurso');
 Route::get('entregas/profesores/{indicador?}',Profesores::class)->middleware('can:entregas.profesores')->middleware('auth')->name('entregas.profesores');
+Route::get('entregas/noentregados',Noentregados::class)->middleware('can:entregas.porcurso')->name('entregas.noentregados');
 
 Route::get('pedidos/personales/{estudiante_id}',Ppersonales::class)->middleware('auth')->name('pedidos.personales');
 

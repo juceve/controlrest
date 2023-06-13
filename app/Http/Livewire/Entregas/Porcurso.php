@@ -93,7 +93,7 @@ class Porcurso extends Component
                             }
                         }
                         if ($entrega) {
-                            $this->arrPedidos[] = array(0, 0, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'entregado', 0);
+                            $this->arrPedidos[] = array(0, 0, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'entregado', 0, $entrega->observaciones);
                         } else {
 
                             $this->arrPedidos[] = array($menu_id, $bonoanual->venta_id, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'bonoanual', $bonoanual->id);
@@ -107,7 +107,7 @@ class Porcurso extends Component
                                 }
                             }
                             if ($entrega) {
-                                $this->arrPedidos[] = array(0, 0, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'entregado', 0);
+                                $this->arrPedidos[] = array(0, 0, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'entregado', 0, $entrega->observaciones);
                             } else {
 
                                 $this->arrPedidos[] = array($menu_id, $bonofecha->venta_id, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'bonofecha', $bonofecha->id);
@@ -126,7 +126,7 @@ class Porcurso extends Component
                                 }
                                 if ($datas) {
                                     if ($entrega) {
-                                        $this->arrPedidos[] = array(0, 0, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'entregado', 0);
+                                        $this->arrPedidos[] = array(0, 0, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'entregado', 0, $entrega->observaciones);
                                     } else {
 
                                         $this->arrPedidos[] = array($detallem->id, $datas->venta_id, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'detallelonchera', $datas->detalle_id);
@@ -158,34 +158,50 @@ class Porcurso extends Component
                     $listadoHtml = $listadoHtml . '<tr>
                     <td>' . $i . '</td>
                     <td>' . $estudiante->nombre . '</td>
-                    <td><span class="badge badge-outline-warning rounded-pill">Licencia</span></td>
+                    <td align="center"><small>Finalizado</small></td>
                     <td align="center">
-                    <span class="badge badge-outline-warning rounded-pill">Licencia</span>                      
+                    --
                     </td>
                     <td align="center">
-                    <span class="badge badge-outline-warning rounded-pill">Licencia</span>                      
+                    --
                     </td>
                     <td align="center">
-                    <span class="badge badge-outline-warning rounded-pill">Licencia</span>                      
+                    <span class="badge badge-outline-warning rounded-pill">Licencia</span>
                     </td>
                 </tr>';
-                $i++;
+                    $i++;
                 } else {
-
-                    $listadoHtml = $listadoHtml . '<tr>
+                    if ($pedido[8] == "AUSENCIA INJUSTIFICADA") {
+                        $listadoHtml = $listadoHtml . '<tr>
                     <td>' . $i . '</td>
                     <td>' . $estudiante->nombre . '</td>
-                    <td><span class="badge badge-outline-success rounded-pill">Entregado</span></td>
+                    <td align="center"><small>Finalizado</small></td>
                     <td align="center">
-                    <span class="badge badge-outline-success rounded-pill">Entregado</span>                      
+                    <span class="badge badge-outline-secondary rounded-pill">Ausencia</span>
                     </td>
                     <td align="center">
-                    <span class="badge badge-outline-success rounded-pill">Entregado</span>                      
+                    --
                     </td>
                     <td align="center">
-                    <span class="badge badge-outline-success rounded-pill">Entregado</span>                      
+                    --
                     </td>
                 </tr>';
+                    } else {
+                        $listadoHtml = $listadoHtml . '<tr>
+                        <td>' . $i . '</td>
+                        <td>' . $estudiante->nombre . '</td>
+                        <td align="center"><small>Finalizado</small></td>
+                        <td align="center">
+                        --
+                        </td>
+                        <td align="center">
+                        <span class="badge badge-outline-success rounded-pill">Entregado</span>
+                        </td>
+                        <td align="center">
+                        --
+                        </td>
+                    </tr>';
+                    }
                 }
                 $i++;
             } else {
