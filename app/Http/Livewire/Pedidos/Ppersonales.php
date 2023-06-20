@@ -59,7 +59,8 @@ class Ppersonales extends Component
             $licencia = Licencia::create([
                 "estudiante_id" => $this->estudiante->id,
                 "fecha" => $detalle->fecha,
-                "detallelonchera_id" => $detallelonchera_id
+                "detallelonchera_id" => $detallelonchera_id,
+                "tipomenu_id" => $detalle->tipomenu_id,
             ]);
             
             $this->reprogramacionautomatica($detallelonchera_id);
@@ -112,13 +113,17 @@ class Ppersonales extends Component
             $fechaActual = new DateTime($this->fechaI);
             $fechaFinalDT = new DateTime($this->fechaF);
             $c = 0;
+
+            $bono = Bonofecha::find($this->bono);
+
             while ($fechaActual <=  $fechaFinalDT) {
                 $diaSemana = $fechaActual->format('N');
                 if ($diaSemana >= 1 && $diaSemana <= 5) {
                     if (!esFeriado(date_format($fechaActual, 'Y-m-d'))) {
                         $licencia = Licencia::create([
                             "estudiante_id" => $this->estudiante->id,
-                            "fecha" => $fechaActual
+                            "fecha" => $fechaActual,
+                            "tipomenu_id" => $bono->tipomenu_id,
                         ]);
                         $c++;
                     }
@@ -126,7 +131,7 @@ class Ppersonales extends Component
                 $fechaActual->modify('+1 day');
             }
             $i = 0;
-            $bono = Bonofecha::find($this->bono);
+            
             $fechafin = new DateTime($bono->fechafin);
             while ($i < $c) {
 
@@ -151,13 +156,13 @@ class Ppersonales extends Component
 
     public function reprogramacionautomatica($detallelonchera_id)
     {
-        $sql = "SELECT dl.* FROM loncheras l
-        INNER JOIN detalleloncheras dl on dl.lonchera_id = l.id
-        WHERE l.estudiante_id = " . $this->estudiante->id . "
-        AND l.habilitado = 1
-        AND l.estado = 1
-        AND dl.estado = 1
-        ORDER BY fecha DESC";
+        // $sql = "SELECT dl.* FROM loncheras l
+        // INNER JOIN detalleloncheras dl on dl.lonchera_id = l.id
+        // WHERE l.estudiante_id = " . $this->estudiante->id . "
+        // AND l.habilitado = 1
+        // AND l.estado = 1
+        // AND dl.estado = 1
+        // ORDER BY fecha DESC";
 
         $ultimalonchera = DB::table('loncheras')->join('detalleloncheras', 'detalleloncheras.lonchera_id', '=', 'loncheras.id')
             ->where('loncheras.estudiante_id', $this->estudiante->id)
@@ -174,8 +179,14 @@ class Ppersonales extends Component
             if ($dia >= 1 && $dia <= 5) {
                 if (!esFeriado(date_format($ultimaFecha, 'Y-m-d'))) {
                     $detallelonchera = Detallelonchera::find($detallelonchera_id);
-                    $detallelonchera->fecha = date_format($ultimaFecha, 'Y-m-d');                    
+                    $detallelonchera->estado = 0;                    
                     $detallelonchera->save();
+                    $detalle = Detallelonchera::create([
+                        "fecha" => date_format($ultimaFecha, 'Y-m-d'),
+                        "tipomenu_id" => $detallelonchera->tipomenu_id,
+                        "lonchera_id" => $detallelonchera->lonchera_id,
+                        "entregado" => 0,
+                    ]);
                     $i++;
                 }
             }

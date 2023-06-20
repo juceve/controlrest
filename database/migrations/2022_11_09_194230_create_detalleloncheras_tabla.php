@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->date('fecha')->nullable();
             $table->foreignId('tipomenu_id')->nullable()->constrained();
+            $table->foreignId('menu_id')->nullable()->constrained();
             $table->foreignId('lonchera_id')->constrained();
             $table->boolean('entregado')->default(false);
             $table->boolean('estado')->default(true);

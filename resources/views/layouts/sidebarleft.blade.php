@@ -106,7 +106,7 @@
                                 Caja</a>                                
                         </li>
                         @endcan
-
+                        
                     </ul>
                 </div>
             </li>
@@ -205,6 +205,28 @@
                             <a href="{{route('catitems.index')}}"><i class="uil-tag-alt"></i> Categorias</a>
                         </li>
                         @endcan
+                    </ul>
+                </div>
+            </li>
+            <li class="side-nav-item">
+                <a data-bs-toggle="collapse" href="#reportes" aria-expanded="false" aria-controls="reportes"
+                    class="side-nav-link">
+                    <i class="uil-file-bookmark-alt"></i>
+                    <span> Reportes </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <div class="collapse" id="reportes">
+                    <ul class="side-nav-second-level">
+                        {{-- @can('reportes.diario') --}}
+                        <li>
+                            <a href="{{route('reportes.diario')}}"><i class="uil-file-alt"></i> CTR Pagado-Servido</a>
+                        </li>
+                        {{-- @endcan --}}
+                        {{-- @can('ventas.vpagos')
+                        <li>
+                            <a href="{{route('pagos.profesores')}}"><i class="uil-receipt"></i> Credito Profesores</a>
+                        </li>
+                        @endcan --}}
                     </ul>
                 </div>
             </li>

@@ -39,7 +39,7 @@ class VariosSeeder extends Seeder
 
         Producto::create([
             'nombre' => 'BONO POR FECHA',
-            'descripcion' => 'Bono de Alimentos por gestion completa',
+            'descripcion' => 'Bono de Alimentos por rango de fechas',
             'catproducto_id' => $categoria->id,
             'sucursale_id' => $sucursale->id,
             'visible' => true,
@@ -48,7 +48,7 @@ class VariosSeeder extends Seeder
 
         Producto::create([
             'nombre' => 'COMPRAS Y RESERVAS',
-            'descripcion' => 'Bono de Alimentos por gestion completa',
+            'descripcion' => 'Loncheras de reserva de alimentos',
             'catproducto_id' => $categoria->id,
             'sucursale_id' => $sucursale->id,
             'visible' => true,
@@ -57,7 +57,16 @@ class VariosSeeder extends Seeder
 
         Producto::create([
             'nombre' => 'PUNTO DE VENTA',
-            'descripcion' => 'Bono de Alimentos por gestion completa',
+            'descripcion' => 'Ventas directas',
+            'catproducto_id' => $categoria->id,
+            'sucursale_id' => $sucursale->id,
+            'visible' => true,
+            'estado' => true,
+        ]);
+
+        Producto::create([
+            'nombre' => 'PROFESORES',
+            'descripcion' => 'Entregas a credito desde la Plataforma Profesores',
             'catproducto_id' => $categoria->id,
             'sucursale_id' => $sucursale->id,
             'visible' => true,

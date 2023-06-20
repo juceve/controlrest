@@ -81,13 +81,13 @@
                         <td>
                             <div class="form-group">
                                 <h2 class="h4">{{$item->tipo}}</h2>
-                                {{-- <span>{{$menu->descripcion}}</span> --}}
+                                <span>{{$item->menu}}</span>
                             </div>
                         </td>
                         <td align="right">
                             @if (count($entregas) == 0)
                             <button class="btn btn-primary" style="font-size: 16px;"
-                                wire:click="entregaProducto({{0}},{{$bonoanual->venta_id}})">Entregar
+                                wire:click="entregaProducto({{0}},{{$bonoanual->venta_id}},{{$item->menu_id}})">Entregar
                                 <i class="uil-arrow-circle-right"></i></button>
                             @else
                             <span class="text-primary"><strong>Producto Entregado</strong></span><br>
@@ -117,13 +117,13 @@
                         <td>
                             <div class="form-group">
                                 <h2 class="h4">{{$item->tipo}}</h2>
-                                {{-- <span>{{$menu->descripcion}}</span> --}}
+                                <span>{{$item->menu}}</span>
                             </div>
                         </td>
                         <td align="right">
                             @if (count($entregas) == 0)
                             <button class="btn btn-primary" style="font-size: 16px;"
-                                wire:click="entregaProducto({{0}},{{$bonofecha->venta_id}})">Entregar
+                                wire:click="entregaProducto({{0}},{{$bonofecha->venta_id}}, {{$item->menu_id}})">Entregar
                                 <i class="uil-arrow-circle-right"></i></button>
                             @else
                             <span class="text-primary"><strong>Producto Entregado</strong></span><br>
@@ -139,8 +139,8 @@
         </div>
     </div>
     @endif
-    @if (!is_null($productos))
-    @if (count($productos)>0)
+    @if (!is_null($productos) && count($productos)>0)
+    
     <div class="card">
         {{-- @dd($productos) --}}
         <div class="card-header bg-success text-white">
@@ -153,14 +153,14 @@
                     <tr>
                         <td>
                             <div class="form-group">
-                                <h2 class="h4">{{$producto->tipomenu}}</h2>
+                                <h2 class="h4">{{$producto->tipomenu}} - {{$producto->menu}}</h2>
                                 {{-- <span>{{$menudeldia->descripcion}}</span> --}}
                             </div>
                         </td>
                         <td align="right">
                             @if ($producto->entregado == 0)
                             <button class="btn btn-primary" style="font-size: 16px;"
-                                wire:click="entregaProducto({{$producto->detalle_id}},{{$producto->venta_id}})">Entregar
+                                wire:click="entregaProducto({{$producto->detalle_id}},{{$producto->venta_id}},{{$producto->menu_id}})">Entregar
                                 <i class="uil-arrow-circle-right"></i></button>
                             @else
                             <span class="text-primary"><strong>Producto Entregado</strong></span><br>
@@ -173,7 +173,7 @@
             </table>
         </div>
     </div>
-    @endif
+    
     @endif
 
 

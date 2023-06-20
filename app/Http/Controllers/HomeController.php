@@ -166,7 +166,7 @@ class HomeController extends Controller
     public function pedidosAnual()
     {
         $hoy = date('Y-m-d');
-        $bonos = Bonoanuale::where('gestion', $hoy)
+        $bonos = Bonoanuale::where('gestion', date('Y'))
             ->where('estado', 1)
             ->get();
         return $bonos;

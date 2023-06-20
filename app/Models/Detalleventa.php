@@ -16,11 +16,16 @@ class Detalleventa extends Model
     protected $perPage = 20;
 
 
-    protected $fillable = ['venta_id','producto_id','descripcion','cantidad','preciounitario','subtotal','observacion'];
+    protected $fillable = ['venta_id','producto_id','tipomenu_id','descripcion','cantidad','preciounitario','subtotal','observacion'];
 
     public function producto()
     {
         return $this->hasOne('App\Models\Producto', 'id', 'producto_id');
+    }
+
+    public function tipomenu()
+    {
+        return $this->hasOne('App\Models\Tipomenu', 'id', 'tipomenu_id');
     }
 
     public function venta()

@@ -25,7 +25,14 @@
 @section('js')
     @if ($indicador)
         <script>
-            Swal.fire("Excelente!", 'Entrega registrada correctamente.', 'success');
+            // Swal.fire("Excelente!", 'Entrega registrada correctamente.', 'success');
+            Swal.fire({
+                icon: 'success',
+                title: 'Excelente',
+                text: 'Entrega registrada correctamente.',
+                showConfirmButton: false,
+                timer: 1500
+            })   
         </script>
     @endif
     <script>

@@ -187,6 +187,7 @@ class Profesores extends Component
                 $entrega = Entregalounch::create([
                     "fechaentrega" => date('Y-m-d H:i:s'),
                     "estudiante_id" => $this->estudiante->id,
+                    "producto_id" => 5,
                     "menu_id" => $menu->id,
                     "venta_id" => $venta->id,
                     "user_id" => Auth::user()->id,

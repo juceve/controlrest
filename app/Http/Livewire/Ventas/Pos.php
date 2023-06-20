@@ -155,6 +155,7 @@ class Pos extends Component
                             $entrega = Entregalounch::create([
                                 "fechaentrega" => date('Y-m-d H:i:s'),
                                 "menu_id" => $producto[0],
+                                "producto_id" => 4,
                                 "venta_id" => $venta->id,
                                 "user_id" => Auth::user()->id,
                                 "sucursale_id" => Auth::user()->sucursale_id,
@@ -164,7 +165,7 @@ class Pos extends Component
 
                             $row = $row . $entrega->id . "|" . $producto[8] . "|Venta POS|" . $entrega->fechaentrega . "|" . $producto[1] . "|" . Auth::user()->name . "~";
                         }
-                        $detalleventa[] = array($menu->tipomenu->nombre, $producto[3], $preciou, $producto[4], $observacion);
+                        $detalleventa[] = array($menu->tipomenu->nombre, $producto[3], $preciou, $producto[4], $observacion,$menu->tipomenu_id);
                     }
                 }
 
@@ -173,6 +174,7 @@ class Pos extends Component
                         'venta_id' => $venta->id,
                         'descripcion' => $dventa[0],
                         'producto_id' => 4,
+                        'tipomenu_id' => $dventa[5],
                         'cantidad' => $dventa[1],
                         'preciounitario' => $dventa[2],
                         'subtotal' => $dventa[3],

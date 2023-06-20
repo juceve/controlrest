@@ -18,6 +18,7 @@ return new class extends Migration
             $table->dateTime('fechaentrega');
             $table->foreignId('detallelonchera_id')->nullable()->constrained();
             $table->foreignId('menu_id')->nullable()->constrained();
+            $table->foreignId('producto_id')->nullable()->constrained();
             $table->foreignId('venta_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('sucursale_id')->constrained();

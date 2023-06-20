@@ -15,12 +15,17 @@ class Detallelonchera extends Model
     protected $perPage = 20;
 
 
-    protected $fillable = ['fecha','tipomenu_id','lonchera_id','entregado','estado'];
+    protected $fillable = ['fecha','tipomenu_id','lonchera_id', 'menu_id', 'entregado','estado'];
 
 
     public function tipomenu()
     {
         return $this->hasOne('App\Models\Tipomenu', 'id', 'tipomenu_id');
+    }
+
+    public function menu()
+    {
+        return $this->hasOne('App\Models\Menu', 'id', 'menu_id');
     }
 
     public function lonchera()

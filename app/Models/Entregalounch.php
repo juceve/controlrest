@@ -16,7 +16,7 @@ class Entregalounch extends Model
     protected $perPage = 20;
 
 
-    protected $fillable = ['fechaentrega','detallelonchera_id','menu_id','venta_id','user_id','sucursale_id','estado','estudiante_id','observaciones'];
+    protected $fillable = ['fechaentrega','detallelonchera_id','menu_id', 'producto_id', 'venta_id','user_id','sucursale_id','estado','estudiante_id','observaciones'];
 
 
     public function detallelonchera()
@@ -42,6 +42,10 @@ class Entregalounch extends Model
         return $this->hasOne('App\Models\User', 'id', 'user_id');
     }
     
+    public function producto()
+    {
+        return $this->hasOne('App\Models\Producto', 'id', 'producto_id');
+    }
   
     public function venta()
     {

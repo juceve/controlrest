@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('estudiante_id')->constrained();
             $table->date('fecha');
             $table->integer('detallelonchera_id')->nullable();
+            $table->integer('tipomenu_id')->nullable();
             $table->timestamps();
         });
     }

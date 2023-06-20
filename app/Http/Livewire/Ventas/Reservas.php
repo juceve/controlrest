@@ -287,15 +287,18 @@ class Reservas extends Component
                     if ($cantidadPedido >= $pedido[6] && $this->checks > 2) {
                         // if ($this->arrPedidos > 2) {
                         $subtotal = $subtotal + $pedido[5];
-                        $detalleventa[] = array($menu->tipomenu->nombre, 1, $pedido[5], $pedido[5], $menu->tipomenu_id);
+
                         $descuento = 'NO';
                         if ($pedido[5] != $pedido[3]) {
                             $descuento = 'SI';
+                            $detalleventa[] = array($menu->tipomenu->nombre, 1, $pedido[5], $pedido[5], $menu->tipomenu_id, 1);
+                        } else {
+                            $detalleventa[] = array($menu->tipomenu->nombre, 1, $pedido[5], $pedido[5], $menu->tipomenu_id, 0);
                         }
                         $this->conDescuento[] = array($estudiante->id, $estudiante->codigo, $estudiante->nombre, $estudiante->curso->nombre, $menu->tipomenu_id, $pedido[5], $descuento);
                     } else {
                         $subtotal = $subtotal + $pedido[3];
-                        $detalleventa[] = array($menu->tipomenu->nombre, 1, $pedido[3], $pedido[3], $menu->tipomenu_id);
+                        $detalleventa[] = array($menu->tipomenu->nombre, 1, $pedido[3], $pedido[3], $menu->tipomenu_id, 0);
                         $this->sinDescuento[] = array($estudiante->id, $estudiante->codigo, $estudiante->nombre, $estudiante->curso->nombre, $menu->tipomenu_id, $pedido[3], 'NO');
                     }
                 }
@@ -366,6 +369,10 @@ class Reservas extends Component
                 ]);
                 $this->datosVentaRecibo = $venta->id . "|" . date('Y-m-d') . "|" . Auth::user()->name . "|" . $tipopago->abreviatura;
                 foreach ($this->detalleventa as $dventa) {
+                    $observacion = "";
+                    if ($dventa[5]) {
+                        $observacion = "DESCUENTO";
+                    }
                     $detalleventa = Detalleventa::create([
                         'venta_id' => $venta->id,
                         'descripcion' => $dventa[0],
@@ -373,6 +380,7 @@ class Reservas extends Component
                         'cantidad' => $dventa[1],
                         'preciounitario' => $dventa[2],
                         'subtotal' => $dventa[3],
+                        'observacion' => $observacion,
                     ]);
                 }
 
@@ -392,6 +400,7 @@ class Reservas extends Component
                             $detalle = Detallelonchera::create([
                                 "fecha" => date('Y-m-d', $pedido[4]),
                                 "tipomenu_id" => $menuX->tipomenu_id,
+                                "menu_id" =>$pedido[1],
                                 "lonchera_id" => $lonchera->id,
                                 "entregado" => 0
                             ]);
@@ -434,19 +443,19 @@ class Reservas extends Component
 
                             break;
                         case 'GASTO ADMINISTRATIVO': {
-                            $pago = Pago::create([
-                                "fecha" => date('Y-m-d'),
-                                "recibo" => 0,
-                                "tipopago_id" => $tipopago->id,
-                                "tipopago" => $tipopago->nombre,
-                                "sucursal_id" => Auth::user()->sucursale_id,
-                                "sucursal" => Auth::user()->sucursale->nombre,
-                                "importe" => $this->importeTotal * $tipopago->factor,
-                                "venta_id" => $venta->id,
-                                "estadopago_id" => 2,
-                                "user_id" => Auth::user()->id,
-                                "tipoinicial" => $tipopago->nombre,
-                            ]);
+                                $pago = Pago::create([
+                                    "fecha" => date('Y-m-d'),
+                                    "recibo" => 0,
+                                    "tipopago_id" => $tipopago->id,
+                                    "tipopago" => $tipopago->nombre,
+                                    "sucursal_id" => Auth::user()->sucursale_id,
+                                    "sucursal" => Auth::user()->sucursale->nombre,
+                                    "importe" => $this->importeTotal * $tipopago->factor,
+                                    "venta_id" => $venta->id,
+                                    "estadopago_id" => 2,
+                                    "user_id" => Auth::user()->id,
+                                    "tipoinicial" => $tipopago->nombre,
+                                ]);
                                 $lonchera->habilitado = 1;
                                 $lonchera->save();
                                 $venta->estadopago_id = 2;
@@ -520,7 +529,7 @@ class Reservas extends Component
 
                 // GENERACION DE RECIBOS
                 $recibos = array();
-                
+
                 foreach ($this->checks as $estudiante_id) {
                     $reciboEstudiante = "";
                     $completoD = array("", "", "", 'ALMUERZO COMPLETO', 0, 0, 0, "");

@@ -19,7 +19,7 @@ use Livewire\Component;
 
 class Porcurso extends Component
 {
-    public $selCurso = "", $arrPedidos = array(), $detalleevento = null, $html = "", $pedidocurso = "";
+    public $selCurso = "", $arrPedidos = array(), $detalleevento = null, $html = "", $pedidocurso = "", $selMenu = 3;
 
     public function mount()
     {
@@ -82,35 +82,35 @@ class Porcurso extends Component
                         ->where('loncheras.estudiante_id', $estudiante->id)
                         ->where('loncheras.habilitado', 1)
                         ->where('detalleloncheras.fecha', date('Y-m-d'))
-                        ->select('detalleloncheras.tipomenu_id', 'loncheras.venta_id', 'detalleloncheras.id as detalle_id')
+                        ->select('detalleloncheras.tipomenu_id', 'detalleloncheras.menu_id', 'loncheras.venta_id', 'detalleloncheras.id as detalle_id')
                         ->first();
                     $entrega = Entregalounch::where('estudiante_id', $estudiante->id)->whereDate('fechaentrega', date('Y-m-d'))->first();
                     if ($bonoanual) {
-                        $menu_id = "";
+                        $menu_id = array();
                         foreach ($this->detalleevento as $detalle) {
                             if ($detalle->menu->tipomenu_id == $bonoanual->tipomenu_id) {
-                                $menu_id = $detalle->menu_id;
+                                $menu_id[] = $detalle->menu_id;
                             }
                         }
                         if ($entrega) {
                             $this->arrPedidos[] = array(0, 0, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'entregado', 0, $entrega->observaciones);
                         } else {
 
-                            $this->arrPedidos[] = array($menu_id, $bonoanual->venta_id, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'bonoanual', $bonoanual->id);
+                            $this->arrPedidos[] = array($menu_id, $bonoanual->venta_id, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'bonoanual', $bonoanual->id,1);
                         }
                     } else {
                         if ($bonofecha) {
-                            $menu_id = "";
+                            $menu_id = array();
                             foreach ($this->detalleevento as $detalle) {
                                 if ($detalle->menu->tipomenu_id == $bonofecha->tipomenu_id) {
-                                    $menu_id = $detalle->menu_id;
+                                    $menu_id[] = $detalle->menu_id;
                                 }
                             }
                             if ($entrega) {
                                 $this->arrPedidos[] = array(0, 0, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'entregado', 0, $entrega->observaciones);
                             } else {
 
-                                $this->arrPedidos[] = array($menu_id, $bonofecha->venta_id, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'bonofecha', $bonofecha->id);
+                                $this->arrPedidos[] = array($menu_id, $bonofecha->venta_id, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'bonofecha', $bonofecha->id,2);
                             }
                         } else {
                             if ($datas) {
@@ -124,12 +124,13 @@ class Porcurso extends Component
                                 foreach ($detalles as $detalle) {
                                     $detallem = $detalle;
                                 }
+                                $menu = array($detallem->id);
                                 if ($datas) {
                                     if ($entrega) {
                                         $this->arrPedidos[] = array(0, 0, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'entregado', 0, $entrega->observaciones);
                                     } else {
 
-                                        $this->arrPedidos[] = array($detallem->id, $datas->venta_id, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'detallelonchera', $datas->detalle_id);
+                                        $this->arrPedidos[] = array($menu, $datas->venta_id, Auth::user()->id, Auth::user()->sucursale_id, 1, $estudiante->id, 'detallelonchera', $datas->detalle_id,3);
                                     }
                                 }
                             }
@@ -211,16 +212,33 @@ class Porcurso extends Component
                 //     ENTREGAR
                 //     <i class="uil-check"></i>
                 // </button>';
-                if (!$this->entregado($pedido[5], $hoy, $pedido[0])) {
-                    $button = '<small class="text-success">Entregado!</small>';
-                }
+                // if (!$this->entregado($pedido[5], $hoy, $pedido[0][0])) {
+                //     $button = '<small class="text-success">Entregado!</small>';
+                // }
                 $estudiante = Estudiante::find($pedido[5]);
-                $menu = Menu::find($pedido[0]);
+                $menu = Menu::whereIn('id', $pedido[0])->get();
                 $listadoHtml = $listadoHtml . '<tr style="vertical-align:middle;">
                     <td>' . $i . '</td>
-                    <td>' . $estudiante->nombre . ' <input type="hidden" value="' . $estudiante->id . '"></td>
-                    <td>' . $menu->nombre . ' <input type="hidden" value="' . $menu->id . '"></td>
-                    <td align="center"><input type="radio" id="fa' . $pedido[5] . '" name="rb' . $pedido[5] . '" class="form-check-input" checked></td>
+                    <td>' . $estudiante->nombre . ' <input type="hidden" value="' . $estudiante->id . '"></td>';
+                if ($menu->count() > 1) {
+                    $listadoHtml = $listadoHtml . '<td><select id="selExtra" class="form-select">';
+                    $b = 0;
+                    foreach ($menu as $item) {
+                        $checked = "";
+                        if ($b == 0) {
+                            $checked = 'selected';
+                            $b++;
+                        }
+                        $listadoHtml = $listadoHtml . '<option value="' . $item->id . '" ' . $checked . '>' . $item->nombre . '</option>';
+                    }
+                    $listadoHtml = $listadoHtml . '</select></td>';
+                } else {
+                    foreach ($menu as $item) {
+                        $listadoHtml = $listadoHtml . '<td>' . $item->nombre . ' <input type="hidden"  value="' . $item->id . '"></td>';
+                    }
+                }
+                // $listadoHtml = $listadoHtml . '<td>' . $menu->nombre . ' <input type="hidden" value="' . $menu->id . '"></td>';
+                $listadoHtml = $listadoHtml . '<td align="center"><input type="radio" id="fa' . $pedido[5] . '" name="rb' . $pedido[5] . '" class="form-check-input" checked></td>
                     <td align="center" style="background-color: #cef5ea;"><input type="radio" id="en' . $pedido[5] . '" name="rb' . $pedido[5] . '" class="form-check-input"></td>
                     <td align="center" style="background-color: #fff2cc;"><input type="radio" id="li' . $pedido[5] . '" name="rb' . $pedido[5] . '" class="form-check-input"></td>
                 </tr>';
@@ -255,13 +273,13 @@ class Porcurso extends Component
 
     public function entregar()
     {
-        // $this->emit('loading');
+        $this->emit('loading');
         DB::beginTransaction();
         try {
 
             foreach ($this->arrListado as $fila) {
                 foreach ($this->arrPedidos as $pedido) {
-
+                    $menu = Menu::find($fila[1]);
                     if ($pedido[5] == $fila[0]) {
                         if ($fila[2]) {
                             // $detallelonchera_id = null;
@@ -295,7 +313,8 @@ class Porcurso extends Component
                             $entrega = Entregalounch::create([
                                 "fechaentrega" => date('Y-m-d H:i:s'),
                                 "detallelonchera_id" => $detallelonchera_id,
-                                "menu_id" => $pedido[0],
+                                "menu_id" => $fila[1],
+                                "producto_id" => $pedido[8],
                                 "venta_id" => $pedido[1],
                                 "user_id" => $pedido[2],
                                 "sucursale_id" => $pedido[3],
@@ -314,7 +333,8 @@ class Porcurso extends Component
                                 $licencia = Licencia::create([
                                     "estudiante_id" => $fila[0],
                                     "fecha" => $detalle->fecha,
-                                    "detallelonchera_id" => $detallelonchera_id
+                                    "detallelonchera_id" => $detallelonchera_id,
+                                    "tipomenu_id" => $detalle->tipomenu_id
                                 ]);
                                 $this->reprogramacionautomatica($detallelonchera_id, $fila[0]);
                             }
@@ -329,7 +349,8 @@ class Porcurso extends Component
                                         if (!esFeriado(date_format($fechaActual, 'Y-m-d'))) {
                                             $licencia = Licencia::create([
                                                 "estudiante_id" => $fila[0],
-                                                "fecha" => $fechaActual
+                                                "fecha" => $fechaActual,
+                                                "tipomenu_id" => $menu->tipomenu_id,
                                             ]);
                                             $c++;
                                         }
@@ -356,7 +377,8 @@ class Porcurso extends Component
                             if ($pedido[6] == 'bonoanual') {
                                 $licencia = Licencia::create([
                                     "estudiante_id" => $fila[0],
-                                    "fecha" => date('Y-m-d')
+                                    "fecha" => date('Y-m-d'),
+                                    "tipomenu_id" => $menu->tipomenu_id,
                                 ]);
                             }
                         }
@@ -404,8 +426,14 @@ class Porcurso extends Component
             if ($dia >= 1 && $dia <= 5) {
                 if (!esFeriado(date_format($ultimaFecha, 'Y-m-d'))) {
                     $detallelonchera = Detallelonchera::find($detallelonchera_id);
-                    $detallelonchera->fecha = date_format($ultimaFecha, 'Y-m-d');
+                    $detallelonchera->estado = 0;
                     $detallelonchera->save();
+                    $detalle = Detallelonchera::create([
+                        "fecha" => date_format($ultimaFecha, 'Y-m-d'),
+                        "tipomenu_id" => $detallelonchera->tipomenu_id,
+                        "lonchera_id" => $detallelonchera->lonchera_id,
+                        "entregado" => 0,
+                    ]);
                     $i++;
                 }
             }

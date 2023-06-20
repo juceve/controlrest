@@ -57,14 +57,14 @@ class Individual extends Component
 
     public function resetAll()
     {
-        $this->reset(['estudiantes', 'estudiante', 'busqueda', 'productos', 'buscaCodigo', 'detalle']);
+        $this->reset(['estudiantes', 'estudiante', 'busqueda', 'productos', 'bonoanual', 'bonofecha', 'buscaCodigo', 'detalle']);
     }
 
     public function buscaXCodigo()
     {
-        $this->reset(['estudiante', 'productos', 'entregas',  'licencia', 'detalle']);
+        $this->reset(['estudiante', 'productos', 'bonoanual', 'bonofecha', 'entregas',  'licencia', 'detalle']);
         if ($this->buscaCodigo != "") {
-            $codigo = str_pad($this->buscaCodigo, 10, "0", STR_PAD_LEFT);        
+            $codigo = str_pad($this->buscaCodigo, 10, "0", STR_PAD_LEFT);
             $this->estudiante = Estudiante::where('codigo', $codigo)->first();
             // dd($this->estudiante);
             if ($this->estudiante) {
@@ -75,7 +75,7 @@ class Individual extends Component
 
     public function seleccionaEstudiante($estudiante_id)
     {
-        $this->reset(['estudiante', 'productos', 'entregas', 'buscaCodigo', 'licencia']);
+        $this->reset(['estudiante', 'productos', 'bonoanual', 'bonofecha', 'entregas', 'buscaCodigo', 'licencia']);
         $this->estudiante = Estudiante::find($estudiante_id);
         $this->buscarDatos($estudiante_id);
     }
@@ -101,8 +101,10 @@ class Individual extends Component
                     ->join('tipomenus', 'tipomenus.id', '=', 'menus.tipomenu_id')
                     ->where('eventos.fecha', date('Y-m-d'))
                     ->where('tipomenus.id', $this->bonoanual->tipomenu_id)
-                    ->select('detalleeventos.*')->get();
+                    ->select('detalleeventos.*', 'menus.nombre AS menu', 'menus.id AS menu_id')->get();
+
                 $this->menu = Menu::find($this->detalle[0]->menu_id);
+
 
                 $sql = "SELECT * FROM entregalounches el
                 where DATE(fechaentrega) = '" . date('Y-m-d') . "'
@@ -123,8 +125,13 @@ class Individual extends Component
                         ->join('tipomenus', 'tipomenus.id', '=', 'menus.tipomenu_id')
                         ->where('eventos.fecha', date('Y-m-d'))
                         ->where('tipomenus.id', $this->bonofecha->tipomenu_id)
-                        ->select('detalleeventos.*')->get();
-                    $this->menu = Menu::find($this->detalle[0]->menu_id);
+                        ->select('detalleeventos.*', 'menus.nombre AS menu', 'menus.id AS menu_id')->get();
+                    // dd($this->detalle);
+                    if ($this->bonofecha->tipomenu_id == 3) {
+                        $this->menu = Menu::where('tipomenu_id', $this->bonofecha->tipomenu_id)->get();
+                    } else {
+                        $this->menu = Menu::find($this->detalle[0]->menu_id);
+                    }
 
                     $sql = "SELECT * FROM entregalounches el
                 where DATE(fechaentrega) = '" . date('Y-m-d') . "'
@@ -133,9 +140,10 @@ class Individual extends Component
                     $this->entregas = DB::select($sql);
                 } else {
                     $hoy = date('Y-m-d');
-                    $sql = "SELECT dl.tipomenu_id, tm.nombre tipomenu, dl.id detalle_id,v.id venta_id, dl.entregado,el.fechaentrega FROM estudiantes e
+                    $sql = "SELECT dl.tipomenu_id, tm.nombre tipomenu, dl.id detalle_id,v.id venta_id, m.nombre menu, dl.menu_id, dl.entregado,el.fechaentrega FROM estudiantes e
                 INNER JOIN loncheras l on l.estudiante_id = e.id
                 INNER JOIN detalleloncheras dl on dl.lonchera_id = l.id
+                INNER JOIN menus m on m.id = dl.menu_id
                 INNER JOIN tipomenus tm on tm.id = dl.tipomenu_id
                 INNER JOIN ventas v on v.id = l.venta_id   
                 LEFT JOIN entregalounches el on el.estudiante_id = l.estudiante_id AND date(el.fechaentrega) = '" . $hoy . "'
@@ -144,37 +152,24 @@ class Individual extends Component
                         AND l.habilitado = 1
                         ORDER BY tm.id ASC";
                     $this->productos = DB::select($sql);
-                    // dd($this->productos);
-                    // $producto = null;
-                    // foreach ($this->productos as $item) {
-                    //     $producto = $item;
-                    // }
-                    // $detalles = DB::select("SELECT m.* from eventos e
-                    // INNER JOIN detalleeventos de on de.evento_id = e.id
-                    // INNER JOIN menus m on m.id = de.menu_id
-                    // WHERE e.fecha = '".$hoy."'
-                    // AND m.tipomenu_id = ".$producto->tipomenu_id."
-                    // AND e.sucursale_id = ".Auth::user()->sucursale_id);
-                    // $detallem = null;
-                    // foreach ($detalles as $detalle ) {
-                    //     $detallem = $detalle;
-                    // }
-                    // $this->menudeldia = $detallem;
                 }
             }
         }
     }
-    
-    public function entregaProducto($detalle_id, $venta_id)
+
+    public function entregaProducto($detalle_id, $venta_id, $menu_id)
     {
         DB::beginTransaction();
         $row = "";
+        $menu = Menu::find($menu_id);
         try {
             if ($this->bonoanual) {
                 $this->reset(['detalle']);
+
                 $entrega = Entregalounch::create([
                     "fechaentrega" => date('Y-m-d H:i:s'),
-                    "menu_id" => $this->menu->id,
+                    "menu_id" => $menu_id,
+                    "producto_id" => 1,
                     "venta_id" => $this->bonoanual->venta_id,
                     "user_id" => Auth::user()->id,
                     "sucursale_id" => Auth::user()->sucursale_id,
@@ -182,13 +177,14 @@ class Individual extends Component
                     "observaciones" => "ENTREGA INDIVIDUAL"
                 ]);
 
-                $row = $entrega->id . "|" . $this->menu->tipomenu->nombre . "|" . $this->estudiante->nombre . "|" . $entrega->fechaentrega . "|" . $this->menu->nombre . "|" . Auth::user()->name;
+                $row = $entrega->id . "|" . $menu->tipomenu->nombre . "|" . $this->estudiante->nombre . "|" . $entrega->fechaentrega . "|" . $menu->nombre . "|" . Auth::user()->name;
             } else {
                 if ($this->bonofecha) {
                     $this->reset(['detalle']);
                     $entrega = Entregalounch::create([
                         "fechaentrega" => date('Y-m-d H:i:s'),
-                        "menu_id" => $this->menu->id,
+                        "menu_id" => $menu->id,
+                        "producto_id" => 2,
                         "venta_id" => $this->bonofecha->venta_id,
                         "user_id" => Auth::user()->id,
                         "sucursale_id" => Auth::user()->sucursale_id,
@@ -196,36 +192,24 @@ class Individual extends Component
                         "observaciones" => "ENTREGA INDIVIDUAL"
                     ]);
 
-                    $row = $entrega->id . "|" . $this->menu->tipomenu->nombre . "|" . $this->estudiante->nombre . "|" . $entrega->fechaentrega . "|" . $this->menu->nombre . "|" . Auth::user()->name;
+                    $row = $entrega->id . "|" . $menu->tipomenu->nombre . "|" . $this->estudiante->nombre . "|" . $entrega->fechaentrega . "|" . $menu->nombre . "|" . Auth::user()->name;
                 } else {
 
                     $detalle = Detallelonchera::find($detalle_id);
-                    // dd($detalle);
                     $detalle->entregado = true;
                     $detalle->save();
-                    $detalles = DB::select("SELECT m.* from eventos e
-                     INNER JOIN detalleeventos de on de.evento_id = e.id
-                     INNER JOIN menus m on m.id = de.menu_id
-                     WHERE e.fecha = '".date('Y-m-d')."'
-                     AND m.tipomenu_id = ".$detalle->tipomenu_id."
-                     AND e.sucursale_id = ".Auth::user()->sucursale_id);
-                    $detallem = null;
-                    foreach ($detalles as $detalle ) {
-                        $detallem = $detalle;
-                    }
-                    // dd();
                     $entrega = Entregalounch::create([
                         "fechaentrega" => date('Y-m-d H:i:s'),
                         "detallelonchera_id" => $detalle_id,
-                        "menu_id" => $detallem->id,
+                        "menu_id" => $menu->id,
+                        "producto_id" => 3,
                         "venta_id" => $venta_id,
                         "user_id" => Auth::user()->id,
                         "sucursale_id" => Auth::user()->sucursale_id,
                         "estudiante_id" => $this->estudiante->id,
                         "observaciones" => "ENTREGA INDIVIDUAL"
                     ]);
-                    $tipomenu = Tipomenu::find($detalle->tipomenu_id);
-                    $row = $entrega->id . "|" . $tipomenu->nombre . "|" . $this->estudiante->nombre . "|" . $entrega->fechaentrega . "|" . $detallem->nombre . "|" . Auth::user()->name;
+                    $row = $entrega->id . "|" . $menu->tipomenu->nombre . "|" . $this->estudiante->nombre . "|" . $entrega->fechaentrega . "|" . $menu->nombre . "|" . Auth::user()->name;
                 }
             }
             //INCLUIR CODIGO PARA ENVIO DE MENSAJE DE ENTREGA AL CORREO

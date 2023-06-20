@@ -61,7 +61,7 @@
 
             </div>
             <div class="container text-center d-grid mt-2">
-                <button class="btn btn-success" onclick="revision();" >FINALIZA REVISIÓN DE CURSO</button>
+                <button class="btn btn-success" onclick="revision();">FINALIZA REVISIÓN DE CURSO</button>
             </div>
         </div>
     @endif
@@ -69,6 +69,7 @@
 </div>
 @section('js')
     <script>
+
         function revision() {
             Swal.fire({
                 title: 'FINALIZAR REVISIÓN DE CURSO',
@@ -95,9 +96,13 @@
             tabla.find("tbody tr").each(function() {
                 var estudiante_id = $(this).find("td:eq(1) input").val();
                 var menu_id = $(this).find("td:eq(2) input").val();
+                if(!menu_id){
+                    menu_id = $(this).find("td:eq(2) select").val();
+                }
                 var falta = $(this).find("td:eq(3) input").is(':checked');
                 var entrega = $(this).find("td:eq(4) input").is(':checked');
                 var licencia = $(this).find("td:eq(5) input").is(':checked');
+                // console.log(menu_id);
                 Livewire.emit('cargaPedidos', estudiante_id, menu_id, falta, entrega, licencia);
             });
             // Livewire.emit('prueba');

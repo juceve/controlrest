@@ -175,7 +175,7 @@ class Bonoanual extends Component
                 $this->importeTotal = $this->importeTotal + $tipobonoanual->precio;
             }
 
-            $this->detalleventa[] = array('BONO ANUAL ' . $this->gestion . ' - ' . $tipomenu->nombre, 1, $tipobonoanual->precio, $tipobonoanual->precio);
+            $this->detalleventa[] = array('BONO ANUAL ' . $this->gestion . ' - ' . $tipomenu->nombre, 1, $tipobonoanual->precio, $tipobonoanual->precio,$tipomenu->id);
         }
 
         $tbodyPagoClientes = $tbodyPagoClientes . "<tr style='background-color: #cef5ea;'>
@@ -218,6 +218,7 @@ class Bonoanual extends Component
     }
 
     public $gestion = "", $contenedor = array(), $datosVentaRecibo = "";
+
     public function registrarCompra()
     {
         if (count($this->arrPedidos) > 0) {
@@ -242,6 +243,7 @@ class Bonoanual extends Component
                         'venta_id' => $venta->id,
                         'descripcion' => $dventa[0],
                         'producto_id' => 1,
+                        'tipomenu_id' => $dventa[4],
                         'cantidad' => $dventa[1],
                         'preciounitario' => $dventa[2],
                         'subtotal' => $dventa[3],

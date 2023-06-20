@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('venta_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('producto_id')->constrained()->nullable();
+            $table->integer('tipomenu_id')->nullable();
             $table->string('descripcion');
             $table->integer('cantidad')->nullable();
             $table->float('preciounitario')->nullable();

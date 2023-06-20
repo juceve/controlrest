@@ -19,7 +19,7 @@ class Licencia extends Model
      *
      * @var array
      */
-    protected $fillable = ['estudiante_id','fecha','detallelonchera_id'];
+    protected $fillable = ['estudiante_id','fecha','detallelonchera_id','tipomenu_id'];
 
 
     /**
