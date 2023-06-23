@@ -106,7 +106,7 @@
                             </table>
                         </div>
                         <div class="mb-3">
-                            <h6>RESUMEN POR PLATAFORMA</h6>
+                            <h6>RESUMEN PAGADOS POR PLATAFORMA</h6>
                             <div class="table-responsive">
                                 @if ($tabla11)
                                     <table class="table table-striped table-bordered table-sm table-hover"

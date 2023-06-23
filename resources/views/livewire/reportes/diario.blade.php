@@ -9,7 +9,7 @@
             </div>
         </div>
     </div> --}}
-    <div class="card mt-3">
+    <div class="card">
         <div class="card-header bg-primary text-white">
             CONTROL DE ALMUERZOS
         </div>
@@ -107,7 +107,7 @@
                         
                     </div>
                     <div class="col-12 col-md-6">
-                        <h2 class="h5">RESUMEN POR PLATAFORMA</h2>
+                        <h2 class="h5">RESUMEN PAGADOS POR PLATAFORMA</h2>
                         <div class="table-responsive">
                             @if ($tabla11)
                                 <table class="table table-striped table-bordered table-sm table-hover"

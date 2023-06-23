@@ -9,14 +9,18 @@ use App\Models\Detallelonchera;
 use App\Models\Licencia;
 use App\Models\Tipomenu;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Diario extends Component
 {
     public $selFecha = "", $tabla1 = array(), $tabla11 = array(), $tabla2 = array(), $tabla3 = array(), $tabla4 = array(), $licenciasHoy = null;
+    public $sucursale_id;
 
-
+    public function mount(){
+        $this->sucursale_id = Auth::user()->sucursale_id;
+    }
     public function render()
     {
         // $this->reportexnivel();
@@ -37,12 +41,13 @@ class Diario extends Component
 
     public function pagadosvsservidos()
     {
-        $this->reset(['tabla1']);
+        $this->reset(['tabla1','tabla11']);
         $hoy = date('Y-m-d');
         $sql1 = "SELECT m.tipomenu_id, tm.nombre tipomenu, COUNT(*) cantidad FROM entregalounches el
         INNER JOIN menus m on m.id = el.menu_id
         INNER JOIN tipomenus tm on tm.id = m.tipomenu_id
         WHERE DATE(el.fechaentrega) = '" . $this->selFecha . "'
+        AND el.sucursale_id = ".$this->sucursale_id." 
         AND el.observaciones != 'AUSENCIA INJUSTIFICADA'
         AND el.observaciones != 'ENTREGA PLATAFORMA'
         GROUP BY m.tipomenu_id, tm.nombre";
@@ -51,20 +56,26 @@ class Diario extends Component
         $sql2 = "SELECT tipomenu_id, tipomenu, SUM(cantidad) cantidad FROM 
         (SELECT 'LONCHERA' tipo, dl.tipomenu_id,tm.nombre tipomenu,count(*) cantidad from detalleloncheras dl
         INNER JOIN loncheras l on l.id = dl.lonchera_id
+        INNER JOIN ventas v on v.id = l.venta_id
         INNER JOIN tipomenus tm on tm.id = dl.tipomenu_id
         WHERE l.habilitado = 1
-        AND dl.fecha = '" . $this->selFecha . "'        
+        AND dl.fecha = '" . $this->selFecha . "'
+        AND v.sucursale_id = ".$this->sucursale_id." 
         GROUP BY dl.tipomenu_id,tm.nombre
         UNION
         SELECT 'BONOANUAL' tipo, ba.tipomenu_id, tm.nombre tipomenu, count(*) cantidad FROM bonoanuales ba
         INNER JOIN tipomenus tm on tm.id = ba.tipomenu_id
+        INNER JOIN ventas v on v.id = ba.venta_id
         WHERE ba.estado = 1
+        AND v.sucursale_id = ".$this->sucursale_id." 
         AND ba.gestion = '" . date('Y') . "'
         GROUP BY ba.tipomenu_id, tm.nombre
         UNION
         SELECT 'BONOFECHA' tipo,bf.tipomenu_id, tm.nombre tipomenu, count(*) cantidad FROM bonofechas bf
         INNER JOIN tipomenus tm on tm.id = bf.tipomenu_id
+        INNER JOIN ventas v on v.id = bf.venta_id
         WHERE bf.fechainicio <= '" . $this->selFecha . "'
+        AND v.sucursale_id = ".$this->sucursale_id." 
         AND bf.fechafin >= '" . $this->selFecha . "'
         GROUP BY bf.tipomenu_id, tm.nombre
         UNION
@@ -73,6 +84,7 @@ class Diario extends Component
         INNER JOIN tipomenus tm on tm.id = dv.tipomenu_id
         WHERE dv.producto_id = 4
         AND v.fecha = '" . $this->selFecha . "'
+        AND v.sucursale_id = ".$this->sucursale_id." 
         GROUP BY tipomenu_id, tm.nombre) AS resultado
         GROUP BY  tipomenu_id, tipomenu";
         $pagados = DB::select($sql2);
@@ -82,30 +94,41 @@ class Diario extends Component
         INNER JOIN tipomenus tm on tm.id = m.tipomenu_id
         WHERE DATE(el.fechaentrega) = '" . $this->selFecha . "'
         AND el.observaciones = 'AUSENCIA INJUSTIFICADA'
+        AND el.sucursale_id = ".$this->sucursale_id." 
         GROUP BY m.tipomenu_id, tm.nombre";
         $ausencias = DB::select($sql3);
 
-        $sql4 = "SELECT tipomenu_id, COUNT(*) cantidad from licencias
+        $sql4 = "SELECT tipomenu_id, COUNT(*) cantidad from licencias l
+        INNER JOIN estudiantes e on e.id = l.estudiante_id
+        INNER JOIN cursos c on c.id = e.curso_id
+        INNER JOIN nivelcursos nc on c.nivelcurso_id = nc.id
         WHERE fecha = '" . $this->selFecha . "'
+        AND nc.sucursale_id = ".$this->sucursale_id." 
         GROUP BY tipomenu_id";
         $licencias = DB::select($sql4);
 
         $sql5 = "SELECT 'COMPRAS Y RESERVAS' tipo, count(*) cantidad from detalleloncheras dl
         INNER JOIN loncheras l on l.id = dl.lonchera_id
+        INNER JOIN ventas v on v.id = l.venta_id
         INNER JOIN tipomenus tm on tm.id = dl.tipomenu_id
         WHERE l.habilitado = 1
+        AND v.sucursale_id = ".$this->sucursale_id." 
         AND dl.fecha = '" . $this->selFecha . "'        
         GROUP BY tipo
         UNION
         SELECT 'BONOS ANUALES' tipo, count(*) cantidad FROM bonoanuales ba
         INNER JOIN tipomenus tm on tm.id = ba.tipomenu_id
+        INNER JOIN ventas v on v.id = ba.venta_id
         WHERE ba.estado = 1
+        AND v.sucursale_id = ".$this->sucursale_id." 
         AND ba.gestion = '" . date('Y') . "'
         GROUP BY tipo
         UNION
         SELECT 'BONOS POR FECHA' tipo, count(*) cantidad FROM bonofechas bf
         INNER JOIN tipomenus tm on tm.id = bf.tipomenu_id
+        INNER JOIN ventas v on v.id = bf.venta_id
         WHERE bf.fechainicio <= '" . $this->selFecha . "'
+        AND v.sucursale_id = ".$this->sucursale_id." 
         AND bf.fechafin >= '" . $this->selFecha . "'
         GROUP BY tipo
         UNION
@@ -113,6 +136,7 @@ class Diario extends Component
         INNER JOIN detalleventas dv on dv.venta_id = v.id
         INNER JOIN tipomenus tm on tm.id = dv.tipomenu_id
         WHERE dv.producto_id = 4
+        AND v.sucursale_id = ".$this->sucursale_id." 
         AND v.fecha = '" . $this->selFecha . "'
         GROUP BY tipo
 				UNION
@@ -120,6 +144,7 @@ class Diario extends Component
 				INNER JOIN ventas v on v.id = dv.venta_id
         INNER JOIN tipomenus tm on tm.id = dv.tipomenu_id
         WHERE dv.producto_id = 5
+        AND v.sucursale_id = ".$this->sucursale_id." 
         AND v.fecha = '" . $this->selFecha . "'
         GROUP BY tipo";
 

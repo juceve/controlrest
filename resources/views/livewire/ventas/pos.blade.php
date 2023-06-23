@@ -42,9 +42,9 @@
                                                 <td style="width: 50px;" align="center">{{ $producto[0] }}</td>
 
                                                 <td>
-                                                    {{ $producto[1] }} <br>
-                                                    <small class="me-2 mt-2"><strong>Detalle:
-                                                        </strong>{{ $producto[6] }}</small>
+                                                    {{ $producto[8] }} <br>
+                                                    <small class="me-2 mt-2"><strong>MENU:
+                                                        </strong>{{ $producto[1] }}</small>
                                                 </td>
 
                                                 <td align="center" style="width: 100px;">

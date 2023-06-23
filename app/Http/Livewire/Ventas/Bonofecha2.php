@@ -232,7 +232,7 @@ class Bonofecha2 extends Component
                 <td align='right'>" . number_format($importeEstudiante, 2, ',', '.') . "</td>         
                 </tr>";
                     $this->importeTotal = $this->importeTotal + $importeEstudiante;
-                    $this->detalleventa[] = array('BONO ' . $cantidadDias . ' Dias - ' . $tipomenu->nombre, 1, $importeEstudiante, $importeEstudiante,$descuento);
+                    $this->detalleventa[] = array('BONO ' . $cantidadDias . ' Dias - ' . $tipomenu->nombre, 1, $importeEstudiante, $importeEstudiante,$descuento,$tipomenu->id);
                     $row = $estudiante->id . "|" . $estudiante->codigo . "|" . $estudiante->nombre . "|" . $estudiante->curso->nombre . "|" . $pedido[2] . "|" . $pedido[3] . "|" . $tipomenu->nombre . "|" . $cantidadDias . "|" . $preciounitario . "|" . $descuento . "|" . $importeEstudiante;
                     $this->contenedor[] = $row;
                 } else {
@@ -302,6 +302,7 @@ class Bonofecha2 extends Component
                         'venta_id' => $venta->id,
                         'descripcion' => $dventa[0],
                         'producto_id' => 2,
+                        'tipomenu_id' => $dventa[5],
                         'cantidad' => $dventa[1],
                         'preciounitario' => $dventa[2],
                         'subtotal' => $dventa[3],

@@ -219,14 +219,14 @@
                     <ul class="side-nav-second-level">
                         {{-- @can('reportes.diario') --}}
                         <li>
-                            <a href="{{route('reportes.diario')}}"><i class="uil-file-alt"></i> CTR Pagado-Servido</a>
+                            <a href="{{route('reportes.diario')}}"><i class="uil-file-alt"></i> Control Almuerzos</a>
                         </li>
                         {{-- @endcan --}}
-                        {{-- @can('ventas.vpagos')
+                        {{-- @can('ventas.vpagos') --}}
                         <li>
-                            <a href="{{route('pagos.profesores')}}"><i class="uil-receipt"></i> Credito Profesores</a>
+                            <a href="{{route('reportes.ventas')}}"><i class="uil-receipt"></i> Reporte Ventas</a>
                         </li>
-                        @endcan --}}
+                        {{-- @endcan --}}
                     </ul>
                 </div>
             </li>

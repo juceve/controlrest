@@ -38,6 +38,7 @@ use App\Http\Livewire\Menu\Resumen;
 use App\Http\Livewire\Pagos\Pagoprofesores;
 use App\Http\Livewire\Pedidos\Ppersonales;
 use App\Http\Livewire\Reportes\Diario;
+use App\Http\Livewire\Reportes\Rventas;
 use App\Http\Livewire\Ventas\Aprobarpedido;
 use App\Http\Livewire\Ventas\Bonoanual;
 use App\Http\Livewire\Ventas\Bonofecha2;
@@ -129,6 +130,7 @@ Route::get('pedidos/personales/{estudiante_id}',Ppersonales::class)->middleware(
 
 Route::get('reportes/cierrecaja/{id}',[ReporteController::class,'cierrecaja'])->name('reportes.cierrecaja');
 Route::get('reportes/diario',Diario::class)->middleware('auth')->name('reportes.diario');
+Route::get('reportes/ventas',Rventas::class)->middleware('auth')->name('reportes.ventas');
 Route::get('pagos/profesores', Pagoprofesores::class)->middleware('auth')->name('pagos.profesores');
 
 Route::get('impresiones/recibo/{data}',function(){

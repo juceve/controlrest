@@ -377,6 +377,7 @@ class Reservas extends Component
                         'venta_id' => $venta->id,
                         'descripcion' => $dventa[0],
                         'producto_id' => 3,
+                        'tipomenu_id' => $dventa[4],
                         'cantidad' => $dventa[1],
                         'preciounitario' => $dventa[2],
                         'subtotal' => $dventa[3],
