@@ -124,11 +124,11 @@
                             <a href="{{route('ventas.vpagos')}}"><i class="uil-stopwatch"></i> Pagos Pendientes</a>
                         </li>
                         @endcan
-                        {{-- @can('ventas.vpagos')
+                        @can('pagos.profesores')
                         <li>
                             <a href="{{route('pagos.profesores')}}"><i class="uil-receipt"></i> Credito Profesores</a>
                         </li>
-                        @endcan --}}
+                        @endcan
                     </ul>
                 </div>
             </li>

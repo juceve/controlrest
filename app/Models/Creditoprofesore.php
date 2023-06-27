@@ -36,7 +36,7 @@ class Creditoprofesore extends Model
      *
      * @var array
      */
-    protected $fillable = ['estudiante_id','venta_id','pagado','sucursale_id'];
+    protected $fillable = ['fecha','estudiante_id','venta_id','pagado','sucursale_id'];
 
 
     /**

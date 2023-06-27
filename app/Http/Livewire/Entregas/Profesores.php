@@ -170,6 +170,7 @@ class Profesores extends Component
             // ]);
 
             $credito = Creditoprofesore::create([
+                "fecha" => date('Y-m-d'),
                 "estudiante_id" => $this->estudiante->id,
                 "venta_id" => $venta->id,
                 "sucursale_id" => Auth::user()->sucursale_id,

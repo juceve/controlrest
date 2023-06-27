@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('creditoprofesores', function (Blueprint $table) {
             $table->id();
+            $table->date('fecha');
             $table->foreignId('estudiante_id')->constrained();
             $table->foreignId('venta_id')->constrained();
             $table->foreignId('sucursale_id')->constrained();

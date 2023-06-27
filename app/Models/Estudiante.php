@@ -8,12 +8,9 @@ class Estudiante extends Model
 {
     
     static $rules = [
-		'codigo' => 'required',
 		'nombre' => 'required',
-		'cedula' => 'required',
-		'tutore_id' => 'required',
-		'curso_id' => 'required',
 		'verificado' => 'required',
+		'esestudiante' => 'required',
     ];
 
     protected $perPage = 20;
@@ -27,11 +24,51 @@ class Estudiante extends Model
 
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function bonoanuales()
+    {
+        return $this->hasMany('App\Models\Bonoanuale', 'estudiante_id', 'id');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function bonofechas()
+    {
+        return $this->hasMany('App\Models\Bonofecha', 'estudiante_id', 'id');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function creditoprofesores()
+    {
+        return $this->hasMany('App\Models\Creditoprofesore', 'estudiante_id', 'id');
+    }
+    
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function curso()
     {
         return $this->hasOne('App\Models\Curso', 'id', 'curso_id');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function entregalounches()
+    {
+        return $this->hasMany('App\Models\Entregalounch', 'estudiante_id', 'id');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function licencias()
+    {
+        return $this->hasMany('App\Models\Licencia', 'estudiante_id', 'id');
     }
     
     /**
@@ -43,6 +80,14 @@ class Estudiante extends Model
     }
     
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function pagos()
+    {
+        return $this->hasMany('App\Models\Pago', 'estudiante_id', 'id');
+    }
+    
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function tutore()
@@ -50,4 +95,5 @@ class Estudiante extends Model
         return $this->hasOne('App\Models\Tutore', 'id', 'tutore_id');
     }
     
+
 }
