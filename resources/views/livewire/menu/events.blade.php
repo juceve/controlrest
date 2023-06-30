@@ -49,91 +49,60 @@
                                     <span>Elija los Productos</span>
                                 </div>
                                 <div class="card-body">
+                                    @if ($tipomenus)
+                                        <ul class="nav nav-tabs mb-3">
 
-                                    <div class="content">
-                                        <div class="accordion" id="tipomenuItems">
-                                            @if ($tipomenus)
-                                                @php
-                                                    $colores = ['d5d8fc', 'b6f1e0', 'c4e7f1', 'feced8', 'ffebb3', 'd3d6d8'];
-                                                    $i = 0;
-                                                @endphp
-                                                @foreach ($tipomenus as $tipomenu)
-                                                    @if ($tipomenu->menuses->count() > 0)
-                                                        <div class="card mb-0">
-                                                            <div class="card-header" id="headingOne"
-                                                                style="background-color: #{{ $colores[$i] }};">
-                                                                <h5 class="m-0">
-                                                                    <a class="custom-accordion-title d-block pt-0 pb-0"
-                                                                        data-bs-toggle="collapse"
-                                                                        href="#clp{{ $tipomenu->id }}"
-                                                                        aria-expanded="true"
-                                                                        aria-controls="clp{{ $tipomenu->id }}">
-                                                                        <p class="text-secondary">
-                                                                            {{ $tipomenu->nombre }}</p>
-                                                                    </a>
-                                                                </h5>
-                                                            </div>
+                                            @php
+                                                $colores = ['d5d8fc', 'b6f1e0', 'c4e7f1', 'feced8', 'ffebb3', 'd3d6d8'];
+                                                $i = 0;
+                                            @endphp
+                                            @foreach ($tipomenus as $tipomenu)
+                                                @if ($tipomenu->menuses->count() > 0)
+                                                    <li class="nav-item">
+                                                        <a href="#tm{{ $tipomenu->id }}" data-bs-toggle="tab"
+                                                            aria-expanded="false" class="nav-link">
+                                                            <i class="mdi mdi-home-variant d-md-none d-block"></i>
+                                                            <span
+                                                                class="d-none d-md-block">{{ $tipomenu->nombre }}</span>
+                                                        </a>
+                                                    </li>
+                                                @endif
+                                            @endforeach
 
-                                                            {{-- <div id="clp{{$tipomenu->id}}" class="collapse"
-                                                    aria-labelledby="headingOne" data-bs-parent="#tipomenuItems">
-                                                    <div class="card-body">
-                                                        <ul class="list-group">
+                                        </ul>
+
+                                        <div class="tab-content">
+                                            @foreach ($tipomenus as $tipomenu)
+                                                <div class="tab-pane" id="tm{{ $tipomenu->id }}">
+                                                    <table class="table table-bordered dataTable5 table-sm" style="font-size: 12px;">
+                                                        <thead style="background-color: #{{$colores[$i]}}">
+                                                            <th>PRODUCTO</th>
+                                                            <th></th>
+                                                        </thead>
+                                                        <tbody>
                                                             @foreach ($tipomenu->menuses as $menu)
-                                                            <li
-                                                                class="list-group-item d-flex justify-content-between align-items-center">
-                                                                {{ $menu->nombre }}
-                                                                <button class="btn btn-sm btn-success"
-                                                                    wire:click="seleccionarMenu({{$menu->id}})">
-                                                                    <i class="uil-arrow-down"></i> Seleccionar
-                                                                </button>
-                                                            </li>
+                                                                <tr>
+                                                                    <td>
+                                                                        {{ $menu->nombre }}
+                                                                    </td>
+                                                                    <td align="right">
+                                                                        <button class="btn btn-sm btn-success"
+                                                                            wire:click="seleccionarMenu({{ $menu->id }})">
+                                                                            <i class="uil-arrow-right"></i>
+                                                                            Seleccionar
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
                                                             @endforeach
-                                                        </ul>
-                                                    </div>
-                                                </div> --}}
-
-                                                            <div id="clp{{ $tipomenu->id }}" class="collapse"
-                                                                aria-labelledby="headingOne"
-                                                                data-bs-parent="#tipomenuItems">
-                                                                <div class="card-body">
-                                                                    <table class="table table-bordered dataTable">
-                                                                        <thead>
-                                                                            <th>PRODUCTO</th>
-                                                                            <th></th>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            @foreach ($tipomenu->menuses as $menu)
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        {{ $menu->nombre }}
-                                                                                    </td>
-                                                                                    <td align="right">
-                                                                                        <button
-                                                                                            class="btn btn-sm btn-success"
-                                                                                            wire:click="seleccionarMenu({{ $menu->id }})">
-                                                                                            <i
-                                                                                                class="uil-arrow-right"></i>
-                                                                                            Seleccionar
-                                                                                        </button>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            @endforeach
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        @php
-                                                            if ($i < 5) {
-                                                                $i++;
-                                                            } else {
-                                                                $i = 0;
-                                                        } @endphp
-                                                    @endif
-                                                @endforeach
-                                            @endif
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                @php
+                                                    $i++;
+                                                @endphp
+                                            @endforeach
                                         </div>
-                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

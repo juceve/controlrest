@@ -61,8 +61,8 @@ class VentaController extends Controller
     public function show($id)
     {
         $venta = Venta::find($id);
-        $pago = Pago::where('venta_id',$venta->id)->first();
-        $loncheras = Lonchera::where('pago_id',$pago->id)->get();
+        // $pago = Pago::where('venta_id',$venta->id)->first();
+        $loncheras = Lonchera::where('venta_id',$venta->id)->get();
         return view('venta.show', compact('venta','loncheras'));
     }
 

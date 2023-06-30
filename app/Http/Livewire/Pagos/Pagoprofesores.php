@@ -96,7 +96,7 @@ class Pagoprofesores extends Component
             }
 
             if ($creditos) {
-                
+
                 $tabla = array();
                 $ttotal = 0;
                 foreach ($creditos as $credito) {
@@ -206,8 +206,7 @@ class Pagoprofesores extends Component
                             $c++;
                         }
                         $this->emit('unLoading');
-                        DB::commit();
-
+                        DB::commit();         
                         $this->emit('cerrarmodal');
                         $detalles[] = array('PAGO DE CREDITOS DEL PLANTEL DOCENTE', $c, $this->ttotal);
                         $tipopago = $tipopago->nombre;

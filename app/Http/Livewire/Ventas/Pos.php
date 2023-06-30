@@ -163,7 +163,7 @@ class Pos extends Component
                             ]);
                             $preciou = $producto[4] / $producto[3];
 
-                            $row = $row . $entrega->id . "|" . $producto[8] . "|Venta POS|" . $entrega->fechaentrega . "|" . $producto[1] . "|" . Auth::user()->name . "~";
+                            $row = $row . $entrega->id . "|" . $producto[8] . "|Venta POS|" . $entrega->fechaentrega . "|" . $producto[1] . "|" . Auth::user()->name . "|" . $preciou . "~";
                         }
                         $detalleventa[] = array($menu->tipomenu->nombre, $producto[3], $preciou, $producto[4], $observacion,$menu->tipomenu_id);
                     }
@@ -190,7 +190,13 @@ class Pos extends Component
                 //     'timer' => 3000,
                 //     'toast' => true,
                 //    ]);
-                redirect('http://127.0.0.1/gprinter/public/printPOS1/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE                
+
+                // $datos = explode('~',$row);
+                // foreach ($datos as $roww) {
+                //     $this->emit('imprimir', $roww);    
+                // }
+                // redirect('http://127.0.0.1/gprinter/public/printPOS1/' . $row); 
+                redirect('http://127.0.0.1:8090/gprinter/public/printPOS1/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE                
                 // return redirect()->route('ventas.pos')->with('success', 'Venta registrada correctamente.');
             } catch (\Throwable $th) {
                 $this->emit('unLoading');

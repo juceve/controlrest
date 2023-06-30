@@ -192,4 +192,10 @@
             $('#efectivo').val("");
         });
     </script>
+
+    <script>
+        Livewire.on('imprimir', data => {
+            window.open("/impresiones/recibos/pos.php?data=" + data, "_blank");
+        })
+    </script>
 @endsection

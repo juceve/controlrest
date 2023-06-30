@@ -157,7 +157,7 @@
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#menus" aria-expanded="false" aria-controls="menus"
                     class="side-nav-link">
-                    <i class="uil-box"></i>
+                    <i class="mdi mdi-food"></i>
                     <span> Menus </span>
                     <span class="menu-arrow"></span>
                 </a>
