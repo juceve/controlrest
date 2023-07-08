@@ -58,6 +58,13 @@
                                 No entregados</a>
                         </li>
                         @endcan
+
+                        @can('entregas.estadopedidos')
+                        <li>
+                            <a href="{{route('entregas.estadopedidos')}}"><i class="mdi mdi-cart-variant"></i>
+                                Estado Pedidos</a>
+                        </li>
+                        @endcan
                     </ul>
                 </div>
             </li>

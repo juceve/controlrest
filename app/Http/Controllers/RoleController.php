@@ -24,7 +24,7 @@ class RoleController extends Controller
 
     public function create()
     {
-        $permissions = Permission::all();
+        $permissions = Permission::orderBy('grupo','ASC')->get();
         return view('admin.role.create', compact('permissions'));
     }
 
@@ -48,7 +48,7 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
-        $permissions = Permission::all();
+        $permissions = Permission::orderBy('grupo','ASC')->get();
         return view('admin.role.edit', compact('role','permissions'));        
     }
 

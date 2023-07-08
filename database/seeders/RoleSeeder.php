@@ -46,6 +46,7 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'entregas.individual','grupo' => 'ENTREGAS', 'descripcion' => 'Individuales'])->syncRoles([$role]);
         Permission::create(['name' => 'entregas.porcurso','grupo' => 'ENTREGAS', 'descripcion' => 'Por Curso'])->syncRoles([$role]);
         Permission::create(['name' => 'entregas.profesores','grupo' => 'ENTREGAS', 'descripcion' => 'Profesores'])->syncRoles([$role]);
+        Permission::create(['name' => 'entregas.estadopedidos','grupo' => 'ENTREGAS', 'descripcion' => 'Estado Pedidos'])->syncRoles([$role]);
 
         Permission::create(['name' => 'tutores.index','grupo' => 'TUTORES', 'descripcion' => 'Ver listado'])->syncRoles([$role]);
         Permission::create(['name' => 'tutores.create','grupo' => 'TUTORES', 'descripcion' => 'Crear'])->syncRoles([$role]);

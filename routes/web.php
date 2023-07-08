@@ -28,6 +28,7 @@ use App\Http\Livewire\Entregas\Individual;
 use App\Http\Livewire\Entregas\Noentregados;
 use App\Http\Livewire\Entregas\Porcurso;
 use App\Http\Livewire\Entregas\Profesores;
+use App\Http\Livewire\Entregas\Estadopedidos;
 use App\Http\Livewire\Masivos;
 use App\Http\Livewire\Menu\Elaborarmenu;
 use App\Http\Livewire\Menu\Events;
@@ -45,7 +46,7 @@ use App\Http\Livewire\Ventas\Bonofecha2;
 use App\Http\Livewire\Ventas\Bonomensual;
 use App\Http\Livewire\Ventas\Cierrebonoreserva;
 use App\Http\Livewire\Ventas\Cierrecaja;
-use App\Http\Livewire\Ventas\Configuraciones;
+
 use App\Http\Livewire\Ventas\Nueva;
 use App\Http\Livewire\Ventas\Pos;
 use App\Http\Livewire\Ventas\Reservas;
@@ -125,6 +126,7 @@ Route::get('entregas/individual/{indicador?}', Individual::class)->middleware('a
 Route::get('entregas/porcurso', Porcurso::class)->middleware('auth')->middleware('can:entregas.porcurso')->name('entregas.porcurso');
 Route::get('entregas/profesores/{indicador?}',Profesores::class)->middleware('can:entregas.profesores')->middleware('auth')->name('entregas.profesores');
 Route::get('entregas/noentregados',Noentregados::class)->middleware('can:entregas.porcurso')->name('entregas.noentregados');
+Route::get('entregas/estadopedidos',Estadopedidos::class)->middleware('auth')->name('entregas.estadopedidos');
 
 Route::get('pedidos/personales/{estudiante_id}',Ppersonales::class)->middleware('auth')->name('pedidos.personales');
 
