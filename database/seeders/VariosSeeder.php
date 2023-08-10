@@ -89,14 +89,17 @@ class VariosSeeder extends Seeder
 
         \App\Models\Tipomenu::create([
             'nombre'=>'ALMUERZO COMPLETO',
+            'abr' => 'AC',
             'sucursale_id' => $sucursale->id,
         ]);
         \App\Models\Tipomenu::create([
             'nombre'=>'ALMUERZO SIMPLE',
+            'abr' => 'AS',
             'sucursale_id' => $sucursale->id,
         ]);
         \App\Models\Tipomenu::create([
             'nombre'=>'EXTRA',
+            'abr' => 'EX',
             'sucursale_id' => $sucursale->id,
         ]);
 

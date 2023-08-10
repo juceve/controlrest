@@ -46,10 +46,12 @@
                             <tr>
                                 <td style="width: 50px;">NRO</td>
                                 <td>ESTUDIANTE</td>
-                                <td align="center">PRODUCTO</td>
+                                <td align="center">SALDO</td>
+                                <td align="center">TIPO</td>
                                 <td style="width: 100px;" align="center">FALTA</td>
                                 <td style="width: 100px;" align="center">ENTREGA</td>
                                 <td style="width: 100px;" align="center">LICENCIA</td>
+                                <td style="display: none" align="center"></td>
                             </tr>
                         </thead>
                         <tbody id="htmlBody" style="height: 10px !important; overflow: scroll; ">
@@ -95,15 +97,16 @@
             var tabla = $("#listaCurso");
             tabla.find("tbody tr").each(function() {
                 var estudiante_id = $(this).find("td:eq(1) input").val();
-                var menu_id = $(this).find("td:eq(2) input").val();
+                var menu_id = $(this).find("td:eq(3) input").val();
                 if(!menu_id){
-                    menu_id = $(this).find("td:eq(2) select").val();
+                    menu_id = $(this).find("td:eq(3) select").val();
                 }
-                var falta = $(this).find("td:eq(3) input").is(':checked');
-                var entrega = $(this).find("td:eq(4) input").is(':checked');
-                var licencia = $(this).find("td:eq(5) input").is(':checked');
-                // console.log(menu_id);
-                Livewire.emit('cargaPedidos', estudiante_id, menu_id, falta, entrega, licencia);
+                var falta = $(this).find("td:eq(4) input").is(':checked');
+                var entrega = $(this).find("td:eq(5) input").is(':checked');
+                var licencia = $(this).find("td:eq(6) input").is(':checked');
+                var tipo = $(this).find("td:eq(7) input").val();
+                // console.log(estudiante_id);
+                Livewire.emit('cargaPedidos', estudiante_id, menu_id, falta, entrega, licencia,tipo);
             });
             // Livewire.emit('prueba');
             Livewire.emit('entregar');

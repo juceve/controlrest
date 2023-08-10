@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('tipomenus', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
+            $table->string('abr',5);
             $table->foreignId('sucursale_id')->nullable()->constrained();
             $table->timestamps();
         });

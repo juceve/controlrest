@@ -8,7 +8,10 @@ use App\Models\Entregalounch;
 use App\Models\Estudiante;
 use App\Models\Feriado;
 use App\Models\Licencia;
+use App\Models\Menu;
 use App\Models\Moneda;
+use App\Models\Preciomenu;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 function contarDiasSemana($fechaInicio, $fechaFin)
@@ -29,7 +32,7 @@ function contarDiasSemana($fechaInicio, $fechaFin)
 
     return $contador;
 }
-function contarDias($fechaInicio, $fechaFin,$estudiante_id)
+function contarDias($fechaInicio, $fechaFin, $estudiante_id)
 {
     $diasSemana = array('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes');
     $contador = 0;
@@ -39,10 +42,9 @@ function contarDias($fechaInicio, $fechaFin,$estudiante_id)
         $diaSemana = $fechaActual->format('N');
         if ($diaSemana >= 1 && $diaSemana <= 5) {
             if (!esFeriado(date_format($fechaActual, 'Y-m-d'))) {
-                if (!tieneLicencia($estudiante_id,date_format($fechaActual, 'Y-m-d'))) {
+                if (!tieneLicencia($estudiante_id, date_format($fechaActual, 'Y-m-d'))) {
                     $contador++;
                 }
-                
             }
         }
         $fechaActual->modify('+1 day');
@@ -83,7 +85,7 @@ function fechaCorta($fecha)
 {
     $dia = substr($fecha, 8, 2);
     $mes = nombreMesESP($fecha);
-    return $dia . '-' . substr($mes,0,3);
+    return $dia . '-' . substr($mes, 0, 3);
 }
 
 function cantidadDiasMes($mes, $anio)
@@ -139,19 +141,29 @@ function tieneEntrega($estudiante_id, $fecha)
     }
 }
 
-function monedaCorto(){
+function monedaCorto()
+{
     $moneda = Moneda::first();
     return $moneda->abreviatura;
 }
 
-function monedaLargo(){
+function monedaLargo()
+{
     $moneda = Moneda::first();
     return $moneda->nombre;
 }
 
-function estadoPedidoEstudiante($estudiante_id){
+function precioMenu($menu_id)
+{
+    $menu = Menu::find($menu_id);
+    $precio = Preciomenu::where('tipomenu_id', $menu->tipomenu_id)->where('sucursale_id', Auth::user()->sucursale_id)->first();
+    return $precio;
+}
+
+function estadoPedidoEstudiante($estudiante_id)
+{
     $estudiante = Estudiante::find($estudiante_id);
-    $fechaInicio = date('Y').'-01-01';
+    $fechaInicio = date('Y') . '-01-01';
     $hoy = date('Y-m-d');
     $ba = Bonoanuale::where('estudiante_id', $estudiante->id)->where('gestion', date('Y'))->first();
     $bonoanual = 0;
@@ -159,24 +171,24 @@ function estadoPedidoEstudiante($estudiante_id){
     $reservas = 0;
     if ($ba) {
         $bonoanual = 200;
-    }else{
-        $bf = Bonofecha::where('estudiante_id',$estudiante->id)->where('fechafin','>=',$fechaInicio)->where('estado',1)->get();
-        if($bf){                        
+    } else {
+        $bf = Bonofecha::where('estudiante_id', $estudiante->id)->where('fechafin', '>=', $fechaInicio)->where('estado', 1)->get();
+        if ($bf) {
             foreach ($bf as $item) {
-                $bonofecha+= contarDias($item->fechainicio, $item->fechafin,$estudiante->id);
+                $bonofecha += contarDias($item->fechainicio, $item->fechafin, $estudiante->id);
             }
         }
 
         $rs = DB::select("SELECT count(*) cantidad FROM detalleloncheras dt
         INNER JOIN loncheras l on l.id = dt.lonchera_id
-        WHERE l.estudiante_id = ".$estudiante_id."
-        AND dt.fecha >= '".$fechaInicio."'
+        WHERE l.estudiante_id = " . $estudiante_id . "
+        AND dt.fecha >= '" . $fechaInicio . "'
         AND l.estado = 1
         AND dt.estado = 1");
-        
+
         if ($rs) {
             foreach ($rs as $item) {
-                $reservas+=$item->cantidad;
+                $reservas += $item->cantidad;
             }
         }
     }
@@ -185,14 +197,14 @@ function estadoPedidoEstudiante($estudiante_id){
     // ENTREGAS DE PRODUCTOS
     $entregas = 0;
 
-    $rs2 = Entregalounch::where('estudiante_id',$estudiante_id)->where('fechaentrega','>=',$fechaInicio)->get();
+    $rs2 = Entregalounch::where('estudiante_id', $estudiante_id)->where('fechaentrega', '>=', $fechaInicio)->get();
     foreach ($rs2 as $resultado) {
         $entregas++;
     }
 
     $restantes = $pagado - $entregas;
 
-    $tabla = array("estudiante"=>$estudiante->nombre,"pagados" => $pagado,"entregas" => $entregas,"restantes" => $restantes);
+    $tabla = array("estudiante" => $estudiante->nombre, "pagados" => $pagado, "entregas" => $entregas, "restantes" => $restantes);
     return $tabla;
 }
 

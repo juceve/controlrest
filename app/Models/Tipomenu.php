@@ -33,7 +33,7 @@ class Tipomenu extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre','sucursale_id'];
+    protected $fillable = ['nombre','sucursale_id','abr'];
 
 
     /**

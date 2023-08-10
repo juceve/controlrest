@@ -23,7 +23,7 @@ use function GuzzleHttp\Promise\all;
 class Bonofecha2 extends Component
 {
     use WithFileUploads;
-    public $estudiantes = null, $busqueda = "", $checks = [], $arrEstudiantes = [], $tutor = "";
+    public $estudiantes = null, $busqueda = "", $checks = [], $arrEstudiantes = [], $condescuento = false, $tutor = "";
     public $formapagos = null, $moneda = null, $arrPedidos = array();
 
     protected $listeners = ['quitarE', 'selectProducto', 'generaPagosXEstudiante', 'calculaPrecio', 'cargaPedidos', 'resetPedidos'];
@@ -32,6 +32,73 @@ class Bonofecha2 extends Component
     {
         $this->moneda = Moneda::first();
         $this->formapagos = Tipopago::all();
+    }
+
+    public function updatedCondescuento()
+    {
+        $this->generaPagosXEstudiante();
+    }
+
+    public function recalcular()
+    {
+        $tbodyPagoClientes = "";
+        $this->reset(['importeTotal', 'detalleventa', 'row']);
+        foreach ($this->arrPedidos as $pedido) {
+            if ($pedido[0] != "" && $pedido[1] != "" && $pedido[2] != "" && $pedido[3] != "") {
+                $tipomenu = Tipomenu::find($pedido[1]);
+
+
+                $estudiante = Estudiante::find($pedido[0]);
+
+                $nivelcurso = $estudiante->curso->nivelcurso->id;
+
+                $precioTipoMenu = Preciomenu::where('nivelcurso_id', $nivelcurso)
+                    ->where('tipomenu_id', $pedido[1])
+                    ->first();
+                $descuento = 'SI';
+                $preciounitario = 0;
+                if ($precioTipoMenu) {
+                    $cantmin = $precioTipoMenu->cantmin;
+                    $cantidadDias = contarDiasSemana($pedido[2], $pedido[3]);
+
+                    $importeEstudiante = $cantidadDias * $precioTipoMenu->preciopm;
+                    $preciounitario = $precioTipoMenu->preciopm;
+
+
+                    $tbodyPagoClientes = $tbodyPagoClientes . "<tr>
+                <td>" . $estudiante->nombre . "</td>
+                <td align='center'>" . $tipomenu->nombre . "</td>   
+                <td align='center'>" . $pedido[2] . "</td>
+                <td align='center'>" . $pedido[3] . "</td>
+                <td align='center'>" . $cantidadDias . "</td>            
+                <td align='right'>" . number_format($importeEstudiante, 2, ',', '.') . "</td>         
+                </tr>";
+                    $this->importeTotal = $this->importeTotal + $importeEstudiante;
+                    $this->detalleventa[] = array('BONO ' . $cantidadDias . ' Dias - ' . $tipomenu->nombre, 1, $importeEstudiante, $importeEstudiante, $descuento, $tipomenu->id);
+                    $row = $estudiante->id . "|" . $estudiante->codigo . "|" . $estudiante->nombre . "|" . $estudiante->curso->nombre . "|" . $pedido[2] . "|" . $pedido[3] . "|" . $tipomenu->nombre . "|" . $cantidadDias . "|" . $preciounitario . "|" . $descuento . "|" . $importeEstudiante;
+                    $this->contenedor[] = $row;
+                } else {
+
+                    $tbodyPagoClientes = $tbodyPagoClientes . "<tr>
+                <td>" . $estudiante->nombre . "</td>
+                <td align='center'>" . $tipomenu->nombre . "</td>   
+                <td align='center' colspan='3'><p class='text-warning'>Precio no Establecido</p></td>           
+                <td align='right'>0</td>         
+                </tr>";
+                }
+            } else {
+                $this->emit('warning', 'Debe completar todos los campos en el AREA PRODUCTOS.');
+            }
+        }
+
+
+        $tbodyPagoClientes = $tbodyPagoClientes . "<tr style='background-color: #cef5ea;'>
+            <td colspan='4'></td>
+            <td align='right'><strong>TOTAL " . $this->moneda->abreviatura . ":</strong></td>
+            <td align='right'><strong>" . number_format($this->importeTotal, 2, ',', '.') . "</strong></td>
+            </tr>";
+
+        return $tbodyPagoClientes;
     }
 
     public function resetAll()
@@ -232,7 +299,7 @@ class Bonofecha2 extends Component
                 <td align='right'>" . number_format($importeEstudiante, 2, ',', '.') . "</td>         
                 </tr>";
                     $this->importeTotal = $this->importeTotal + $importeEstudiante;
-                    $this->detalleventa[] = array('BONO ' . $cantidadDias . ' Dias - ' . $tipomenu->nombre, 1, $importeEstudiante, $importeEstudiante,$descuento,$tipomenu->id);
+                    $this->detalleventa[] = array('BONO ' . $cantidadDias . ' Dias - ' . $tipomenu->nombre, 1, $importeEstudiante, $importeEstudiante, $descuento, $tipomenu->id);
                     $row = $estudiante->id . "|" . $estudiante->codigo . "|" . $estudiante->nombre . "|" . $estudiante->curso->nombre . "|" . $pedido[2] . "|" . $pedido[3] . "|" . $tipomenu->nombre . "|" . $cantidadDias . "|" . $preciounitario . "|" . $descuento . "|" . $importeEstudiante;
                     $this->contenedor[] = $row;
                 } else {
@@ -248,7 +315,7 @@ class Bonofecha2 extends Component
                 $this->emit('warning', 'Debe completar todos los campos en el AREA PRODUCTOS.');
             }
         }
-        
+
 
         $tbodyPagoClientes = $tbodyPagoClientes . "<tr style='background-color: #cef5ea;'>
             <td colspan='4'></td>
@@ -262,8 +329,16 @@ class Bonofecha2 extends Component
     public function generaPagosXEstudiante()
     {
         $this->emit('loading');
+        if ($this->condescuento) {
+            $this->reset('contenedor');
+            $htmlClientePagos = $this->recalcular();
+            $this->observaciones = "CON DESCUENTO";
+        } else {
+            $this->reset('contenedor');
+            $htmlClientePagos = $this->generaHtmlBodyPagos();
+            $this->observaciones = "";
+        }
 
-        $htmlClientePagos = $this->generaHtmlBodyPagos();
         $this->emit('htmlPagoClientes', $htmlClientePagos);
     }
 
@@ -295,7 +370,7 @@ class Bonofecha2 extends Component
 
                 foreach ($this->detalleventa as $dventa) {
                     $observacion = "";
-                    if($dventa[4]=="SI"){
+                    if ($dventa[4] == "SI") {
                         $observacion = 'DESCUENTO';
                     }
                     $detalleventa = Detalleventa::create([
@@ -327,42 +402,42 @@ class Bonofecha2 extends Component
                             $bonofecha->estado = 1;
                             $bonofecha->save();
                             break;
-                        case 'EFECTIVO - LOCAL':{
-                            $pago = Pago::create([
-                                "fecha" => date('Y-m-d'),
-                                "recibo" => 0,
-                                "tipopago_id" => $tipopago->id,
-                                "tipopago" => $tipopago->nombre,
-                                "sucursal_id" => Auth::user()->sucursale_id,
-                                "sucursal" => Auth::user()->sucursale->nombre,
-                                "importe" => $this->importeTotal * $tipopago->factor,
-                                "venta_id" => $venta->id,
-                                "estadopago_id" => 2,
-                                "user_id" => Auth::user()->id,
-                                "tipoinicial" => $tipopago->nombre,
-                            ]);
-                            $bonofecha->estado = 1;
-                            $bonofecha->save();
-                            $venta->estadopago_id = 2;
-                            $venta->save();
-                        }
-                            
+                        case 'EFECTIVO - LOCAL': {
+                                $pago = Pago::create([
+                                    "fecha" => date('Y-m-d'),
+                                    "recibo" => 0,
+                                    "tipopago_id" => $tipopago->id,
+                                    "tipopago" => $tipopago->nombre,
+                                    "sucursal_id" => Auth::user()->sucursale_id,
+                                    "sucursal" => Auth::user()->sucursale->nombre,
+                                    "importe" => $this->importeTotal * $tipopago->factor,
+                                    "venta_id" => $venta->id,
+                                    "estadopago_id" => 2,
+                                    "user_id" => Auth::user()->id,
+                                    "tipoinicial" => $tipopago->nombre,
+                                ]);
+                                $bonofecha->estado = 1;
+                                $bonofecha->save();
+                                $venta->estadopago_id = 2;
+                                $venta->save();
+                            }
+
                             break;
-                        case 'GASTO ADMINISTRATIVO':{
-                            $pago = Pago::create([
-                                "fecha" => date('Y-m-d'),
-                                "recibo" => 0,
-                                "tipopago_id" => $tipopago->id,
-                                "tipopago" => $tipopago->nombre,
-                                "sucursal_id" => Auth::user()->sucursale_id,
-                                "sucursal" => Auth::user()->sucursale->nombre,
-                                "importe" => $this->importeTotal * $tipopago->factor,
-                                "venta_id" => $venta->id,
-                                "estadopago_id" => 2,
-                                "user_id" => Auth::user()->id,
-                                "tipoinicial" => $tipopago->nombre,
-                            ]);
-                        }
+                        case 'GASTO ADMINISTRATIVO': {
+                                $pago = Pago::create([
+                                    "fecha" => date('Y-m-d'),
+                                    "recibo" => 0,
+                                    "tipopago_id" => $tipopago->id,
+                                    "tipopago" => $tipopago->nombre,
+                                    "sucursal_id" => Auth::user()->sucursale_id,
+                                    "sucursal" => Auth::user()->sucursale->nombre,
+                                    "importe" => $this->importeTotal * $tipopago->factor,
+                                    "venta_id" => $venta->id,
+                                    "estadopago_id" => 2,
+                                    "user_id" => Auth::user()->id,
+                                    "tipoinicial" => $tipopago->nombre,
+                                ]);
+                            }
                             $bonofecha->estado = 1;
                             $bonofecha->save();
                             $venta->estadopago_id = 2;

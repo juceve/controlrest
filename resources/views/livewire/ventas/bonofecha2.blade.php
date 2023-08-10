@@ -181,7 +181,17 @@
                                         </tr>
                                     </tbody>
                                 </table>
-
+                                <div class="row mb-2">
+                                    <div class="col-12 col-md-8"></div>
+                                    <div class="col-12 col-md-4">
+                                        <div class="form-check text-end">
+                                            <label class="form-check-label fs-4" for="switch1">Aplica descuento</label>
+                                            <input type="checkbox" id="switch1" checked data-switch="bool"
+                                                wire:model='condescuento' />
+                                            <label for="switch1" data-on-label="SI" data-off-label="NO"></label>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="finish text-center mb-3 d-grid gap-2">
                                     @if (!cajaCerrada(Auth::user()->id, Auth::user()->sucursale_id))
                                         <button class="btn btn-success" wire:click="registrarCompra"
