@@ -175,6 +175,23 @@
             })
         });
 
+        $('.anular').submit(function(e) {
+            Swal.fire({
+                title: 'Anular Venta',
+                text: "Esta seguro de realizar esta operación?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, continuar!',
+                cancelButtonText: 'No, cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.submit();
+                }
+            })
+        });
+
         $('.reset').submit(function(e) {
             Swal.fire({
                 title: 'RESET PASSWORD',

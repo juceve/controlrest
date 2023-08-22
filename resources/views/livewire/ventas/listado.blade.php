@@ -15,10 +15,12 @@
         </div>
         @if (count($ventas) > 0)
             <div class="col-12 col-md-2 mb-2 d-grid">
-                <button class="btn btn-danger" wire:click='exportar'>PDF <i class="mdi mdi-file-pdf-outline"></i></button>
+                <button class="btn btn-danger" wire:click='exportar'>PDF <i
+                        class="mdi mdi-file-pdf-outline"></i></button>
             </div>
             <div class="col-12 col-md-2 mb-2 d-grid">
-                <button class="btn btn-success" wire:click='excel'>Excel <i class="mdi mdi-file-excel-outline"></i></button>
+                <button class="btn btn-success" wire:click='excel'>Excel <i
+                        class="mdi mdi-file-excel-outline"></i></button>
             </div>
         @endif
 
@@ -27,7 +29,7 @@
 
 
     <div class="table-responsive" data-simplebar>
-        <table class="table table-striped table-hover table-bordered dataTable">
+        <table class="table table-striped table-hover table-bordered dataTable" style="font-size: 12px;">
             <thead class="thead table-primary">
                 <tr>
                     <td align="center"><strong> ID</strong></td>
@@ -52,10 +54,10 @@
 
                         <td align="right">
                             <form action="{{ route('ventas.destroy', $venta->id) }}" onsubmit="return false"
-                                method="POST" class="delete">
+                                method="POST" class="anular">
                                 <a class="btn btn-sm btn-primary " href="{{ route('ventas.show', $venta->id) }}"
                                     title="Ver info"><i class="uil-eye"></i></a>
-                                @can('ventas.destroy')
+                                @can('ventas.edit')
                                     <a class="btn btn-sm btn-success" href="{{ route('ventas.destroy', $venta->id) }}"
                                         title="Editar"><i class="uil-edit"></i></a>
                                 @endcan
@@ -63,8 +65,11 @@
 
                                 @csrf
                                 @method('DELETE')
-                                {{-- <button type="submit" class="btn btn-danger btn-sm" title="Anular Venta"><i
-                                    class="uil-trash"></i></button> --}}
+                                @can('ventas.destroy')
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Anular Venta"><i
+                                            class="uil-trash"></i></button>
+                                @endcan
+
                             </form>
                         </td>
                     </tr>

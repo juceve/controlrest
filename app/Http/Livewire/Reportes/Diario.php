@@ -77,6 +77,7 @@ class Diario extends Component
         WHERE bf.fechainicio <= '" . $this->selFecha . "'
         AND v.sucursale_id = ".$this->sucursale_id." 
         AND bf.fechafin >= '" . $this->selFecha . "'
+        AND bf.estado = 1
         GROUP BY bf.tipomenu_id, tm.nombre
         UNION
         SELECT 'POS' tipo,tipomenu_id, tm.nombre tipomenu ,SUM(cantidad) cantidad FROM ventas v

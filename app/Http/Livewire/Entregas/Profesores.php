@@ -154,6 +154,7 @@ class Profesores extends Component
                 'preciounitario' => $precioMenu->precio,
                 'subtotal' => $precioMenu->precio,
                 'producto_id' => 5,
+                'tipomenu_id' => 1,
             ]);
 
             // $pago = Pago::create([
@@ -201,7 +202,8 @@ class Profesores extends Component
             $row = $entrega->id . "|" . $tipomenu->nombre . "|" . $this->estudiante->nombre . "|" . $entrega->fechaentrega . "|" . $tipomenu->nombre . "|Plataforma Entregas";
 
             DB::commit();
-             redirect('http://127.0.0.1/gprinter/public/printPOS3/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE
+            //RECORDAR SIEMPRE VERIFICAR EL PUERTO DEL SERVIDOR DE IMPRESION
+             redirect('http://127.0.0.1:8090/gprinter/public/printPOS3/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE
             // return redirect()->route('entregas.profesores')->with('success', 'Entrega registrada correctamente.');
         } catch (\Throwable $th) {
             DB::rollback();
@@ -232,7 +234,7 @@ class Profesores extends Component
             $row = $entrega->id . "|" . $this->reservaP[3] . "|" . $this->estudiante->nombre . "|" . $entrega->fechaentrega . "|" . $this->reservaP[4] . "|Plataforma Entregas";
 
             DB::commit();
-            // redirect('http://127.0.0.1/gprinter/public/printPOS3/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE
+            // redirect('http://127.0.0.1:8090/gprinter/public/printPOS3/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE
             return redirect()->route('entregas.profesores')->with('success', 'Entrega registrada correctamente.');
             // }
         } catch (\Throwable $th) {
@@ -258,7 +260,7 @@ class Profesores extends Component
             $row = $entrega->id . "|" . $this->reservaP[2] . "|" . $this->estudiante->nombre . "|" . $entrega->fechaentrega . "|" . $this->reservaP[3] . "|Plataforma Entregas";
 
             DB::commit();
-            // redirect('http://127.0.0.1/gprinter/public/printPOS3/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE
+            // redirect('http://127.0.0.1:8090/gprinter/public/printPOS3/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE
             return redirect()->route('entregas.profesores')->with('success', 'Entrega registrada correctamente.');
             // }
         } catch (\Throwable $th) {

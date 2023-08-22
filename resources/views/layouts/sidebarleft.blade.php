@@ -233,6 +233,9 @@
                         <li>
                             <a href="{{route('reportes.ventas')}}"><i class="uil-receipt"></i> Reporte Ventas</a>
                         </li>
+                        <li>
+                            <a href="{{route('reportes.entregasprofesores')}}"><i class="uil-receipt"></i> Entregas a Profesores</a>
+                        </li>
                         {{-- @endcan --}}
                     </ul>
                 </div>

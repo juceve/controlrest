@@ -52,7 +52,7 @@ class Porcurso extends Component
         return view('livewire.entregas.porcurso', compact('cursos'))->extends('layouts.app');
     }
 
-    protected $listeners = ['entregar', 'cargaPedidos', 'prueba'];
+    protected $listeners = ['entregar', 'cargaPedidos', 'prueba', 'finalizar'];
 
 
 
@@ -214,7 +214,7 @@ class Porcurso extends Component
                             <input type="radio" id="fa' . $pedido[5] . '" name="rb' . $pedido[5] . '" class="form-check-input" checked>
                             </td>                    
                             <td align="center" style="background-color: #cef5ea;"><input type="radio" id="en' . $pedido[5] . '" name="rb' . $pedido[5] . '" class="form-check-input"></td>                    
-                            <td align="center" ><input type="radio" id="li' . $pedido[5] . '" name="rb' . $pedido[5] . '" class="form-check-input" disabled></td>
+                            <td align="center" style="background-color: #fff2cc;"><input type="radio" id="li' . $pedido[5] . '" name="rb' . $pedido[5] . '" class="form-check-input" disabled></td>
                             <td style="display: none" align="center"><input type="text" value="credito"></td>
                         </tr>';
                         }
@@ -487,7 +487,7 @@ class Porcurso extends Component
             DB::commit();
             // $this->emit('ocultaBtn', $estudiante_id);
             $this->emit('unLoading');
-            return redirect()->route('entregas.porcurso')->with('success', 'Curso Finalizado!');
+            return redirect()->route('entregas.porcurso')->with('success', 'Entregas y Licencias guardadas!');
             // $this->emit('success', 'Curso Finalizado!');
         } catch (\Throwable $th) {
             DB::rollback();
@@ -496,6 +496,54 @@ class Porcurso extends Component
         }
     }
 
+
+    public function finalizar()
+    {
+        DB::beginTransaction();
+        try {
+            if (count($this->arrListado) > 0) {
+                foreach ($this->arrListado as $fila) {
+                    foreach ($this->arrPedidos as $pedido) {
+                        $menu = Menu::find($fila[1]);
+                        if ($pedido[5] == $fila[0]) {
+                            if ($fila[2]) {
+                                $detallelonchera_id = null;
+                                if ($pedido[6] == 'detallelonchera') {
+                                    $detallelonchera_id = $pedido[7];
+                                    $detallelonchera = Detallelonchera::find($pedido[7]);
+                                    $detallelonchera->entregado = 1;
+                                    $detallelonchera->save();
+                                }
+
+                                $entrega = Entregalounch::create([
+                                    "fechaentrega" => date('Y-m-d H:i:s'),
+                                    "detallelonchera_id" => $detallelonchera_id,
+                                    "menu_id" => $fila[1],
+                                    "producto_id" => $pedido[8],
+                                    "venta_id" => $pedido[1],
+                                    "user_id" => $pedido[2],
+                                    "sucursale_id" => $pedido[3],
+                                    "estado" => $pedido[4],
+                                    "estudiante_id" => $pedido[5],
+                                    "observaciones" => "AUSENCIA INJUSTIFICADA"
+                                ]);
+                            }
+                        }
+                    }
+                }
+                DB::commit();
+                $this->emit('unLoading');
+                return redirect()->route('entregas.porcurso')->with('success', 'Curso Finalizado!');
+            } else {
+                $this->emit('unLoading');
+                $this->emit('error', 'Curso sin Reservas pendientes.');
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            $this->emit('unLoading');
+            $this->emit('error', 'Ha ocurrido un error');
+        }
+    }
     public function reprogramacionautomatica($detallelonchera_id, $estudiante_id)
     {
         $sql = "SELECT dl.* FROM loncheras l

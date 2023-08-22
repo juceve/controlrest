@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bonoanuale;
+use App\Models\Bonofecha;
+use App\Models\Bonomensuale;
+use App\Models\Detallelonchera;
+use App\Models\Entregalounch;
 use App\Models\Estadopago;
 use App\Models\Lonchera;
 use App\Models\Pago;
 use App\Models\Tipopago;
 use App\Models\Venta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class VentaController
@@ -62,8 +68,8 @@ class VentaController extends Controller
     {
         $venta = Venta::find($id);
         // $pago = Pago::where('venta_id',$venta->id)->first();
-        $loncheras = Lonchera::where('venta_id',$venta->id)->get();
-        return view('venta.show', compact('venta','loncheras'));
+        $loncheras = Lonchera::where('venta_id', $venta->id)->get();
+        return view('venta.show', compact('venta', 'loncheras'));
     }
 
     /**
@@ -75,8 +81,8 @@ class VentaController extends Controller
     public function edit($id)
     {
         $venta = Venta::find($id);
-        $tipopagos = Estadopago::all()->pluck('nombre','id');
-        return view('venta.edit', compact('venta','tipopagos'));
+        $tipopagos = Estadopago::all()->pluck('nombre', 'id');
+        return view('venta.edit', compact('venta', 'tipopagos'));
     }
 
     /**
@@ -103,9 +109,55 @@ class VentaController extends Controller
      */
     public function destroy($id)
     {
-        $venta = Venta::find($id)->delete();
+        DB::beginTransaction();
+        try {
+            $venta = Venta::find($id);
+            $pago = Pago::where('venta_id',$id)->first();
 
-        return redirect()->route('ventas.index')
-            ->with('success', 'Venta deleted successfully');
+            $venta->estado = 0;
+            $venta->save();
+            
+            $pago->estado = 0;
+            $pago->save();
+
+            $bonoanual = Bonoanuale::where('venta_id',$id)->first();
+            $bonomensual = Bonofecha::where('venta_id',$id)->first();
+            $lonchera = Lonchera::where('venta_id',$id)->first();
+            $entregalounche = Entregalounch::where('venta_id',$id)->first();
+
+            if ($bonoanual) {   
+                $bonoanual->estado = 0;
+                $bonoanual->save();
+            }
+
+            if ($bonomensual) {   
+                $bonomensual->estado = 0;
+                $bonomensual->save();
+            }
+
+            if ($lonchera) {   
+                $lonchera->estado = 0;
+                $lonchera->save();
+
+                $detallelonchera = Detallelonchera::where('lonchera_id',$lonchera->id)->get();
+                foreach ($detallelonchera as $item) {
+                    $item->estado = 0;
+                    $item->save();
+                }
+            }
+
+            if ($entregalounche) {   
+                $entregalounche->estado = 0;
+                $entregalounche->save();
+            }
+
+            DB::commit();
+            return redirect()->route('ventas.index')
+                ->with('success', 'Venta anulada correctamente');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->route('ventas.index')
+                ->with('error', 'Ha ocurrido un error');
+        }
     }
 }

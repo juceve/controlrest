@@ -53,7 +53,7 @@ Info Venta |
     
                         <div class="col-12 col-md-6 form-group mb-2">
                             <strong>Tipo Pago:</strong>
-                            {{ $venta->pagos->first()->tipopago }}
+                            {{ $venta->tipopago->nombre }}
                         </div>
     
                         <div class="col-12 col-md-6 form-group mb-2">
@@ -62,7 +62,7 @@ Info Venta |
                         </div>
                         <div class="col-12 col-md-6 form-group mb-2">
                             <strong>Usuario:</strong>
-                            {{ $venta->pagos->first()->user->name }}
+                            {{ $venta->user->name }}
                         </div>
                         <div class="col-12 col-md-6 form-group mb-2">
                             <strong>Observaciones:</strong>

@@ -37,11 +37,12 @@ class Listado extends Component
         $tipoPagos = Tipopago::all();
         $ventas = null;
             $ventas = DB::table('ventas')
-                ->join('pagos', 'pagos.venta_id', '=', 'ventas.id')
-                ->join('estadopagos', 'estadopagos.id', '=', 'ventas.estadopago_id')
-                ->join('tipopagos', 'tipopagos.id', '=', 'pagos.tipopago_id')
+                ->leftJoin('pagos', 'pagos.venta_id', '=', 'ventas.id')
+                ->leftJoin('estadopagos', 'estadopagos.id', '=', 'ventas.estadopago_id')
+                ->leftJoin('tipopagos', 'tipopagos.id', '=', 'ventas.tipopago_id')
                 ->where('ventas.sucursale_id', Auth::user()->sucursale_id)
-                ->where('pagos.user_id', Auth::user()->id)
+                ->where('ventas.user_id', Auth::user()->id)
+                ->where('ventas.estado',1)
                 ->whereBetween('ventas.fecha', [$this->fecInicio, $this->fecFin])
                 ->orderBy('ventas.id', 'ASC')
                 ->select('ventas.id', 'ventas.fecha', 'ventas.cliente', 'estadopagos.abreviatura as estadopago', 'ventas.importe', 'tipopagos.abreviatura as tipopago')

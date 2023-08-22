@@ -62,8 +62,16 @@
 
 
             </div>
-            <div class="container text-center d-grid mt-2">
-                <button class="btn btn-success" onclick="revision();">FINALIZA REVISIÓN DE CURSO</button>
+            <div class="row">
+                <div class="col-12 col-md-6 d-grid">
+                    <button class="btn btn-success" onclick="revision();">GUARDAR ENTREGAS Y LICENCIAS</button>
+                </div>
+                <div class="col-12 col-md-6 d-grid">
+                    <button class="btn btn-warning" onclick="finalizar();">FINALIZAR CURSO</button>
+                </div>
+            </div>
+            <div class="container text-center  mt-2">
+
             </div>
         </div>
     @endif
@@ -71,8 +79,47 @@
 </div>
 @section('js')
     <script>
-
         function revision() {
+            Swal.fire({
+                title: 'GUARDAR CAMBIOS',
+                text: "Esta seguro de realizar esta operación?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, continuar!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    revisionCurso();
+                }
+            });
+
+        }
+
+        function revisionCurso() {
+            $.blockUI({
+                message: '<h1 class="text-success"><div class="spinner-grow text-success" role="status"></div> Espere por favor...</h1>'
+            });
+            var tabla = $("#listaCurso");
+            tabla.find("tbody tr").each(function() {
+                var estudiante_id = $(this).find("td:eq(1) input").val();
+                var menu_id = $(this).find("td:eq(3) input").val();
+                if (!menu_id) {
+                    menu_id = $(this).find("td:eq(3) select").val();
+                }
+                var falta = $(this).find("td:eq(4) input").is(':checked');
+                var entrega = $(this).find("td:eq(5) input").is(':checked');
+                var licencia = $(this).find("td:eq(6) input").is(':checked');
+                var tipo = $(this).find("td:eq(7) input").val();
+                // console.log(estudiante_id);
+                Livewire.emit('cargaPedidos', estudiante_id, menu_id, falta, entrega, licencia, tipo);
+            });
+            // Livewire.emit('prueba');
+            Livewire.emit('entregar');
+        }
+
+        function finalizar() {
             Swal.fire({
                 title: 'FINALIZAR REVISIÓN DE CURSO',
                 text: "Esta seguro de realizar esta operación?",
@@ -98,7 +145,7 @@
             tabla.find("tbody tr").each(function() {
                 var estudiante_id = $(this).find("td:eq(1) input").val();
                 var menu_id = $(this).find("td:eq(3) input").val();
-                if(!menu_id){
+                if (!menu_id) {
                     menu_id = $(this).find("td:eq(3) select").val();
                 }
                 var falta = $(this).find("td:eq(4) input").is(':checked');
@@ -106,10 +153,13 @@
                 var licencia = $(this).find("td:eq(6) input").is(':checked');
                 var tipo = $(this).find("td:eq(7) input").val();
                 // console.log(estudiante_id);
-                Livewire.emit('cargaPedidos', estudiante_id, menu_id, falta, entrega, licencia,tipo);
+                if(tipo == ""){
+                    Livewire.emit('cargaPedidos', estudiante_id, menu_id, falta, entrega, licencia, tipo);
+                }
+                
             });
             // Livewire.emit('prueba');
-            Livewire.emit('entregar');
+            Livewire.emit('finalizar');
         }
 
         Livewire.on('htmlBody', html => {
