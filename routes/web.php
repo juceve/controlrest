@@ -36,7 +36,9 @@ use App\Http\Livewire\Menu\Finish;
 use App\Http\Livewire\Menu\Formapago;
 use App\Http\Livewire\Menu\Pedido;
 use App\Http\Livewire\Menu\Resumen;
+use App\Http\Livewire\Pagos\Actcomprobante as PagosActcomprobante;
 use App\Http\Livewire\Pagos\Pagoprofesores;
+use App\Http\Livewire\Pagos\Pagossincomprobante;
 use App\Http\Livewire\Pedidos\Ppersonales;
 use App\Http\Livewire\Reportes\Diario;
 use App\Http\Livewire\Reportes\Entregaprofesores;
@@ -136,6 +138,8 @@ Route::get('reportes/diario',Diario::class)->middleware('auth')->name('reportes.
 Route::get('reportes/ventas',Rventas::class)->middleware('auth')->name('reportes.ventas');
 Route::get('reportes/entregasprofesores', Entregaprofesores::class)->middleware('auth')->name('reportes.entregasprofesores');
 Route::get('pagos/profesores', Pagoprofesores::class)->middleware('auth')->name('pagos.profesores');
+Route::get('pagos/sincomprobante',Pagossincomprobante::class)->middleware('auth')->name('pagos.sincomprobante');
+Route::get('pagos/actcomprobante/{pago_id}',PagosActcomprobante::class)->middleware('auth')->name('pagos.actcomprobante');
 
 Route::get('impresiones/recibo/{data}',function(){
     return view('impresiones.recibos');

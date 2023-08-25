@@ -148,6 +148,55 @@ class HomeController extends Controller
             $arrPos = array("COMPLETOS",$cantC,"SIMPLES",$cantS,"EXTRAS",$cantE,$totalPos);
 
 
+            // PENDIENTES DE PAGO
+
+            $sqlpp = "SELECT tipomenu_id, SUM(cantidad) cantidad FROM
+            (SELECT bf.tipomenu_id, count(*) cantidad FROM bonofechas bf
+            INNER JOIN ventas v on v.id = bf.venta_id
+            WHERE v.estadopago_id = 1
+            AND fechainicio <= '$hoy'
+            AND fechafin >= '$hoy'
+            AND v.sucursale_id = $sucursale_id
+            GROUP BY bf.tipomenu_id
+            UNION
+            SELECT ba.tipomenu_id, count(*) cantidad from bonoanuales ba
+            INNER JOIN ventas v on v.id = ba.venta_id
+            WHERE v.estadopago_id = 1
+            AND gestion = '$gestion'
+            AND v.sucursale_id = $sucursale_id
+            GROUP BY ba.tipomenu_id
+            UNION
+            SELECT dl.tipomenu_id, count(*) cantidad FROM detalleloncheras dl
+            INNER JOIN loncheras l on l.id = dl.lonchera_id
+            INNER JOIN ventas v on v.id = l.venta_id
+            WHERE dl.fecha = '$hoy'
+            AND v.sucursale_id = $sucursale_id
+            GROUP BY dl.tipomenu_id) AS res1
+            GROUP BY tipomenu_id;";
+
+            $pendientespago = DB::select($sqlpp);
+            $cantC = 0;
+            $cantS = 0;
+            $cantE = 0;
+            $totalPP = 0;
+            foreach ($pendientespago as $item) {
+                switch ($item->tipomenu_id) {
+                    case '1':
+                        $cantC+=$item->cantidad;
+                        break;
+                    case '2':
+                        $cantS+=$item->cantidad;
+                        break;
+                    case '3':
+                        $cantE+=$item->cantidad;
+                        break;
+                }
+                $totalPP+=$item->cantidad;
+            }
+
+            $arrPP = array("COMPLETOS",$cantC,"SIMPLES",$cantS,"EXTRAS",$cantE,$totalPP);
+
+
             // Profesores
 
             $sql5 = "SELECT dv.* from detalleventas dv
@@ -211,7 +260,7 @@ class HomeController extends Controller
 
             $moneda = Moneda::all()->first();
 
-            return view('home', compact('moneda',  'reservas', 'arrPos', 'arrProf', 'arrEntregas'));
+            return view('home', compact('moneda',  'reservas', 'arrPos', 'arrProf', 'arrPP', 'arrEntregas'));
         } else {
             return view('home');
         }

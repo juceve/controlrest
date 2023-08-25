@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Bonoanuale;
 use App\Models\Bonofecha;
 use App\Models\Bonomensuale;
+use App\Models\Creditoprofesore;
 use App\Models\Detallelonchera;
 use App\Models\Entregalounch;
 use App\Models\Estadopago;
@@ -67,9 +68,52 @@ class VentaController extends Controller
     public function show($id)
     {
         $venta = Venta::find($id);
+        $dv = $venta->detalleventas;
+        $producto_id = 0;
+        $detalleEstudiantes = array();
+        foreach ($dv as $item) {
+            $producto_id = $item->producto_id;
+        }
+        if ($producto_id) {
+            switch ($producto_id) {
+                case '1':
+                    $bonoanual = Bonoanuale::where('venta_id', $id)->get();
+                    foreach ($bonoanual as $bf) {
+                        $contenido = "Bono Anual - Gestion " . $bf->gestion;
+                        $detalleEstudiantes[] = array($bf->estudiante->nombre, $contenido,$bf->tipomenu->nombre,$bf->estudiante->codigo);
+                    }
+                    break;
+                case '2':
+                    $bonofechas = Bonofecha::where('venta_id', $id)->get();
+                    foreach ($bonofechas as $bf) {
+                        $contenido = "Bono fecha del " . $bf->fechainicio . " al " . $bf->fechafin;
+                        $detalleEstudiantes[] = array($bf->estudiante->nombre, $contenido,$bf->tipomenu->nombre,$bf->estudiante->codigo);
+                    }
+                    break;
+                case '3':
+                    $loncheras = Lonchera::where('venta_id',$id)->get();                    
+                    foreach ($loncheras as $lonchera) {
+                        $detalles = $lonchera->detalleloncheras;
+                        foreach ($detalles as $detalle) {
+                            $detalleEstudiantes[] = array($lonchera->estudiante->nombre, "Reserva - Loncheras",$detalle->tipomenu->nombre,$lonchera->estudiante->codigo);    
+                        }
+                    }
+                    break;
+                case '4':
+                    # code...
+                    break;
+                case '5':
+                    $creditos = Creditoprofesore::where('venta_id',$id)->get();
+                    foreach ($creditos as $credito) {
+                        $contenido = "Plataforma Entregas Profesores";
+                        $detalleEstudiantes[] = array($credito->estudiante->nombre, $contenido,"Almuerzo Completo",$credito->estudiante->codigo);
+                    }
+                    break;
+            }
+        }
         // $pago = Pago::where('venta_id',$venta->id)->first();
         $loncheras = Lonchera::where('venta_id', $venta->id)->get();
-        return view('venta.show', compact('venta', 'loncheras'));
+        return view('venta.show', compact('venta', 'loncheras', 'detalleEstudiantes'));
     }
 
     /**
@@ -81,6 +125,7 @@ class VentaController extends Controller
     public function edit($id)
     {
         $venta = Venta::find($id);
+
         $tipopagos = Estadopago::all()->pluck('nombre', 'id');
         return view('venta.edit', compact('venta', 'tipopagos'));
     }
@@ -112,41 +157,41 @@ class VentaController extends Controller
         DB::beginTransaction();
         try {
             $venta = Venta::find($id);
-            $pago = Pago::where('venta_id',$id)->first();
+            $pago = Pago::where('venta_id', $id)->first();
 
             $venta->estado = 0;
             $venta->save();
-            
+
             $pago->estado = 0;
             $pago->save();
 
-            $bonoanual = Bonoanuale::where('venta_id',$id)->first();
-            $bonomensual = Bonofecha::where('venta_id',$id)->first();
-            $lonchera = Lonchera::where('venta_id',$id)->first();
-            $entregalounche = Entregalounch::where('venta_id',$id)->first();
+            $bonoanual = Bonoanuale::where('venta_id', $id)->first();
+            $bonomensual = Bonofecha::where('venta_id', $id)->first();
+            $lonchera = Lonchera::where('venta_id', $id)->first();
+            $entregalounche = Entregalounch::where('venta_id', $id)->first();
 
-            if ($bonoanual) {   
+            if ($bonoanual) {
                 $bonoanual->estado = 0;
                 $bonoanual->save();
             }
 
-            if ($bonomensual) {   
+            if ($bonomensual) {
                 $bonomensual->estado = 0;
                 $bonomensual->save();
             }
 
-            if ($lonchera) {   
+            if ($lonchera) {
                 $lonchera->estado = 0;
                 $lonchera->save();
 
-                $detallelonchera = Detallelonchera::where('lonchera_id',$lonchera->id)->get();
+                $detallelonchera = Detallelonchera::where('lonchera_id', $lonchera->id)->get();
                 foreach ($detallelonchera as $item) {
                     $item->estado = 0;
                     $item->save();
                 }
             }
 
-            if ($entregalounche) {   
+            if ($entregalounche) {
                 $entregalounche->estado = 0;
                 $entregalounche->save();
             }

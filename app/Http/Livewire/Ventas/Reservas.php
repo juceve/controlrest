@@ -407,6 +407,7 @@ class Reservas extends Component
                             ]);
                         }
                     }
+
                     switch ($tipopago->nombre) {
                         case 'CREDITO': {
                                 $lonchera->habilitado = 1;
@@ -465,10 +466,7 @@ class Reservas extends Component
 
                             break;
                         case "PAGO QR": {
-                                if ($this->comprobante) {
-                                    $this->validate([
-                                        'comprobante' => 'image|max:1024', // 1MB Max
-                                    ]);
+                               
                                     $pago = Pago::create([
                                         "fecha" => date('Y-m-d'),
                                         "recibo" => 0,
@@ -482,8 +480,7 @@ class Reservas extends Component
                                         "user_id" => Auth::user()->id,
                                         "tipoinicial" => $tipopago->nombre,
                                     ]);
-                                    $file = $this->comprobante->storeAs('depositos/' . $tipopago->abreviatura, $pago->id . "." . $this->comprobante->extension());
-                                    $comprobante = 'depositos/' . $tipopago->abreviatura . '/' . $pago->id . "." . $this->comprobante->extension();
+                                    $comprobante = 'img/admin/noImagen.jpg';
 
                                     $lonchera->habilitado = 1;
                                     $lonchera->save();
@@ -491,14 +488,11 @@ class Reservas extends Component
                                     $venta->save();
                                     $pago->comprobante = $comprobante;
                                     $pago->save();
-                                }
+                               
                             }
                             break;
                         case "TRANSFERENCIA BANCARIA": {
-                                if ($this->comprobante) {
-                                    $this->validate([
-                                        'comprobante' => 'image|max:1024', // 1MB Max
-                                    ]);
+                              
                                     $pago = Pago::create([
                                         "fecha" => date('Y-m-d'),
                                         "recibo" => 0,
@@ -512,8 +506,7 @@ class Reservas extends Component
                                         "user_id" => Auth::user()->id,
                                         "tipoinicial" => $tipopago->nombre,
                                     ]);
-                                    $file = $this->comprobante->storeAs('depositos/' . $tipopago->abreviatura, $pago->id . "." . $this->comprobante->extension());
-                                    $comprobante = 'depositos/' . $tipopago->abreviatura . '/' . $pago->id . "." . $this->comprobante->extension();
+                                    $comprobante = 'img/admin/noImagen.jpg';
 
                                     $lonchera->habilitado = 1;
                                     $lonchera->save();
@@ -521,10 +514,130 @@ class Reservas extends Component
                                     $venta->save();
                                     $pago->comprobante = $comprobante;
                                     $pago->save();
-                                }
+                              
                             }
                             break;
                     }
+
+                    // PAGO CON COMPROBANTES
+                    // switch ($tipopago->nombre) {
+                    //     case 'CREDITO': {
+                    //             $lonchera->habilitado = 1;
+                    //             $lonchera->save();
+                    //             $estudiante = Estudiante::find($estudiante_id);
+                    //             $credito = null;
+                    //             if ($estudiante->esestudiante == 0) {
+                    //                 $credito = Creditoprofesore::create([
+                    //                     "estudiante_id" => $estudiante->id,
+                    //                     "venta_id" => $venta->id,
+                    //                     "sucursale_id" => Auth::user()->sucursale_id,
+                    //                 ]);
+                    //             }
+                    //         }
+                    //         break;
+                    //     case 'EFECTIVO - LOCAL': {
+                    //             $pago = Pago::create([
+                    //                 "fecha" => date('Y-m-d'),
+                    //                 "recibo" => 0,
+                    //                 "tipopago_id" => $tipopago->id,
+                    //                 "tipopago" => $tipopago->nombre,
+                    //                 "sucursal_id" => Auth::user()->sucursale_id,
+                    //                 "sucursal" => Auth::user()->sucursale->nombre,
+                    //                 "importe" => $this->importeTotal * $tipopago->factor,
+                    //                 "venta_id" => $venta->id,
+                    //                 "estadopago_id" => 2,
+                    //                 "user_id" => Auth::user()->id,
+                    //                 "tipoinicial" => $tipopago->nombre,
+                    //             ]);
+                    //             $lonchera->habilitado = 1;
+                    //             $lonchera->save();
+                    //             $venta->estadopago_id = 2;
+                    //             $venta->save();
+                    //         }
+
+                    //         break;
+                    //     case 'GASTO ADMINISTRATIVO': {
+                    //             $pago = Pago::create([
+                    //                 "fecha" => date('Y-m-d'),
+                    //                 "recibo" => 0,
+                    //                 "tipopago_id" => $tipopago->id,
+                    //                 "tipopago" => $tipopago->nombre,
+                    //                 "sucursal_id" => Auth::user()->sucursale_id,
+                    //                 "sucursal" => Auth::user()->sucursale->nombre,
+                    //                 "importe" => $this->importeTotal * $tipopago->factor,
+                    //                 "venta_id" => $venta->id,
+                    //                 "estadopago_id" => 2,
+                    //                 "user_id" => Auth::user()->id,
+                    //                 "tipoinicial" => $tipopago->nombre,
+                    //             ]);
+                    //             $lonchera->habilitado = 1;
+                    //             $lonchera->save();
+                    //             $venta->estadopago_id = 2;
+                    //             $venta->save();
+                    //         }
+
+                    //         break;
+                    //     case "PAGO QR": {
+                    //             if ($this->comprobante) {
+                    //                 $this->validate([
+                    //                     'comprobante' => 'image|max:1024', // 1MB Max
+                    //                 ]);
+                    //                 $pago = Pago::create([
+                    //                     "fecha" => date('Y-m-d'),
+                    //                     "recibo" => 0,
+                    //                     "tipopago_id" => $tipopago->id,
+                    //                     "tipopago" => $tipopago->nombre,
+                    //                     "sucursal_id" => Auth::user()->sucursale_id,
+                    //                     "sucursal" => Auth::user()->sucursale->nombre,
+                    //                     "importe" => $this->importeTotal * $tipopago->factor,
+                    //                     "venta_id" => $venta->id,
+                    //                     "estadopago_id" => 2,
+                    //                     "user_id" => Auth::user()->id,
+                    //                     "tipoinicial" => $tipopago->nombre,
+                    //                 ]);
+                    //                 $file = $this->comprobante->storeAs('depositos/' . $tipopago->abreviatura, $pago->id . "." . $this->comprobante->extension());
+                    //                 $comprobante = 'depositos/' . $tipopago->abreviatura . '/' . $pago->id . "." . $this->comprobante->extension();
+
+                    //                 $lonchera->habilitado = 1;
+                    //                 $lonchera->save();
+                    //                 $venta->estadopago_id = 2;
+                    //                 $venta->save();
+                    //                 $pago->comprobante = $comprobante;
+                    //                 $pago->save();
+                    //             }
+                    //         }
+                    //         break;
+                    //     case "TRANSFERENCIA BANCARIA": {
+                    //             if ($this->comprobante) {
+                    //                 $this->validate([
+                    //                     'comprobante' => 'image|max:1024', // 1MB Max
+                    //                 ]);
+                    //                 $pago = Pago::create([
+                    //                     "fecha" => date('Y-m-d'),
+                    //                     "recibo" => 0,
+                    //                     "tipopago_id" => $tipopago->id,
+                    //                     "tipopago" => $tipopago->nombre,
+                    //                     "sucursal_id" => Auth::user()->sucursale_id,
+                    //                     "sucursal" => Auth::user()->sucursale->nombre,
+                    //                     "importe" => $this->importeTotal * $tipopago->factor,
+                    //                     "venta_id" => $venta->id,
+                    //                     "estadopago_id" => 2,
+                    //                     "user_id" => Auth::user()->id,
+                    //                     "tipoinicial" => $tipopago->nombre,
+                    //                 ]);
+                    //                 $file = $this->comprobante->storeAs('depositos/' . $tipopago->abreviatura, $pago->id . "." . $this->comprobante->extension());
+                    //                 $comprobante = 'depositos/' . $tipopago->abreviatura . '/' . $pago->id . "." . $this->comprobante->extension();
+
+                    //                 $lonchera->habilitado = 1;
+                    //                 $lonchera->save();
+                    //                 $venta->estadopago_id = 2;
+                    //                 $venta->save();
+                    //                 $pago->comprobante = $comprobante;
+                    //                 $pago->save();
+                    //             }
+                    //         }
+                    //         break;
+                    // }
                 }
                 DB::commit();
 

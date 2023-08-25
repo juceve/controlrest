@@ -49,7 +49,7 @@
                         @can('entregas.profesores')
                         <li>
                             <a href="{{route('entregas.profesores')}}"><i class="uil-book-reader"></i>
-                                Profesores</a>
+                                Personales</a>
                         </li>
                         @endcan
                         @can('entregas.porcurso')
@@ -134,6 +134,11 @@
                         @can('pagos.profesores')
                         <li>
                             <a href="{{route('pagos.profesores')}}"><i class="uil-receipt"></i> Credito Profesores</a>
+                        </li>
+                        @endcan
+                        @can('pagos.sincomprobante')
+                        <li>
+                            <a href="{{route('pagos.sincomprobante')}}"><i class="uil-receipt"></i> Sin comprobante</a>
                         </li>
                         @endcan
                     </ul>

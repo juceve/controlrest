@@ -31,7 +31,7 @@ class Profesores extends Component
         $this->indicador = request()->indicador;
     }
 
-    protected $listeners = ['entrega', 'entregaReserva','entregaBonos'];
+    protected $listeners = ['entrega', 'entregaReserva', 'entregaBonos'];
 
     public function render()
     {
@@ -44,6 +44,10 @@ class Profesores extends Component
         $this->estudiante = Estudiante::where('cedula', $this->cedula)
             ->where('esestudiante', 0)
             ->first();
+        if (!$this->estudiante) {
+            $this->estudiante = Estudiante::where('codigo', str_pad($this->cedula, 10, "0", STR_PAD_LEFT))->first();
+        }
+
         if ($this->estudiante) {
             $hoy = date('Y-m-d');
             $entregaLounche = Entregalounch::where('estudiante_id', $this->estudiante->id)
@@ -73,6 +77,7 @@ class Profesores extends Component
                     ->where('estado', 1)->first();
 
                 $reserva = "";
+                // dd($bonoanual);
                 foreach ($productos as $producto) {
                     $reserva = $producto;
                 }
@@ -85,9 +90,11 @@ class Profesores extends Component
                             $menu = $item->menu;
                         }
                     }
-                    $this->reservaP = array($reserva->detalle_id, $menu->id, $reserva->venta_id, $reserva->tipomenu_id, $reserva->tipomenu);
+                    $this->reservaP = array($reserva->detalle_id, $menu->id, $reserva->venta_id, $reserva->tipomenu_id, $reserva->tipomenu, 3);
                     $data = $this->estudiante->id . "|" . $this->estudiante->nombre . "|" . $reserva->entregado . "|" . $reserva->tipomenu;
-                    $this->emit('reserva', $data);
+                    // $this->emit('reserva', $data);
+                    // dd($this->reservaP);
+                    $this->entregaReserva();
                 } else {
                     if ($bonofecha) {
                         $evento = Evento::where('fecha', date('Y-m-d'))->first();
@@ -97,9 +104,11 @@ class Profesores extends Component
                                 $menu = $item->menu;
                             }
                         }
-                        $this->reservaP = array($menu->id, $bonofecha->venta_id, $bonofecha->tipomenu_id, $bonofecha->tipomenu->nombre);
+                        $this->reservaP = array($menu->id, $bonofecha->venta_id, $bonofecha->tipomenu_id, $bonofecha->tipomenu->nombre, 2);
                         $data = $this->estudiante->id . "|" . $this->estudiante->nombre . "|" . $bonofecha->tipomenu->nombre;
-                        $this->emit('bonos', $data);
+                        // $this->emit('bonos', $data);
+                        // dd($this->reservaP);
+                        $this->entregaBonos();
                     } else {
                         if ($bonoanual) {
                             $evento = Evento::where('fecha', date('Y-m-d'))->first();
@@ -109,18 +118,26 @@ class Profesores extends Component
                                     $menu = $item->menu;
                                 }
                             }
-                            $this->reservaP = array($menu->id, $bonoanual->venta_id, $bonoanual->tipomenu_id, $bonoanual->tipomenu->nombre);
+                            $this->reservaP = array($menu->id, $bonoanual->venta_id, $bonoanual->tipomenu_id, $bonoanual->tipomenu->nombre, 1);
                             $data = $this->estudiante->id . "|" . $this->estudiante->nombre . "|" . $bonoanual->tipomenu->nombre;
-                            $this->emit('bonos', $data);
+                            // $this->emit('bonos', $data);
+                            // dd($this->reservaP);
+                            $this->entregaBonos();
                         } else {
-                            $data = $this->estudiante->id . "|" . $this->estudiante->nombre;
-                            $this->emit('question', $data);
+                            if ($this->estudiante->esestudiante) {
+                                $this->emit('warning','NO CUENTA CON UNA RESERVA ACTIVA.');
+                            } else {
+                                $data = $this->estudiante->id . "|" . $this->estudiante->nombre;
+                                // $this->emit('question', $data);
+                                // dd($this->reservaP);
+                                $this->entrega();
+                            }
                         }
                     }
                 }
             }
         } else {
-            $this->emit('error', 'Docente no encontrado');
+            $this->emit('error', 'Cliente no encontrado');
             $this->cedula = "";
         }
     }
@@ -203,8 +220,8 @@ class Profesores extends Component
 
             DB::commit();
             //RECORDAR SIEMPRE VERIFICAR EL PUERTO DEL SERVIDOR DE IMPRESION
-             redirect('http://127.0.0.1:8090/gprinter/public/printPOS3/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE
-            // return redirect()->route('entregas.profesores')->with('success', 'Entrega registrada correctamente.');
+            // redirect('http://127.0.0.1:8090/gprinter/public/printPOS3/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE
+            return redirect()->route('entregas.profesores')->with('success', 'Entrega registrada correctamente.');
         } catch (\Throwable $th) {
             DB::rollback();
             $this->emit('error', $th->getMessage());
@@ -226,6 +243,7 @@ class Profesores extends Component
                 "estudiante_id" => $this->estudiante->id,
                 "menu_id" => $this->reservaP[1],
                 "venta_id" => $this->reservaP[2],
+                'producto_id' => $this->reservaP[5],
                 "user_id" => Auth::user()->id,
                 "sucursale_id" => Auth::user()->sucursale_id,
                 "observaciones" => "ENTREGA PLATAFORMA"
@@ -252,6 +270,7 @@ class Profesores extends Component
                 "estudiante_id" => $this->estudiante->id,
                 "menu_id" => $this->reservaP[0],
                 "venta_id" => $this->reservaP[1],
+                'producto_id' => $this->reservaP[4],
                 "user_id" => Auth::user()->id,
                 "sucursale_id" => Auth::user()->sucursale_id,
                 "observaciones" => "ENTREGA PLATAFORMA"

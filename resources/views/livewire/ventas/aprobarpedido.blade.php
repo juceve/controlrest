@@ -23,7 +23,7 @@
                                         <strong>ID</strong>
                                     </td>
                                     <td>
-                                        {{ $venta->id }}
+                                        <a href="{{route('ventas.show',$venta->id)}}" target="_blank" rel="noopener" class="btn btn-link btn-sm" title="Mas Info">{{$venta->id}}</a>
                                     </td>
                                 </tr>
                                 <tr>

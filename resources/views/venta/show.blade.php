@@ -100,10 +100,43 @@ Info Venta |
                                         $i++;
                                     @endphp
                                 @endforeach
+                                
                             </tbody>
-                        </table>
+                        </table>                        
                     </div>
-
+                    @if ($detalleEstudiantes)
+                    <h2 class="h5">ESTUDIANTES VINCULADOS</h2>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-info">
+                                    <tr >
+                                        <th>CODIGO</th>
+                                        <th>ESTUDIANTE</th>
+                                        <th>DETALLE</th>
+                                        <th>TIPO MENU</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $i=1;
+                                    @endphp
+                                    @foreach ($detalleEstudiantes as $de)
+                                        <tr >
+                                            <td>{{$de[3]}}</td>
+                                            <td>{{$de[0]}}</td>
+                                            <td>{{$de[1]}}</td>
+                                            <td>{{$de[2]}}</td>
+                                            
+                                        </tr>
+                                        @php
+                                            $i++;
+                                        @endphp
+                                    @endforeach
+                                    {{-- @dump($detalleEstudiantes) --}}
+                                </tbody>
+                            </table>  
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

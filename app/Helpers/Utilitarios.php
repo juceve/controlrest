@@ -204,7 +204,7 @@ function estadoPedidoEstudiante($estudiante_id)
 
     $restantes = $pagado - $entregas;
 
-    $tabla = array("estudiante" => $estudiante->nombre, "pagados" => $pagado, "entregas" => $entregas, "restantes" => $restantes);
+    $tabla = array("estudiante" => $estudiante->nombre, "pagados" => $pagado, "entregas" => $entregas, "restantes" => $restantes,"codigo"=>$estudiante->codigo);
     return $tabla;
 }
 

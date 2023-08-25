@@ -53,7 +53,7 @@
                     <table class="table table-bordered table-sm table-striped dataTable">
                         <thead class="table-primary">
                             <tr align="center">
-                                <th>NRO</th>
+                                <th>CODIGO</th>
                                 <th>NOMBRE</th>
                                 <th>ALMUERZOS PAGADOS</th>
                                 <th>ENTREGAS</th>
@@ -67,7 +67,7 @@
                             
                            
                                 <tr>
-                                    <td align="center">{{$i++}}</td>
+                                    <td align="center">{{$item['codigo']}}</td>
                                     <td>{{$item['estudiante']}}</td>
                                     <td align="center">{{$item['pagados']}}</td>
                                     <td align="center">{{$item['entregas']}}</td>

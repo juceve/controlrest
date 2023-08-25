@@ -19,7 +19,7 @@
 
                 @php
                     $colores = ['primary', 'success', 'info', 'warning', 'danger', 'secondary', 'dark'];
-                    $imagen = ['uil-food', 'uil-life-ring', 'uil-coffee', 'uil-utensils'];
+                    $imagen = ['uil-food', 'uil-life-ring', 'uil-coffee', 'uil-utensils','uil-food'];
                     $i = 0;
                     $total = 0;
                 @endphp
@@ -67,7 +67,27 @@
                     </div> <!-- end col-->
                 @endif
 
+                @if ($arrPP)
+                    <div class="col-lg-4">
+                        <div class="card text-white bg-{{ $colores[4] }} overflow-hidden">
+                            <div class="card-body">
+                                <div class="toll-free-box text-end">
+                                    <h3> <i class="{{ $imagen[4] }}"></i> PAGOS PENDIENTES</h3>
+                                </div>
+                                <div class="text-end">
 
+                                    <span>{{ $arrPP[0] }}: {{ $arrPP[1] }}</span> <br>
+                                    <span>{{ $arrPP[2] }}: {{ $arrPP[3] }}</span> <br>
+                                    <span>{{ $arrPP[4] }}: {{ $arrPP[5] }}</span> <br>
+                                    <hr>
+                                    <span><strong>TOTAL: {{ $arrPP[6] }}</strong></span>
+
+
+                                </div>
+                            </div> <!-- end card-body-->
+                        </div>
+                    </div> <!-- end col-->
+                @endif
 
                 {{-- <div class="col-lg-4">
             <div class="card text-white bg-{{$colores[1]}} overflow-hidden">

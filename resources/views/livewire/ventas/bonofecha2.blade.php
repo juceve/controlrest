@@ -143,7 +143,7 @@
                                         </div>
                                     @endforeach
                                 </div>
-                                <div class="mt-3" id="divComprobante">
+                                <div class="mt-3 d-none" id="divComprobante">
                                     <label for="example-fileinput" class="form-label text-warning">Finalice la
                                         Transacción adjuntado un Comprobante.</label>
                                     <input type="file" id="example-fileinput" class="form-control mb-2"
@@ -183,7 +183,7 @@
                                 </table>
                                 <div class="row mb-2">
                                     <div class="col-12 col-md-8"></div>
-                                    <div class="col-12 col-md-4">
+                                    <div class="col-12 col-md-6 w-full">
                                         <div class="form-check text-end">
                                             <label class="form-check-label fs-4" for="switch1">Aplica descuento</label>
                                             <input type="checkbox" id="switch1" checked data-switch="bool"

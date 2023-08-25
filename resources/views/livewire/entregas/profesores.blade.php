@@ -1,13 +1,13 @@
 <div>
-    <h1 class="text-center text-success mt-5"><strong>ENTREGAS PARA PROFESORES</strong></h1>
+    <h1 class="text-center text-success mt-5"><strong>ENTREGAS PERSONALES</strong></h1>
     <div class="row">
         <div class="col-12 col-md-4"></div>
         <div class="col-12 col-md-4">
             <div class="row mt-5">
                 <div class="col-12 col-md-1"></div>
-                <div class="col-12 col-md-10">
+                <div class="col-12 col-md-12">
                     <div class="form-group text-center">
-                        <label class="fs-3 mt-2 text-secondary"><strong>INGRESE SU CEDULA</strong></label><br>
+                        <label class="fs-3 mt-2 text-secondary"><strong>INGRESE SU CEDULA O CODIGO</strong></label><br>
                         <input type="text" class="form-control text-center text-primary" wire:model="cedula"
                             wire:keydown.enter="buscar" id="cedula" style="font-size: 50px;font-weight: bold;">
 

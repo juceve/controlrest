@@ -41,7 +41,7 @@ class Listado extends Component
                 ->leftJoin('estadopagos', 'estadopagos.id', '=', 'ventas.estadopago_id')
                 ->leftJoin('tipopagos', 'tipopagos.id', '=', 'ventas.tipopago_id')
                 ->where('ventas.sucursale_id', Auth::user()->sucursale_id)
-                ->where('ventas.user_id', Auth::user()->id)
+                // ->where('ventas.user_id', Auth::user()->id)
                 ->where('ventas.estado',1)
                 ->whereBetween('ventas.fecha', [$this->fecInicio, $this->fecFin])
                 ->orderBy('ventas.id', 'ASC')
