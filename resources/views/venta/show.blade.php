@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-Info Venta |
+Info Venta 
 @endsection
 
 @section('content')

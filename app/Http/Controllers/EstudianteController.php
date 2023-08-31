@@ -9,6 +9,7 @@ use App\Models\Tutore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class EstudianteController
@@ -107,8 +108,24 @@ class EstudianteController extends Controller
     public function show($id)
     {
         $estudiante = Estudiante::find($id);
-
-        return view('estudiante.show', compact('estudiante'));
+        $sql = "select venta_id, v.fecha from loncheras l
+        INNER JOIN ventas v on v.id = l.venta_id
+        WHERE estudiante_id = $id
+        UNION
+        SELECT venta_id, v.fecha from bonofechas bf
+        INNER JOIN ventas v on v.id = bf.venta_id
+        WHERE estudiante_id = $id
+        UNION
+        SELECT venta_id, v.fecha FROM bonoanuales ba
+        INNER JOIN ventas v on v.id = ba.venta_id
+        WHERE estudiante_id = $id
+        UNION
+        SELECT venta_id, v.fecha FROM creditoprofesores cp
+        INNER JOIN ventas v on v.id = cp.venta_id
+        WHERE estudiante_id = $id";
+        $ventas = DB::select($sql);
+        // dd($ventas);
+        return view('estudiante.show', compact('estudiante','ventas'));
     }
 
     /**

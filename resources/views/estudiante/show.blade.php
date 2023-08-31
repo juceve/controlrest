@@ -17,7 +17,7 @@ Info Estudiante
                         </span>
 
                         <div class="float-right">
-                            <a href="{{ route('estudiantes.index') }}" class="btn btn-primary btn-sm float-right"
+                            <a href="javascript:history.back()" class="btn btn-primary btn-sm float-right"
                                 data-placement="left">
                                 <i class="uil-arrow-left"></i>
                                 Volver
@@ -68,7 +68,28 @@ Info Estudiante
                         {{ $estudiante->verificado }}
                     </div>
 
-                </div>
+                    <h5 class="text-info mt-5">VENTAS VINCULADAS</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-sm dataTable" style="vertical-align: middle">
+                            <thead class="table-info">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>FECHA</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($ventas as $venta)
+                                    <tr>
+                                        <td>{{$venta->venta_id}}</td>
+                                        <td>{{$venta->fecha}}</td>
+                                        <td> <a href="{{route('ventas.show',$venta->venta_id)}}" target="_blank" rel="noopener" class="btn btn-sm btn-info"><i class="uil-eye"></i> Ver</a> </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>               
             </div>
         </div>
     </div>
