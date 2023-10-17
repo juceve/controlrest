@@ -62,7 +62,13 @@
                         @can('entregas.estadopedidos')
                         <li>
                             <a href="{{route('entregas.estadopedidos')}}"><i class="mdi mdi-cart-variant"></i>
-                                Estado Pedidos</a>
+                                Estado de Saldos</a>
+                        </li>
+                        @endcan
+                        @can('entregas.listado')
+                        <li>
+                            <a href="{{route('entregas.listado')}}"><i class="mdi mdi-list-status"></i>
+                                Anular Entregas</a>
                         </li>
                         @endcan
                     </ul>
@@ -100,7 +106,7 @@
                         @endcan                       
                         @can('ventas.index')
                         <li>
-                            <a href="{{route('ventas.index')}}"><i class="uil-list-ul"></i> Listado</a>
+                            <a href="{{route('ventas.index')}}"><i class="uil-list-ul"></i> Mis Ventas</a>
                         </li>
                         @endcan
                         @can('ventas.cierrecaja')

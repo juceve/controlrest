@@ -134,9 +134,10 @@ class Individual extends Component
                     }
 
                     $sql = "SELECT * FROM entregalounches el
-                where DATE(fechaentrega) = '" . date('Y-m-d') . "'
-                AND estudiante_id = " . $this->bonofecha->estudiante_id . "
-                AND venta_id  = " . $this->bonofecha->venta_id;
+                where DATE(fechaentrega) = '" . date('Y-m-d') . "' ".
+                "AND estudiante_id = " . $this->bonofecha->estudiante_id . 
+                "AND venta_id  = " . $this->bonofecha->venta_id .
+                "AND estado  = 1";
                     $this->entregas = DB::select($sql);
                 } else {
                     $hoy = date('Y-m-d');

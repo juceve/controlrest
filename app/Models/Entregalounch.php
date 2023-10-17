@@ -46,6 +46,11 @@ class Entregalounch extends Model
     {
         return $this->hasOne('App\Models\Producto', 'id', 'producto_id');
     }
+
+    public function estudiante()
+    {
+        return $this->hasOne('App\Models\Estudiante', 'id', 'estudiante_id');
+    }
   
     public function venta()
     {

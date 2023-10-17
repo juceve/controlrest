@@ -93,7 +93,7 @@ class Porcurso extends Component
                             ->where('detalleloncheras.fecha', date('Y-m-d'))
                             ->select('detalleloncheras.tipomenu_id', 'detalleloncheras.menu_id', 'loncheras.venta_id', 'detalleloncheras.id as detalle_id')
                             ->first();
-                        $entrega = Entregalounch::where('estudiante_id', $estudiante->id)->whereDate('fechaentrega', date('Y-m-d'))->first();
+                        $entrega = Entregalounch::where('estudiante_id', $estudiante->id)->whereDate('fechaentrega', date('Y-m-d'))->where('estado', 1)->first();
                         if ($bonoanual) {
                             $menu_id = array();
                             foreach ($this->detalleevento as $detalle) {
@@ -175,7 +175,7 @@ class Porcurso extends Component
                     $listadoHtml = $listadoHtml . '<tr>
                     <td>' . $i . '</td>
                     <td>' . $estudiante->nombre . '</td>
-                    <td align="center">0</td>
+                    <td align="center" style="display: none">0</td>
                     <td align="center"><small>Finalizado</small></td>
                     <td align="center">
                     --
@@ -194,7 +194,7 @@ class Porcurso extends Component
                         $listadoHtml = $listadoHtml . '<tr>
                     <td>' . $i . '</td>
                     <td>' . $estudiante->nombre . '<input type="hidden" value="' . $estudiante->id . '"></td>
-                    <td align="center">0</td>';
+                    <td align="center" style="display: none">0</td>';
                         if (tieneEntrega($estudiante->id, date('Y-m-d'))) {
                             $listadoHtml = $listadoHtml . '<td align="center"><small>Finalizado</small></td>
                             <td align="center">
@@ -223,7 +223,7 @@ class Porcurso extends Component
                             $listadoHtml = $listadoHtml . '<tr>
                     <td>' . $i . '</td>
                     <td>' . $estudiante->nombre . '</td>
-                    <td align="center">0</td>
+                    <td align="center" style="display: none">0</td>
                     <td align="center"><small>Finalizado</small></td>
                     <td align="center">
                     <span class="badge badge-outline-secondary rounded-pill">Ausencia</span>
@@ -240,7 +240,7 @@ class Porcurso extends Component
                             $listadoHtml = $listadoHtml . '<tr>
                         <td>' . $i . '</td>
                         <td>' . $estudiante->nombre . '</td>
-                        <td align="center">' . $estado['restantes'] . '</td>
+                        <td align="center" style="display: none">' . $estado['restantes'] . '</td>
                         <td align="center"><small>Finalizado</small></td>
                         <td align="center">
                         --
@@ -273,7 +273,7 @@ class Porcurso extends Component
                 $menu = Menu::whereIn('id', $pedido[0])->get();
                 $listadoHtml = $listadoHtml . '<tr style="vertical-align:middle;">
                     <td>' . $i . '</td>
-                    <td>' . $estudiante->nombre . ' <input type="hidden" value="' . $estudiante->id . '"></td><td align="center">' . $estado['restantes'] . '</td>';
+                    <td>' . $estudiante->nombre . ' <input type="hidden" value="' . $estudiante->id . '"></td><td align="center" style="display: none">' . $estado['restantes'] . '</td>';
                 if ($menu->count() > 1) {
                     $listadoHtml = $listadoHtml . '<td><select id="selExtra" class="form-select">';
                     $b = 0;
@@ -438,26 +438,17 @@ class Porcurso extends Component
 
                                 if ($pedido[6] == 'bonofecha') {
                                     $fechaActual = new DateTime(date('Y-m-d'));
-                                    $fechaFinalDT = new DateTime(date('Y-m-d'));
                                     $c = 0;
-                                    while ($fechaActual <=  $fechaFinalDT) {
-                                        $diaSemana = $fechaActual->format('N');
-                                        if ($diaSemana >= 1 && $diaSemana <= 5) {
-                                            if (!esFeriado(date_format($fechaActual, 'Y-m-d'))) {
-                                                $licencia = Licencia::create([
-                                                    "estudiante_id" => $fila[0],
-                                                    "fecha" => $fechaActual,
-                                                    "tipomenu_id" => $menu->tipomenu_id,
-                                                ]);
-                                                $c++;
-                                            }
-                                        }
-                                        $fechaActual->modify('+1 day');
-                                    }
+                                    $licencia = Licencia::create([
+                                        "estudiante_id" => $fila[0],
+                                        "fecha" => date_format($fechaActual, 'Y-m-d'),
+                                        "tipomenu_id" => $menu->tipomenu_id,
+                                    ]);
                                     $i = 0;
                                     $bono = Bonofecha::find($pedido[7]);
+                                    
                                     $fechafin = new DateTime($bono->fechafin);
-                                    while ($i < $c) {
+                                    while ($i < 1) {
 
                                         $fechafin->modify('+1 day');
                                         $dia = $fechafin->format('N');

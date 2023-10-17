@@ -46,7 +46,7 @@
                             <tr>
                                 <td style="width: 50px;">NRO</td>
                                 <td>ESTUDIANTE</td>
-                                <td align="center">SALDO</td>
+                                <td align="center" style="display: none">SALDO</td>
                                 <td align="center">TIPO</td>
                                 <td style="width: 100px;" align="center">FALTA</td>
                                 <td style="width: 100px;" align="center">ENTREGA</td>
@@ -71,7 +71,9 @@
                 </div>
             </div>
             <div class="container text-center  mt-2">
-
+                <div class="alert alert-warning">
+                    <strong>Atención!</strong> Utilice el Boton Guardar para generar Entregas y Licencias primero, luego de realizar todo el proceso de entrega puede FINALIZAR CURSO para registrar las faltas como ENTREGAS INJUSTIFICADAS.
+                </div>
             </div>
         </div>
     @endif
@@ -112,7 +114,7 @@
                 var entrega = $(this).find("td:eq(5) input").is(':checked');
                 var licencia = $(this).find("td:eq(6) input").is(':checked');
                 var tipo = $(this).find("td:eq(7) input").val();
-                // console.log(estudiante_id);
+                // console.log(estudiante_id+" "+licencia);
                 Livewire.emit('cargaPedidos', estudiante_id, menu_id, falta, entrega, licencia, tipo);
             });
             // Livewire.emit('prueba');
@@ -153,10 +155,10 @@
                 var licencia = $(this).find("td:eq(6) input").is(':checked');
                 var tipo = $(this).find("td:eq(7) input").val();
                 // console.log(estudiante_id);
-                if(tipo == ""){
+                if (tipo == "") {
                     Livewire.emit('cargaPedidos', estudiante_id, menu_id, falta, entrega, licencia, tipo);
                 }
-                
+
             });
             // Livewire.emit('prueba');
             Livewire.emit('finalizar');

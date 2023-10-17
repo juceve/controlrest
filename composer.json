@@ -15,7 +15,8 @@
         "livewire/livewire": "^2.12",
         "maatwebsite/excel": "^3.1",
         "phpoffice/phpspreadsheet": "^1.28",
-        "spatie/laravel-permission": "^5.10"
+        "spatie/laravel-permission": "^5.10",
+        "yajra/laravel-datatables-oracle": "10.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -34,7 +35,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helpers/Utilitarios.php"
+            "app/Helpers/Utilitarios.php",
+            "app/Helpers/Funciones.php"
         ]
     },
     "autoload-dev": {

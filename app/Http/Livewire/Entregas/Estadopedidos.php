@@ -15,7 +15,7 @@ use Livewire\Component;
 class Estadopedidos extends Component
 {
     public $sucursale_id = null, $selCurso = "";
-    public $curso = null, $tabla = null;
+    public $curso = null, $tabla = null, $totalSaldos = 0;
 
     public function mount()
     {
@@ -34,6 +34,7 @@ class Estadopedidos extends Component
 
     public function buscar()
     {
+        $this->reset('totalSaldos','tabla');
         if ($this->selCurso != "") {
             $hoy = date('Y-m-d');
             $this->curso = Curso::find($this->selCurso);
@@ -47,11 +48,23 @@ class Estadopedidos extends Component
         // dd($tabla);
     }
 
+    public function totalSaldos()
+    {
+        $this->reset('totalSaldos','tabla');
+        $totalsaldos = 0;
+        $estudiantes = Estudiante::where('esestudiante', 1)->get();
+        foreach ($estudiantes as $estudiante) {
+            $saldos = estadoPedidoEstudiante($estudiante->id);
+            $totalsaldos += $saldos['restantes'];
+        }
+        $this->totalSaldos = number_format($totalsaldos);
+    }
+
     public function pdf()
     {
         $tabla = $this->tabla;
         $curso = $this->curso->nombre;
-        $pdf = Pdf::loadView('reports.rptestadopedidos', compact('tabla','curso'))->output();
+        $pdf = Pdf::loadView('reports.rptestadopedidos', compact('tabla', 'curso'))->output();
         return response()->streamDownload(
             fn () => print($pdf),
             "EstadoPedidos_" . date('YmdHi') . ".pdf"

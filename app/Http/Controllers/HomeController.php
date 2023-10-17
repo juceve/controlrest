@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Bonoanuale;
 use App\Models\Bonofecha;
 use App\Models\Entregalounch;
+use App\Models\Estudiante;
 use App\Models\Menu;
 use App\Models\Moneda;
+use App\Models\Producto;
 use App\Models\Tipomenu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +32,9 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
-    {
+    {        
+        $productos = Producto::all();
+
         $sucursale_id = Auth::user()->sucursale_id;
         if (Auth::user()->estado == 0) {
             Auth::logout();
@@ -38,8 +42,9 @@ class HomeController extends Controller
         }
         $hoy = date('Y-m-d');
         $gestion = date('Y');
-        
+
         if ($sucursale_id) {
+
             $sql1 = "SELECT bf.* from bonofechas bf
             INNER JOIN estudiantes e on e.id = bf.estudiante_id
             INNER JOIN cursos c on c.id = e.curso_id
@@ -112,7 +117,7 @@ class HomeController extends Controller
                 }
                 $totalReservas++;
             }
-            $reservas = array("COMPLETOS",$reservasC,"SIMPLES",$reservasS,"EXTRAS",$reservasE,$totalReservas);
+            $reservas = array("COMPLETOS", $reservasC, "SIMPLES", $reservasS, "EXTRAS", $reservasE, $totalReservas);
 
 
             // PUNTO DE VENTA
@@ -133,19 +138,19 @@ class HomeController extends Controller
             foreach ($pos as $item) {
                 switch ($item->tipomenu_id) {
                     case '1':
-                        $cantC+=$item->cantidad;
+                        $cantC += $item->cantidad;
                         break;
                     case '2':
-                        $cantS+=$item->cantidad;
+                        $cantS += $item->cantidad;
                         break;
                     case '3':
-                        $cantE+=$item->cantidad;
+                        $cantE += $item->cantidad;
                         break;
                 }
-                $totalPos+=$item->cantidad;
+                $totalPos += $item->cantidad;
             }
 
-            $arrPos = array("COMPLETOS",$cantC,"SIMPLES",$cantS,"EXTRAS",$cantE,$totalPos);
+            $arrPos = array("COMPLETOS", $cantC, "SIMPLES", $cantS, "EXTRAS", $cantE, $totalPos);
 
 
             // PENDIENTES DE PAGO
@@ -182,19 +187,19 @@ class HomeController extends Controller
             foreach ($pendientespago as $item) {
                 switch ($item->tipomenu_id) {
                     case '1':
-                        $cantC+=$item->cantidad;
+                        $cantC += $item->cantidad;
                         break;
                     case '2':
-                        $cantS+=$item->cantidad;
+                        $cantS += $item->cantidad;
                         break;
                     case '3':
-                        $cantE+=$item->cantidad;
+                        $cantE += $item->cantidad;
                         break;
                 }
-                $totalPP+=$item->cantidad;
+                $totalPP += $item->cantidad;
             }
 
-            $arrPP = array("COMPLETOS",$cantC,"SIMPLES",$cantS,"EXTRAS",$cantE,$totalPP);
+            $arrPP = array("COMPLETOS", $cantC, "SIMPLES", $cantS, "EXTRAS", $cantE, $totalPP);
 
 
             // Profesores
@@ -214,19 +219,19 @@ class HomeController extends Controller
             foreach ($profesores as $item) {
                 switch ($item->tipomenu_id) {
                     case '1':
-                        $cantC+=$item->cantidad;
+                        $cantC += $item->cantidad;
                         break;
                     case '2':
-                        $cantS+=$item->cantidad;
+                        $cantS += $item->cantidad;
                         break;
                     case '3':
-                        $cantE+=$item->cantidad;
+                        $cantE += $item->cantidad;
                         break;
                 }
-                $totalprofesores+=$item->cantidad;
+                $totalprofesores += $item->cantidad;
             }
 
-            $arrProf = array("COMPLETOS",$cantC,"SIMPLES",$cantS,"EXTRAS",$cantE,$totalprofesores);
+            $arrProf = array("COMPLETOS", $cantC, "SIMPLES", $cantS, "EXTRAS", $cantE, $totalprofesores);
 
 
             // Entregas
@@ -256,11 +261,13 @@ class HomeController extends Controller
                 $totalentregas++;
             }
 
-            $arrEntregas = array("COMPLETOS",$cantC,"SIMPLES",$cantS,"EXTRAS",$cantE,$totalentregas);
+            $arrEntregas = array("COMPLETOS", $cantC, "SIMPLES", $cantS, "EXTRAS", $cantE, $totalentregas);
 
             $moneda = Moneda::all()->first();
 
-            return view('home', compact('moneda',  'reservas', 'arrPos', 'arrProf', 'arrPP', 'arrEntregas'));
+            $misVentas = misVentasHoyTotales();            
+
+            return view('home', compact('moneda',  'reservas', 'arrPos', 'arrProf', 'arrPP', 'arrEntregas','misVentas'));
         } else {
             return view('home');
         }

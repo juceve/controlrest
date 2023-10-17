@@ -52,6 +52,7 @@ class Profesores extends Component
             $hoy = date('Y-m-d');
             $entregaLounche = Entregalounch::where('estudiante_id', $this->estudiante->id)
                 ->whereDate('fechaentrega', $hoy)
+                ->where('estado',1)
                 ->first();
             if ($entregaLounche) {
                 $this->emit('warning', 'Producto ya entregado.');

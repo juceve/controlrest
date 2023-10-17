@@ -19,7 +19,7 @@
 
                 @php
                     $colores = ['primary', 'success', 'info', 'warning', 'danger', 'secondary', 'dark'];
-                    $imagen = ['uil-food', 'uil-life-ring', 'uil-coffee', 'uil-utensils','uil-food'];
+                    $imagen = ['uil-food', 'uil-life-ring', 'uil-coffee', 'uil-utensils', 'uil-food'];
                     $i = 0;
                     $total = 0;
                 @endphp
@@ -89,57 +89,6 @@
                     </div> <!-- end col-->
                 @endif
 
-                {{-- <div class="col-lg-4">
-            <div class="card text-white bg-{{$colores[1]}} overflow-hidden">
-                <div class="card-body">
-                    <div class="toll-free-box text-end">
-                        <h3> <i class="{{$imagen[1]}}"></i> PUNTO DE VENTA</h3>
-                    </div>
-                    <div class="text-end">
-                        @php
-                        $total = 0;
-                        @endphp
-                        @foreach ($puntoventas as $reserva)
-                        <span>{{$reserva[1]}}: {{$reserva[2]}}</span> <br>
-                        @php
-                        $total = $total + $reserva[2];
-                        @endphp
-                        @endforeach
-
-                        <hr>
-                        <span><strong>TOTAL: {{$total}}</strong></span>
-
-
-                    </div>
-                </div> <!-- end card-body-->
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card text-white bg-{{$colores[2]}} overflow-hidden">
-                <div class="card-body">
-                    <div class="toll-free-box text-end">
-                        <h3> <i class="{{$imagen[2]}}"></i> PENDIENTE PAGO</h3>
-                    </div>
-                    <div class="text-end">
-                        @php
-                        $total = 0;
-                        @endphp
-                        @foreach ($pendientepagos as $reserva)
-                        <span>{{$reserva[1]}}: {{$reserva[2]}}</span> <br>
-                        @php
-                        $total = $total + $reserva[2];
-                        @endphp
-                        @endforeach
-
-                        <hr>
-                        <span><strong>TOTAL: {{$total}}</strong></span>
-
-
-                    </div>
-                </div> <!-- end card-body-->
-            </div>
-        </div> --}}
 
             </div>
 
@@ -189,120 +138,89 @@
                     </div> <!-- end col-->
                 @endif
             </div>
+
+            <h4>
+                Mis Ventas de Hoy:
+                {{-- {{Auth::user()->roles[0]->name}} --}}
+            </h4>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-sm" style="font-size: 12px;">
+                            <thead class="table-primary">
+                                <tr align="center">
+                                    <th class="text-start">DETALLE</th>
+                                    <th>CANT. OPERACIONES</th>
+                                    <th class="text-end">EFE Bs.</th>
+                                    <th class="text-end">TB Bs.</th>
+                                    <th class="text-end">QR Bs.</th>
+                                    <th class="text-end">CR Bs.</th>
+                                    <th class="text-end">GA Bs.</th>
+                                    <th class="text-end">TOTAL Bs.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $totalOp = 0;
+                                    $totalEFE = 0;
+                                    $totalTB = 0;
+                                    $totalQR = 0;
+                                    $totalCR = 0;
+                                    $totalGA = 0;
+                                    $ttotal = 0;
+                                    foreach ($misVentas as $item) {
+                                        echo "<tr align='right'>
+                                        <td align='left'>$item[0]</td>
+                                        <td align='center'>" .
+                                           $item[1] .
+                                            "</td>
+                                        <td>" .
+                                            number_format($item[2], 2) .
+                                            "</td>
+                                        <td>" .
+                                            number_format($item[3], 2) .
+                                            "</td>
+                                        <td>" .
+                                            number_format($item[4], 2) .
+                                            "</td>
+                                        <td>" .
+                                            number_format($item[5], 2) .
+                                            "</td>
+                                        <td>" .
+                                            number_format($item[6], 2) .
+                                            "</td>
+                                        <td>" .
+                                            number_format($item[7], 2) .
+                                            "</td>
+                                    </tr>";
+                                        $totalOp += $item[1];
+                                        $totalEFE += $item[2];
+                                        $totalTB += $item[3];
+                                        $totalQR += $item[4];
+                                        $totalCR += $item[5];
+                                        $totalGA += $item[6];
+                                        $ttotal += $item[7];
+                                    }
+                                @endphp
+                            </tbody>
+                            <tfoot class="table-primary">
+                                <tr align="right">
+                                    <td align="center">TOTALES</td>
+                                    <td align="center">{{ $totalOp }}</td>
+                                    <td>{{ number_format($totalEFE, 2) }}</td>
+                                    <td>{{ number_format($totalTB, 2) }}</td>
+                                    <td>{{ number_format($totalQR, 2) }}</td>
+                                    <td>{{ number_format($totalCR, 2) }}</td>
+                                    <td>{{ number_format($totalGA, 2) }}</td>
+                                    <td>{{ number_format($ttotal, 2) }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
         @endif
 
-        {{-- <div class="row">
-        <div class="col-xl-5 col-lg-6">
 
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="card widget-flat">
-                        <div class="card-body">
-
-                            @if ($ventasMes)
-                            <div class="float-end">
-                                <i class="mdi mdi-currency-usd widget-icon"></i>
-                            </div>
-                            @php
-                            $meses =
-                            ["01"=>'Enero',"02"=>'Febrero',"03"=>'Marzo',"04"=>'Abril',"05"=>'Mayo',"06"=>'Junio',"07"=>'Julio',"08"=>'Agosto',"09"=>'Septiembre',"10"=>'Octubre',"11"=>'Noviembre',"12"=>'Diciembre'];
-                            @endphp
-                            <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Ventas - {{$meses[$mes]}}
-                            </h5>
-                            <h3 class="mt-3 mb-3">{{$ventasMes[0]->importes}} {{$moneda->abreviatura}}</h3>
-                            <p class="mb-0 text-muted">
-                                <span class="text-success me-2">{{$ventasMes[0]->cantidad}} producto(s)
-                                    vendido(s)</span>
-                                <span class="text-nowrap">Since last month</span>
-                            </p>
-                            @endif
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="card widget-flat">
-                        <div class="card-body">
-                            <div class="float-end">
-                                <i class="mdi mdi-cart-plus widget-icon"></i>
-                            </div>
-                            <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Orders</h5>
-                            <h3 class="mt-3 mb-3">5,543</h3>
-                            <p class="mb-0 text-muted">
-                                <span class="text-danger me-2"><i class="mdi mdi-arrow-down-bold"></i> 1.08%</span>
-                                <span class="text-nowrap">Since last month</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="card widget-flat">
-                        <div class="card-body">
-                            <div class="float-end">
-                                <i class="mdi mdi-currency-usd widget-icon"></i>
-                            </div>
-                            <h5 class="text-muted fw-normal mt-0" title="Average Revenue">Revenue</h5>
-                            <h3 class="mt-3 mb-3">$6,254</h3>
-                            <p class="mb-0 text-muted">
-                                <span class="text-danger me-2"><i class="mdi mdi-arrow-down-bold"></i> 7.00%</span>
-                                <span class="text-nowrap">Since last month</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="card widget-flat">
-                        <div class="card-body">
-                            <div class="float-end">
-                                <i class="mdi mdi-pulse widget-icon"></i>
-                            </div>
-                            <h5 class="text-muted fw-normal mt-0" title="Growth">Growth</h5>
-                            <h3 class="mt-3 mb-3">+ 30.56%</h3>
-                            <p class="mb-0 text-muted">
-                                <span class="text-success me-2"><i class="mdi mdi-arrow-up-bold"></i> 4.87%</span>
-                                <span class="text-nowrap">Since last month</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="col-xl-7 col-lg-6">
-            <div class="card card-h-100">
-                <div class="card-body">
-                    <div class="dropdown float-end">
-                        <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="mdi mdi-dots-vertical"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end">
-
-                            <a href="javascript:void(0);" class="dropdown-item">Sales Report</a>
-
-                            <a href="javascript:void(0);" class="dropdown-item">Export Report</a>
-
-                            <a href="javascript:void(0);" class="dropdown-item">Profit</a>
-
-                            <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                        </div>
-                    </div>
-                    <h4 class="header-title mb-3">Projections Vs Actuals</h4>
-
-                    <div dir="ltr">
-                        <div id="high-performing-product" class="apex-charts" data-colors="#727cf5,#e3eaef"></div>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-    </div> --}}
     </div>
 @endsection

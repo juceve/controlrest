@@ -90,7 +90,6 @@
         <script>
             // Swal.fire("Excelente!", '{{ session('success') }}','success');
             Swal.fire({
-                position: 'middle',
                 icon: 'success',
                 title: 'Excelente',
                 text: '{{ session('success') }}',
@@ -104,7 +103,7 @@
             Swal.fire("Error!", '{{ session('error') }}', 'error');
         </script>
     @endif
-    <script language="JavaScript" type="text/javascript">
+    <script>
         $(document).ready(function() {
             $(".dataTable").DataTable({
                 destroy: true,
@@ -125,8 +124,8 @@
             $(".dataTable5").DataTable({
                 destroy: true,
                 lengthMenu: [
-                    [5,10, 25, 50],
-                    [5,10, 25, 50],
+                    [5, 10, 25, 50],
+                    [5, 10, 25, 50],
                 ],
                 keys: !0,
                 language: {
@@ -192,6 +191,8 @@
             })
         });
 
+
+
         $('.reset').submit(function(e) {
             Swal.fire({
                 title: 'RESET PASSWORD',
@@ -237,6 +238,7 @@
                         next: "<i class='mdi mdi-chevron-right'>",
                     }
                 },
+                
                 drawCallback: function() {
                     $(".dataTables_paginate > .pagination").addClass("pagination-rounded")
                 }

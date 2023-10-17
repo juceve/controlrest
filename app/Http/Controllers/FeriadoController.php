@@ -37,9 +37,9 @@ class FeriadoController extends Controller
         request()->validate(Feriado::$rules);
 
         $feriado = Feriado::create($request->all());
-
+        $cambios = cambiosPorFeriado($request->fecha);
         return redirect()->route('feriados.index')
-            ->with('success', 'Feriado creado correctamente.');
+            ->with('success', 'Feriado creado correctamente. Cambios: '. $cambios);
     }
 
     public function show($id)
