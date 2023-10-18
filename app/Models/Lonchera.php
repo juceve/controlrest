@@ -19,7 +19,7 @@ class Lonchera extends Model
      *
      * @var array
      */
-    protected $fillable = ['fecha','estudiante_id','venta_id','habilitado','estado'];
+    protected $fillable = ['fecha','estudiante_id','venta_id','habilitado', 'sucursale_id', 'estado'];
 
 
     /**

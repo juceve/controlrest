@@ -86,6 +86,7 @@ class Diario extends Component
         WHERE dv.producto_id = 4
         AND v.fecha = '" . $this->selFecha . "'
         AND v.sucursale_id = ".$this->sucursale_id." 
+        AND v.estado = 1
         GROUP BY tipomenu_id, tm.nombre) AS resultado
         GROUP BY  tipomenu_id, tipomenu";
         $pagados = DB::select($sql2);
@@ -131,6 +132,7 @@ class Diario extends Component
         WHERE bf.fechainicio <= '" . $this->selFecha . "'
         AND v.sucursale_id = ".$this->sucursale_id." 
         AND bf.fechafin >= '" . $this->selFecha . "'
+        AND bf.estado = 1
         GROUP BY tipo
         UNION
         SELECT 'PUNTO DE VENTA' tipo,SUM(cantidad) cantidad FROM ventas v
@@ -139,6 +141,7 @@ class Diario extends Component
         WHERE dv.producto_id = 4
         AND v.sucursale_id = ".$this->sucursale_id." 
         AND v.fecha = '" . $this->selFecha . "'
+        AND v.estado = 1
         GROUP BY tipo
 				UNION
 				SELECT 'PROFESORES' tipo,SUM(cantidad) cantidad FROM detalleventas dv
@@ -218,6 +221,7 @@ class Diario extends Component
         INNER JOIN tipomenus tm on tm.id = ba.tipomenu_id
         WHERE ba.estado = 1
         AND ba.gestion = '" . substr($this->selFecha, 0, 4) . "'
+        AND ba.estado = 1
         GROUP BY e.curso_id, ba.tipomenu_id, tm.nombre
         UNION
         SELECT 'BONOFECHA' tipo, e.curso_id, bf.tipomenu_id, tm.nombre tipomenu, count(*) cantidad FROM bonofechas bf
@@ -225,6 +229,7 @@ class Diario extends Component
         INNER JOIN tipomenus tm on tm.id = bf.tipomenu_id
         WHERE bf.fechainicio <= '" . $this->selFecha . "'
         AND bf.fechafin >= '" . $this->selFecha . "'
+        AND bf.estado = 1
         GROUP BY e.curso_id, bf.tipomenu_id, tm.nombre) AS resultado
         GROUP BY  curso_id, tipomenu_id, tipomenu";
         $pagados = DB::select($sql2);

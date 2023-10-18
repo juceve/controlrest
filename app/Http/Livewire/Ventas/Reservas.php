@@ -390,6 +390,7 @@ class Reservas extends Component
                         "fecha" => date('Y-m-d'),
                         "estudiante_id" => $estudiante_id,
                         "venta_id" => $venta->id,
+                        "sucursale_id" => Auth::user()->sucursale_id,
                         "habilitado" => 0,
                     ]);
 

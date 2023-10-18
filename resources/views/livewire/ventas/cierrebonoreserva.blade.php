@@ -102,7 +102,7 @@
                             <thead class="table-info">
                                 <tr align="center">
                                     <th>Nro.</th>
-                                    <th>TIPO PAGOCANTIDAD</th>
+                                    <th>TIPO PAGO</th>
                                     <th>CANTIDAD</th>
                                     <th>IMPORTE BS.</th>
                                 </tr>
@@ -115,13 +115,13 @@
                                 @foreach ($montosHOY as $item)
                                     <tr>
                                         <td align="center">{{ $i }}</td>
-                                        <td>{{ $item->tipopago }}</td>
+                                        <td>{{ $item->nombre }}</td>
                                         <td align="center">{{ $item->cantidad }}</td>
-                                        <td align="right">{{ $item->importe }}</td>
+                                        <td align="right">{{ $item->total }}</td>
                                     </tr>
                                     @php
                                         $i++;
-                                        $total = $total + $item->importe;
+                                        $total = $total + $item->total;
                                     @endphp
                                 @endforeach
 
@@ -140,7 +140,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2"></td>
-                                    <td align="right"><strong>FALTANTE:</strong></td>
+                                    <td align="right"><strong>DIFERENCIA:</strong></td>
                                     <td><input type="number" readonly step="0.00" min="0"
                                             class="form-control form-control-sm text-end bg-white" id="faltante"
                                             wire:model='faltante'></td>
@@ -162,10 +162,7 @@
 
     @php
         $i = 1;
-        $totalEfectivo = 0;
-        $totalQr = 0;
-        $totalTr = 0;
-        $totalGa = 0;
+        $ttotal1 = 0;
     @endphp
 
     <div wire:ignore.self id="modalData" class="modal fade" tabindex="-1" role="dialog"
@@ -202,7 +199,6 @@
                                         <th>TIPO PAGO</th>
                                         <th>DESCUENTO</th>
                                         <th>CANTIDAD</th>
-                                        <th style="width: 100px;">PRECIO UNIT.</th>
                                         <th style="width: 100px;">SUBTOTAL</th>
                                     </tr>
                                 </thead>
@@ -212,66 +208,39 @@
                                         @foreach ($ingresosHOY as $ingreso)
                                             <tr>
                                                 <td align="center">{{ str_pad($i, 3, '0', STR_PAD_LEFT) }}</td>
-                                                <td>{{ $ingreso->descripcion }}</td>
-                                                <td align="center">{{ $ingreso->abreviatura }}</td>
+                                                <td>{{ $ingreso->tipo }}</td>
+                                                <td align="center">{{ $ingreso->tipopago }}</td>
                                                 <td align="center">{{ $ingreso->descuento }}</td>
                                                 <td align="center">{{ $ingreso->cantidad }}</td>
-                                                <td align="right">
-                                                    {{ number_format($ingreso->preciounitario, 2, '.', ',') }}</td>
                                                 <td align="right">{{ number_format($ingreso->subtotal, 2, '.', ',') }}
                                                 </td>
 
                                             </tr>
                                             @php
-                                                switch ($ingreso->abreviatura) {
-                                                    case 'EF':
-                                                        $totalEfectivo = $totalEfectivo + $ingreso->subtotal;
-                                                        break;
-                                                    case 'QR':
-                                                        $totalQr = $totalQr + $ingreso->subtotal;
-                                                        break;
-                                                    case 'TR':
-                                                        $totalTr = $totalTr + $ingreso->subtotal;
-                                                        break;
-                                                    case 'GA':
-                                                        $totalGa = $totalGa + $ingreso->subtotal;
-                                                        break;
-                                                }
+                                                $ttotal1 += $ingreso->subtotal;
                                                 $i++;
                                             @endphp
                                         @endforeach
                                     @endif
                                     <tr class="table-primary">
-                                        <td colspan="6" align="right"><strong>TOTAL:</strong></td>
-                                        <td align="right">{{ number_format($totalpr, 2, '.', ',') }}</td>
+                                        <td colspan="5" align="right"><strong>TOTAL:</strong></td>
+                                        <td align="right">{{ number_format($ttotal1, 2, '.', ',') }}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <hr>
-                        @if ($totalEfectivo)
-                            <div class="row">
-                                <div class="col-12 col-md-3"><strong>TOTAL BS. EFECTIVO:</strong></div>
-                                <div class="col-12 col-md-3">{{ number_format($totalEfectivo, 2, '.', ',') }}</div>
+                        @if ($montosHOY)
+                        @foreach ($montosHOY as $item)
+                             <div class="row">
+                                <div class="col-12 col-md-5"><strong>{{$item->nombre}}</strong></div>                                
+                                <div class="col-12 col-md-3">{{ number_format($item->total, 2, '.', ',') }}</div>
                             </div>
-                        @endif
-                        @if ($totalQr)
-                            <div class="row">
-                                <div class="col-12 col-md-3"><strong>TOTAL BS. PAGO QR:</strong></div>
-                                <div class="col-12 col-md-3">{{ number_format($totalQr, 2, '.', ',') }}</div>
-                            </div>
-                        @endif
-                        @if ($totalTr)
-                            <div class="row">
-                                <div class="col-12 col-md-3"><strong>TOTAL BS. TRANSFER.:</strong></div>
-                                <div class="col-12 col-md-3">{{ number_format($totalTr, 2, '.', ',') }}</div>
-                            </div>
-                        @endif
-                        @if ($totalGa)
-                            <div class="row">
-                                <div class="col-12 col-md-3"><strong>TOTAL BS. GASTOS ADM.:</strong></div>
-                                <div class="col-12 col-md-3">{{ number_format($totalGa, 2, '.', ',') }}</div>
-                            </div>
+                        @endforeach
+                        <div class="row border">
+                            <div class="col-12 col-md-5"><strong>TOTAL BS.:</strong></div>
+                            <div class="col-12 col-md-3"><strong>{{ number_format($ttotal1, 2, '.', ',') }}</strong></div>
+                        </div>
                         @endif
                     @endif
 

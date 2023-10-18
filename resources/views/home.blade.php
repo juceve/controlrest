@@ -72,7 +72,10 @@
                         <div class="card text-white bg-{{ $colores[4] }} overflow-hidden">
                             <div class="card-body">
                                 <div class="toll-free-box text-end">
-                                    <h3> <i class="{{ $imagen[4] }}"></i> PAGOS PENDIENTES</h3>
+                                    <a href="{{ route('ventas.vpagos') }}" class="text-white">
+                                        <h3> <i class="{{ $imagen[4] }}"></i> PAGOS PENDIENTES</h3>
+                                    </a>
+
                                 </div>
                                 <div class="text-end">
 
@@ -139,86 +142,93 @@
                 @endif
             </div>
 
-            <h4>
-                Mis Ventas de Hoy:
-                {{-- {{Auth::user()->roles[0]->name}} --}}
-            </h4>
-            <div class="card">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm" style="font-size: 12px;">
-                            <thead class="table-primary">
-                                <tr align="center">
-                                    <th class="text-start">DETALLE</th>
-                                    <th>CANT. OPERACIONES</th>
-                                    <th class="text-end">EFE Bs.</th>
-                                    <th class="text-end">TB Bs.</th>
-                                    <th class="text-end">QR Bs.</th>
-                                    <th class="text-end">CR Bs.</th>
-                                    <th class="text-end">GA Bs.</th>
-                                    <th class="text-end">TOTAL Bs.</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php
-                                    $totalOp = 0;
-                                    $totalEFE = 0;
-                                    $totalTB = 0;
-                                    $totalQR = 0;
-                                    $totalCR = 0;
-                                    $totalGA = 0;
-                                    $ttotal = 0;
-                                    foreach ($misVentas as $item) {
-                                        echo "<tr align='right'>
+            @if ($misVentas)
+                <h4>
+                    @if (Auth::user()->roles[0]->name == 'VENTAS')
+                        Mis Ventas de Hoy:
+                    @endif
+                    @if (Auth::user()->roles[0]->name == 'Admin')
+                        Listado de Ventas:
+                    @endif
+                </h4>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-sm" style="font-size: 12px;">
+                                <thead class="table-primary">
+                                    <tr align="center">
+                                        <th class="text-start">DETALLE</th>
+                                        <th>CANT. OPERACIONES</th>
+                                        <th class="text-end">EFE Bs.</th>
+                                        <th class="text-end">TB Bs.</th>
+                                        <th class="text-end">QR Bs.</th>
+                                        <th class="text-end">CR Bs.</th>
+                                        <th class="text-end">GA Bs.</th>
+                                        <th class="text-end">TOTAL Bs.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $totalOp = 0;
+                                        $totalEFE = 0;
+                                        $totalTB = 0;
+                                        $totalQR = 0;
+                                        $totalCR = 0;
+                                        $totalGA = 0;
+                                        $ttotal = 0;
+                                        foreach ($misVentas as $item) {
+                                            echo "<tr align='right'>
                                         <td align='left'>$item[0]</td>
                                         <td align='center'>" .
-                                           $item[1] .
-                                            "</td>
+                                                $item[1] .
+                                                "</td>
                                         <td>" .
-                                            number_format($item[2], 2) .
-                                            "</td>
+                                                number_format($item[2], 2) .
+                                                "</td>
                                         <td>" .
-                                            number_format($item[3], 2) .
-                                            "</td>
+                                                number_format($item[3], 2) .
+                                                "</td>
                                         <td>" .
-                                            number_format($item[4], 2) .
-                                            "</td>
+                                                number_format($item[4], 2) .
+                                                "</td>
                                         <td>" .
-                                            number_format($item[5], 2) .
-                                            "</td>
+                                                number_format($item[5], 2) .
+                                                "</td>
                                         <td>" .
-                                            number_format($item[6], 2) .
-                                            "</td>
+                                                number_format($item[6], 2) .
+                                                "</td>
                                         <td>" .
-                                            number_format($item[7], 2) .
-                                            "</td>
+                                                number_format($item[7], 2) .
+                                                "</td>
                                     </tr>";
-                                        $totalOp += $item[1];
-                                        $totalEFE += $item[2];
-                                        $totalTB += $item[3];
-                                        $totalQR += $item[4];
-                                        $totalCR += $item[5];
-                                        $totalGA += $item[6];
-                                        $ttotal += $item[7];
-                                    }
-                                @endphp
-                            </tbody>
-                            <tfoot class="table-primary">
-                                <tr align="right">
-                                    <td align="center">TOTALES</td>
-                                    <td align="center">{{ $totalOp }}</td>
-                                    <td>{{ number_format($totalEFE, 2) }}</td>
-                                    <td>{{ number_format($totalTB, 2) }}</td>
-                                    <td>{{ number_format($totalQR, 2) }}</td>
-                                    <td>{{ number_format($totalCR, 2) }}</td>
-                                    <td>{{ number_format($totalGA, 2) }}</td>
-                                    <td>{{ number_format($ttotal, 2) }}</td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                                            $totalOp += $item[1];
+                                            $totalEFE += $item[2];
+                                            $totalTB += $item[3];
+                                            $totalQR += $item[4];
+                                            $totalCR += $item[5];
+                                            $totalGA += $item[6];
+                                            $ttotal += $item[7];
+                                        }
+                                    @endphp
+                                </tbody>
+                                <tfoot class="table-primary">
+                                    <tr align="right">
+                                        <td align="center">TOTALES</td>
+                                        <td align="center">{{ $totalOp }}</td>
+                                        <td>{{ number_format($totalEFE, 2) }}</td>
+                                        <td>{{ number_format($totalTB, 2) }}</td>
+                                        <td>{{ number_format($totalQR, 2) }}</td>
+                                        <td>{{ number_format($totalCR, 2) }}</td>
+                                        <td>{{ number_format($totalGA, 2) }}</td>
+                                        <td>{{ number_format($ttotal, 2) }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
+
         @endif
 
 

@@ -15,35 +15,40 @@ class Cierrebonoreserva extends Component
 {
     public function render()
     {
-        $sql = "SELECT v.fecha, dv.descripcion,  tp.abreviatura, IF(dv.observacion='','NO','SI') descuento, 
-        SUM(dv.cantidad) cantidad, dv.preciounitario, SUM(dv.subtotal) subtotal,
-        p.user_id,p.sucursal_id,p.estado
+        $hoy = date('Y-m-d');
+        $user = Auth::user()->id;
+        $sucursale = Auth::user()->sucursale_id;
+        $sql = "SELECT p.nombre as tipo, COUNT(DISTINCT(v.id)) cantidad,tp.abreviatura tipopago,IF(dv.observacion='DESCUENTO','SI','NO') descuento,SUM(dv.subtotal) subtotal
         from detalleventas dv
         INNER JOIN ventas v on v.id = dv.venta_id
-        INNER JOIN pagos p ON p.venta_id = v.id
-        INNER JOIN tipopagos tp ON tp.id = p.tipopago_id
-        WHERE cliente != 'VENTA POS'        
-        AND p.user_id = " . Auth::user()->id . "
-        AND p.sucursal_id = " . Auth::user()->sucursale_id . "
-        AND v.fecha = '" . date('Y-m-d') . "'
+        INNER JOIN tipopagos tp on tp.id = v.tipopago_id
+        INNER JOIN productos p on p.id = dv.producto_id
+        WHERE v.user_id = $user
+        AND v.fecha = '$hoy'
+        AND v.estadopago_id = 2
         AND v.estado = 1
-        GROUP BY v.fecha,dv.descripcion,tp.abreviatura, dv.preciounitario, dv.observacion,p.user_id,p.sucursal_id,p.estado";
+        AND dv.producto_id <> 4
+        AND v.sucursale_id = $sucursale
+        GROUP BY p.nombre,dv.observacion,tp.abreviatura";
         $ingresosHOY = DB::select($sql);
         $this->ingresos = $ingresosHOY;
-        
-
-        $sql2 = "SELECT p.tipopago_id, p.tipopago, count(*) cantidad, SUM(p.importe) importe from pagos p
-        INNER JOIN ventas v on v.id = p.venta_id
-        WHERE p.fecha = '" . date('Y-m-d') . "'
-        AND v.cliente <> 'VENTA POS'
-        AND p.user_id = " . Auth::user()->id . "
-        AND p.estado = 1
-        GROUP BY p.tipopago_id, p.tipopago";
+       
+        $sql2 = "SELECT tp.nombre, tp.id tipopago_id, COUNT(DISTINCT(v.id)) cantidad, SUM(dv.subtotal) total FROM ventas v
+        INNER JOIN tipopagos tp on tp.id = v.tipopago_id
+        INNER JOIN detalleventas dv on v.id = dv.venta_id
+        WHERE user_id = $user
+        AND fecha = '$hoy'
+        AND estadopago_id = 2
+        AND v.estado = 1
+        AND v.sucursale_id = $sucursale
+        AND dv.producto_id <> 4
+        GROUP BY tp.nombre,tp.id";
         $montosHOY = DB::select($sql2);
         $this->montos = $montosHOY;
+        // dd($montosHOY);
         $this->reset(['totalpr', 'totalpp']);
         foreach ($montosHOY as $ingreso) {
-            $this->totalpr = $this->totalpr + $ingreso->importe;
+            $this->totalpr = $this->totalpr + $ingreso->total;
         }
 
         $cierres = Cierrereservabono::where('user_id', Auth::user()->id)
@@ -63,11 +68,11 @@ class Cierrebonoreserva extends Component
     public function updatedEncaja()
     {
         if (is_numeric($this->encaja)) {
-            $this->faltante = $this->totalpr - $this->encaja;
+            $this->faltante = $this->encaja - $this->totalpr;
         }
         if ($this->encaja == "") {
             $this->encaja = 0;
-            $this->faltante = $this->totalpr - $this->encaja;
+            $this->faltante = $this->encaja - $this->totalpr;
         }
     }
 
@@ -88,11 +93,11 @@ class Cierrebonoreserva extends Component
             foreach ($this->ingresos as $ingreso) {
                 $detallecierre = Detallecierrereservabono::create([
                     'cierrereservabono_id' => $cierre->id,
-                    'descripcion' => $ingreso['descripcion'],
-                    'tipopago' => $ingreso['abreviatura'],
+                    'descripcion' => $ingreso['tipo'],
+                    'tipopago' => $ingreso['tipopago'],
                     'descuento' => $ingreso['descuento'],
                     'cantidad' => $ingreso['cantidad'],
-                    'preciounitario' => $ingreso['preciounitario'],
+                    // 'preciounitario' => $ingreso['preciounitario'],
                     'importe' => $ingreso['subtotal'],
                 ]);
             }
@@ -101,9 +106,9 @@ class Cierrebonoreserva extends Component
                 $detallemontos = Detallemontocierreresbono::create([
                     "cierrereservabono_id" => $cierre->id,
                     "tipopago_id" => $monto['tipopago_id'],
-                    "tipopago" => $monto['tipopago'],
+                    "tipopago" => $monto['nombre'],
                     "cantidad" => $monto['cantidad'],
-                    "importe" => $monto['importe'],
+                    "importe" => $monto['total'],
                 ]);
             }
             DB::commit();
@@ -147,7 +152,7 @@ class Cierrebonoreserva extends Component
                 case 'QR':
                     $totalQr = $totalQr + $detalle->importe;
                     break;
-                case 'TR':
+                case 'TB':
                     $totalTr = $totalTr + $detalle->importe;
                     break;
                 case 'GA':

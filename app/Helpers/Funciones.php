@@ -171,44 +171,17 @@ function traeEstudiantesVenta($venta_id)
     return $estudiantes;
 }
 
-function misVentasHoy()
+function ventasHoy()
 {
     $hoy = date('Y-m-d');
     $misventas = Venta::where([
         ['fecha', $hoy],
-        ['user_id', Auth::user()->id],
-        ['estado', 1],
-        ['estadopago_id', 2]
-    ])->get();
-
-    $productos = Producto::all();
-    $arrayVentas = [];
-    foreach ($productos as $producto) {
-        // dd($producto->id);
-        foreach ($misventas as $venta) {
-            $aVentas = $venta->detalleventas->first();
-            if ($aVentas->producto_id == $producto->id) {
-
-                foreach ($venta->detalleventas as $detalle) {
-                    $arrayVentas[] = array($producto->nombre, $detalle);
-                }
-            }
-        }
-    }
-    return $arrayVentas;
-}
-
-function misVentasHoyTotales()
-{
-    $hoy = date('Y-m-d');
-    $misventas = Venta::where([
-        ['fecha', $hoy],
-        ['user_id', Auth::user()->id],
+        // ['user_id', Auth::user()->id],
         ['estado', 1],
         // ['estadopago_id', 2]
     ])->get();
 
-    $productos = Producto::where('id','<>',5)->get();
+    $productos = Producto::where('id', '<>', 5)->get();
     $arrayVentas = [];
     foreach ($productos as $producto) {
         $total = 0;
@@ -241,13 +214,71 @@ function misVentasHoyTotales()
                 $cantOperaciones++;
             }
         }
-        $arrayVentas[] = array($producto->nombre,$cantOperaciones,  
-        $totalEF, 
-        $totalTB, 
-        $totalQR, 
-        $totalCR, 
-        $totalGA, 
-        $total);
+        $arrayVentas[] = array(
+            $producto->nombre, $cantOperaciones,
+            $totalEF,
+            $totalTB,
+            $totalQR,
+            $totalCR,
+            $totalGA,
+            $total
+        );
+    }
+    return $arrayVentas;
+}
+
+function misVentasHoyTotales()
+{
+    $hoy = date('Y-m-d');
+    $misventas = Venta::where([
+        ['fecha', $hoy],
+        ['user_id', Auth::user()->id],
+        ['estado', 1],
+        // ['estadopago_id', 2]
+    ])->get();
+
+    $productos = Producto::where('id', '<>', 5)->get();
+    $arrayVentas = [];
+    foreach ($productos as $producto) {
+        $total = 0;
+        $cantOperaciones = 0;
+        $totalEF =  0;
+        $totalTB =  0;
+        $totalQR =  0;
+        $totalCR =  0;
+        $totalGA =  0;
+
+        foreach ($misventas as $venta) {
+            $aVentas = $venta->detalleventas->first();
+            if ($aVentas->producto_id == $producto->id) {
+                $total += $venta->importe;
+                if ($venta->tipopago_id == 1) {
+                    $totalEF += $venta->importe;
+                }
+                if ($venta->tipopago_id == 2) {
+                    $totalTB += $venta->importe;
+                }
+                if ($venta->tipopago_id == 3) {
+                    $totalQR += $venta->importe;
+                }
+                if ($venta->tipopago_id == 4) {
+                    $totalCR += $venta->importe;
+                }
+                if ($venta->tipopago_id == 5) {
+                    $totalGA += $venta->importe;
+                }
+                $cantOperaciones++;
+            }
+        }
+        $arrayVentas[] = array(
+            $producto->nombre, $cantOperaciones,
+            $totalEF,
+            $totalTB,
+            $totalQR,
+            $totalCR,
+            $totalGA,
+            $total
+        );
     }
     return $arrayVentas;
 }

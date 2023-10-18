@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Reporte Cierre de Caja</title>
-    <link href="{{public_path('invoice/bootstrap.min.css')}}" rel="stylesheet" id="bootstrap-css">
-    <script src="{{public_path('invoice/bootstrap.min.js')}}"></script>
-    <script src="{{public_path('invoice/jquery-1.11.1.min.js')}}"></script>
+    <link href="{{ public_path('invoice/bootstrap.min.css') }}" rel="stylesheet" id="bootstrap-css">
+    <script src="{{ public_path('invoice/bootstrap.min.js') }}"></script>
+    <script src="{{ public_path('invoice/jquery-1.11.1.min.js') }}"></script>
     <style>
         .invoice-title h2,
         .invoice-title h3 {
@@ -34,7 +34,7 @@
 </head>
 
 <body>
-    <img src="{{asset('img/logoAR.png')}}" style="width: 120px;">
+    <img src="{{ asset('img/logoAR.png') }}" style="width: 120px;">
 
     <div class="container">
         <div class="content">
@@ -47,21 +47,22 @@
             <div class="row mb-3">
                 <div class="col-12 text-center">
                     <h4>OPERACIONES - BONOS Y RESERVAS</h4>
-                    <small><strong>Fecha:</strong> {{$cierre->fecha}}</small>
+                    <small><strong>Fecha:</strong> {{ $cierre->fecha }}</small>
                 </div>
             </div><br>
             <div class="row ">
                 <div class="col-12">
                     <div class="container">
                         <div class="">
-                            <table class="table table-bordered" style="font-size: 12px; width: 40%;text-transform: uppercase;">
+                            <table class="table table-bordered"
+                                style="font-size: 12px; width: 40%;text-transform: uppercase;">
                                 <tr>
                                     <td><b>USUARIO:</b> </td>
-                                    <td>{{$cierre->user->name}}</td>
+                                    <td>{{ $cierre->user->name }}</td>
                                 </tr>
                                 <tr>
                                     <td><b>SUCURSAL:</b> </td>
-                                    <td>{{$cierre->sucursale->nombre}}</td>
+                                    <td>{{ $cierre->sucursale->nombre }}</td>
                                 </tr>
                             </table>
                         </div>
@@ -81,13 +82,13 @@
                                         <td>TIPO PAGO</td>
                                         <td>DESCUENTO</td>
                                         <td>CANTIDAD</td>
-                                        <td style="width: 100px;">PRECIO UNIT.</td>
+                                        {{-- <td style="width: 100px;">PRECIO UNIT.</td> --}}
                                         <td style="width: 100px;">SUBTOTAL</td>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @php
-                                        $i=1;
+                                        $i = 1;
                                         $total = 0;
                                     @endphp
                                     @if ($detalles)
@@ -99,8 +100,8 @@
                                                 <td align="center">{{ $ingreso->tipopago }}</td>
                                                 <td align="center">{{ $ingreso->descuento }}</td>
                                                 <td align="center">{{ $ingreso->cantidad }}</td>
-                                                <td align="right">
-                                                    {{ number_format($ingreso->preciounitario, 2, '.', ',') }}</td>
+                                                {{-- <td align="right"> --}}
+                                                {{-- {{ number_format($ingreso->preciounitario, 2, '.', ',') }}</td> --}}
                                                 <td align="right">{{ number_format($ingreso->importe, 2, '.', ',') }}
                                                 </td>
 
@@ -114,33 +115,77 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="5"></td>
+                                        <td colspan="4"></td>
                                         <td align="right">TOTAL Bs.:</td>
-                                        <td align="right">{{number_format($total,2,'.',',')}}</td>
+                                        <td align="right">{{ number_format($total, 2, '.', ',') }}</td>
                                     </tr>
                                 </tfoot>
                             </table>
                         </div>
-                        @if ($totalEfectivo)
-                            <div class="content">
-                                <strong>TOTAL BS. EFECTIVO: </strong>{{ number_format($totalEfectivo, 2, '.', ',') }}
-                            </div>
-                        @endif
+
+
+                        <table class="table table-bordered">
+                            @if ($totalEfectivo)
+                                <tr>
+                                    <td>
+                                        <strong>BS. PAGO EFECTIVO: </strong>
+                                    </td>
+                                    <td>
+                                        {{ number_format($totalEfectivo, 2, '.', ',') }}
+                                    </td>
+                                </tr>
+                            @endif
+                            @if ($totalQr)
+                                <tr>
+                                    <td>
+                                        <strong>BS. PAGO QR: </strong>
+                                    </td>
+                                    <td>
+                                        {{ number_format($totalQr, 2, '.', ',') }}
+                                    </td>
+                                </tr>
+                            @endif
+                            @if ($totalTr)
+                                <tr>
+                                    <td>
+                                        <strong>BS. TRANS. BANCARIA: </strong>
+                                    </td>
+                                    <td>
+                                        {{ number_format($totalTr, 2, '.', ',') }}
+                                    </td>
+                                </tr>
+                            @endif
+                            @if ($totalGa)
+                                <tr>
+                                    <td>
+                                        <strong>BS. GASTOS ADM.: </strong>
+                                    </td>
+                                    <td>
+                                        {{ number_format($totalGa, 2, '.', ',') }}
+                                    </td>
+                                </tr>
+                            @endif
+                        </table>
+
+                        {{-- <div class="content">
+
+                        </div>
+
                         @if ($totalQr)
                             <div class="content">
-                                <strong>TOTAL BS. PAGO QR:</strong> {{ number_format($totalQr, 2, '.', ',') }}
+                                <strong>BS. PAGO QR:</strong> {{ number_format($totalQr, 2, '.', ',') }}
                             </div>
                         @endif
                         @if ($totalTr)
                             <div class="content">
-                                <strong>TOTAL BS. TRANSFER.: </strong>{{ number_format($totalTr, 2, '.', ',') }}
+                                <strong>BS. TRANSF. BANCARIA: </strong>{{ number_format($totalTr, 2, '.', ',') }}
                             </div>
                         @endif
                         @if ($totalGa)
                             <div class="content">
-                                <strong>TOTAL BS. GASTOS ADM.: </strong>{{ number_format($totalGa, 2, '.', ',') }}
+                                <strong>BS. GASTOS ADM.: </strong>{{ number_format($totalGa, 2, '.', ',') }}
                             </div>
-                        @endif
+                        @endif --}}
                         {{-- <div class="mb-3">
                             <h6>OPERACIONES CON PAGO PENDIENTE</h6>
                             <table class="table table-bordered" style="font-size: 12px">
@@ -174,10 +219,10 @@
                                     </tr>
                                 </tfoot>
                             </table>
-                        </div>--}}
+                        </div> --}}
 
                         <div class="mb-3">
-                       
+
                             <br><br><br>
                             {{-- <table style="width: 100%">
                                 <tr>
@@ -189,7 +234,7 @@
                                     </td>
                                 </tr>
                             </table> --}}
-                        </div> 
+                        </div>
                     </div>
                 </div>
 

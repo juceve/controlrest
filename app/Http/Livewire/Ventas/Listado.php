@@ -41,38 +41,72 @@ class Listado extends Component
 
     public function render()
     {
+        $this->emit('loading');
         $estadoPagos = Estadopago::all();
         $tipoPagos = Tipopago::all();
         $ventas = null;
-        if ($this->tp != "") {
-            $ventas = DB::table('ventas')
-                ->leftJoin('pagos', 'pagos.venta_id', '=', 'ventas.id')
-                ->leftJoin('estadopagos', 'estadopagos.id', '=', 'ventas.estadopago_id')
-                ->leftJoin('tipopagos', 'tipopagos.id', '=', 'ventas.tipopago_id')
-                ->where('ventas.sucursale_id', Auth::user()->sucursale_id)
-                ->where('ventas.user_id', Auth::user()->id)
-                ->where('ventas.estado', 1)
-                ->whereBetween('ventas.fecha', [$this->fecInicio, $this->fecFin])
-                ->where('ventas.tipopago_id', $this->tp)
-                ->orderBy('ventas.id', 'ASC')
-                ->select('ventas.id', 'ventas.fecha', 'ventas.cliente', 'estadopagos.abreviatura as estadopago', 'ventas.importe', 'tipopagos.abreviatura as tipopago')
-                ->distinct('ventas_id')
-                ->get();
-        } else {
-            $ventas = DB::table('ventas')
-                ->leftJoin('pagos', 'pagos.venta_id', '=', 'ventas.id')
-                ->leftJoin('estadopagos', 'estadopagos.id', '=', 'ventas.estadopago_id')
-                ->leftJoin('tipopagos', 'tipopagos.id', '=', 'ventas.tipopago_id')
-                ->where('ventas.sucursale_id', Auth::user()->sucursale_id)
-                ->where('ventas.user_id', Auth::user()->id)
-                ->where('ventas.estado', 1)
-                ->whereBetween('ventas.fecha', [$this->fecInicio, $this->fecFin])
-                ->orderBy('ventas.id', 'ASC')
-                ->select('ventas.id', 'ventas.fecha', 'ventas.cliente', 'estadopagos.abreviatura as estadopago', 'ventas.importe', 'tipopagos.abreviatura as tipopago')
-                ->distinct('ventas_id')
-                ->get();
-        }
 
+        if (Auth::user()->roles[0]->name== "VENTAS") {
+            if ($this->tp != "") {
+                $ventas = DB::table('ventas')
+                    // ->leftJoin('pagos', 'pagos.venta_id', '=', 'ventas.id')
+                    ->leftJoin('estadopagos', 'estadopagos.id', '=', 'ventas.estadopago_id')
+                    ->leftJoin('tipopagos', 'tipopagos.id', '=', 'ventas.tipopago_id')
+                    ->where('ventas.sucursale_id', Auth::user()->sucursale_id)
+                    ->where('ventas.user_id', Auth::user()->id)
+                    ->where('ventas.estado', 1)
+                    ->whereBetween('ventas.fecha', [$this->fecInicio, $this->fecFin])
+                    ->where('ventas.tipopago_id', $this->tp)
+                    ->orderBy('ventas.id', 'ASC')
+                    ->select('ventas.id', 'ventas.fecha', 'ventas.cliente', 'estadopagos.abreviatura as estadopago', 'ventas.importe', 'tipopagos.abreviatura as tipopago')
+                    ->distinct('ventas_id')
+                    ->get();
+            } else {
+                $ventas = DB::table('ventas')
+                    // ->leftJoin('pagos', 'pagos.venta_id', '=', 'ventas.id')
+                    ->leftJoin('estadopagos', 'estadopagos.id', '=', 'ventas.estadopago_id')
+                    ->leftJoin('tipopagos', 'tipopagos.id', '=', 'ventas.tipopago_id')
+                    ->where('ventas.sucursale_id', Auth::user()->sucursale_id)
+                    ->where('ventas.user_id', Auth::user()->id)
+                    ->where('ventas.estado', 1)
+                    ->whereBetween('ventas.fecha', [$this->fecInicio, $this->fecFin])
+                    ->orderBy('ventas.id', 'ASC')
+                    ->select('ventas.id', 'ventas.fecha', 'ventas.cliente', 'estadopagos.abreviatura as estadopago', 'ventas.importe', 'tipopagos.abreviatura as tipopago')
+                    ->distinct('ventas_id')
+                    ->get();
+            }
+        }
+        if (Auth::user()->roles[0]->name== "Admin") {
+            if ($this->tp != "") {
+                $ventas = DB::table('ventas')
+                    // ->leftJoin('pagos', 'pagos.venta_id', '=', 'ventas.id')
+                    ->leftJoin('estadopagos', 'estadopagos.id', '=', 'ventas.estadopago_id')
+                    ->leftJoin('tipopagos', 'tipopagos.id', '=', 'ventas.tipopago_id')
+                    ->where('ventas.sucursale_id', Auth::user()->sucursale_id)
+                    // ->where('ventas.user_id', Auth::user()->id)
+                    ->where('ventas.estado', 1)
+                    ->whereBetween('ventas.fecha', [$this->fecInicio, $this->fecFin])
+                    ->where('ventas.tipopago_id', $this->tp)
+                    ->orderBy('ventas.id', 'ASC')
+                    ->select('ventas.id', 'ventas.fecha', 'ventas.cliente', 'estadopagos.abreviatura as estadopago', 'ventas.importe', 'tipopagos.abreviatura as tipopago')
+                    ->distinct('ventas_id')
+                    ->get();
+            } else {
+                $ventas = DB::table('ventas')
+                    // ->leftJoin('pagos', 'pagos.venta_id', '=', 'ventas.id')
+                    ->leftJoin('estadopagos', 'estadopagos.id', '=', 'ventas.estadopago_id')
+                    ->leftJoin('tipopagos', 'tipopagos.id', '=', 'ventas.tipopago_id')
+                    ->where('ventas.sucursale_id', Auth::user()->sucursale_id)
+                    // ->where('ventas.user_id', Auth::user()->id)
+                    ->where('ventas.estado', 1)
+                    ->whereBetween('ventas.fecha', [$this->fecInicio, $this->fecFin])
+                    ->orderBy('ventas.id', 'ASC')
+                    ->select('ventas.id', 'ventas.fecha', 'ventas.cliente', 'estadopagos.abreviatura as estadopago', 'ventas.importe', 'tipopagos.abreviatura as tipopago')
+                    ->distinct('ventas_id')
+                    ->get();
+            }
+        }
+        $this->emit('unLoading');
         $this->emit('datatableRender');
         $this->contenedor = $ventas;
 

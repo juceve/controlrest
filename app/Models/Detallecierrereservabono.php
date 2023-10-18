@@ -30,8 +30,7 @@ class Detallecierrereservabono extends Model
 		'descripcion' => 'required',
 		'tipopago' => 'required',
 		'descuento' => 'required',
-		'cantidad' => 'required',
-		'preciounitario' => 'required',
+		'cantidad' => 'required',		
 		'importe' => 'required',
     ];
 
@@ -42,7 +41,7 @@ class Detallecierrereservabono extends Model
      *
      * @var array
      */
-    protected $fillable = ['cierrereservabono_id','descripcion','tipopago','descuento','cantidad','preciounitario','importe'];
+    protected $fillable = ['cierrereservabono_id','descripcion','tipopago','descuento','cantidad','importe'];
 
 
     /**

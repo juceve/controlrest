@@ -32,7 +32,7 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
-    {        
+    {
         $productos = Producto::all();
 
         $sucursale_id = Auth::user()->sucursale_id;
@@ -156,7 +156,14 @@ class HomeController extends Controller
             // PENDIENTES DE PAGO
 
             $sqlpp = "SELECT tipomenu_id, SUM(cantidad) cantidad FROM
-            (SELECT bf.tipomenu_id, count(*) cantidad FROM bonofechas bf
+            (SELECT dv.tipomenu_id, count(*) cantidad FROM detalleventas dv
+            INNER JOIN ventas v on v.id = dv.venta_id
+            WHERE v.estadopago_id = 1
+            AND v.fecha = '$hoy'
+            AND v.sucursale_id = $sucursale_id
+            GROUP BY dv.tipomenu_id
+            UNION
+            SELECT bf.tipomenu_id, count(*) cantidad FROM bonofechas bf
             INNER JOIN ventas v on v.id = bf.venta_id
             WHERE v.estadopago_id = 1
             AND fechainicio <= '$hoy'
@@ -263,11 +270,17 @@ class HomeController extends Controller
 
             $arrEntregas = array("COMPLETOS", $cantC, "SIMPLES", $cantS, "EXTRAS", $cantE, $totalentregas);
 
+            $misVentas = null;
             $moneda = Moneda::all()->first();
+            if (Auth::user()->roles[0]->name == "VENTAS") {
+                $misVentas = misVentasHoyTotales();
+            }
+            if (Auth::user()->roles[0]->name == "Admin") {
+                $misVentas = ventasHoy();
+            }
+            
 
-            $misVentas = misVentasHoyTotales();            
-
-            return view('home', compact('moneda',  'reservas', 'arrPos', 'arrProf', 'arrPP', 'arrEntregas','misVentas'));
+            return view('home', compact('moneda',  'reservas', 'arrPos', 'arrProf', 'arrPP', 'arrEntregas', 'misVentas'));
         } else {
             return view('home');
         }

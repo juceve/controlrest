@@ -37,7 +37,7 @@ class Bonoanuale extends Model
      *
      * @var array
      */
-    protected $fillable = ['gestion','estudiante_id','tipomenu_id','venta_id','estado'];
+    protected $fillable = ['gestion','estudiante_id','tipomenu_id','venta_id', 'sucursale_id', 'estado'];
 
 
     /**

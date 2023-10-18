@@ -11,8 +11,7 @@ class Bonofecha extends Model
 		'fechainicio' => 'required',
 		'fechafin' => 'required',
 		'estudiante_id' => 'required',
-		'tipomenu_id' => 'required',
-		
+		'tipomenu_id' => 'required',		
 		'estado' => 'required',
     ];
 
@@ -23,7 +22,7 @@ class Bonofecha extends Model
      *
      * @var array
      */
-    protected $fillable = ['fechainicio','fechafin','estudiante_id', 'tipomenu_id','venta_id','estado'];
+    protected $fillable = ['fechainicio','fechafin','estudiante_id', 'tipomenu_id','venta_id', 'sucursale_id', 'estado'];
 
 
     /**
