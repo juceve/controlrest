@@ -1,6 +1,6 @@
 <div>
     @section('template_title')
-        Cierres POS
+        Cierres de Caja
     @endsection
     <div class="card">
         <div class="card-header bg-info text-white">

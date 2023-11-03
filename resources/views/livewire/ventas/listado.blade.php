@@ -19,12 +19,12 @@
                 <select wire:model='tp' class="form-select">
                     <option value="">Todos</option>
                     @foreach ($tps as $tp)
-                    <option value="{{$tp->id}}">{{$tp->nombre}}</option>    
-                    @endforeach                    
+                        <option value="{{ $tp->id }}">{{ $tp->nombre }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
-        @if (count($ventas) > 0)
+        @if ($ventas->count()>0)
             <div class="col-12 col-md-2 mb-2 d-grid">
                 <button class="btn btn-danger" wire:click='exportar'>PDF <i
                         class="mdi mdi-file-pdf-outline"></i></button>
@@ -55,38 +55,41 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($ventas as $venta)
-                    <tr>
-                        <td align="center">{{ $venta->id }}</td>
-                        <td align="center">{{ $venta->fecha }}</td>
-                        <td>{{ $venta->cliente }}</td>
-                        <td>{{ traeEstudiantesVenta($venta->id) }}</td>
-                        <td align="center">{{ $venta->tipopago }}</td>
-                        <td align="center">{{ $venta->estadopago }}</td>
-                        <td align="right">{{ $venta->importe }}</td>
+                @if ($ventas->count() > 0)
+                    @foreach ($ventas as $venta)
+                        <tr>
+                            <td align="center">{{ $venta->id }}</td>
+                            <td align="center">{{ $venta->fecha }}</td>
+                            <td>{{ $venta->cliente }}</td>
+                            <td>{{ traeEstudiantesVenta($venta->id) }}</td>
+                            <td align="center">{{ $venta->tipopago }}</td>
+                            <td align="center">{{ $venta->estadopago }}</td>
+                            <td align="right">{{ $venta->importe }}</td>
 
-                        <td align="right">
-                            {{-- <form action="{{ route('ventas.destroy', $venta->id) }}" --}}
-                            {{-- method="POST" class="anular"> --}}
-                            <a class="btn btn-sm btn-outline-primary " href="{{ route('ventas.show', $venta->id) }}"
-                                title="Ver info"><i class="uil-eye"></i></a>
-                            @can('ventas.edit')
-                                <a class="btn btn-sm btn-outline-success" href="{{ route('ventas.destroy', $venta->id) }}"
-                                    title="Editar"><i class="uil-edit"></i></a>
-                            @endcan
+                            <td align="right">
+                                {{-- <form action="{{ route('ventas.destroy', $venta->id) }}" --}}
+                                {{-- method="POST" class="anular"> --}}
+                                <a class="btn btn-sm btn-outline-primary " href="{{ route('ventas.show', $venta->id) }}"
+                                    title="Ver info"><i class="uil-eye"></i></a>
+                                @can('ventas.edit')
+                                    <a class="btn btn-sm btn-outline-success"
+                                        href="{{ route('ventas.destroy', $venta->id) }}" title="Editar"><i
+                                            class="uil-edit"></i></a>
+                                @endcan
 
 
-                            @csrf
-                            @method('DELETE')
-                            @can('ventas.destroy')
-                                <button type="button" class="btn btn-outline-danger btn-sm" title="Anular Venta"
-                                    onclick="anular({{ $venta->id }})"><i class="uil-trash"></i></button>
-                            @endcan
+                                @csrf
+                                @method('DELETE')
+                                @can('ventas.destroy')
+                                    <button type="button" class="btn btn-outline-danger btn-sm" title="Anular Venta"
+                                        onclick="anular({{ $venta->id }})"><i class="uil-trash"></i></button>
+                                @endcan
 
-                            {{-- </form> --}}
-                        </td>
-                    </tr>
-                @endforeach
+                                {{-- </form> --}}
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
             </tbody>
         </table>
     </div>

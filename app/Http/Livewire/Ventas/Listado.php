@@ -46,7 +46,7 @@ class Listado extends Component
         $tipoPagos = Tipopago::all();
         $ventas = null;
 
-        if (Auth::user()->roles[0]->name== "VENTAS") {
+        if (Auth::user()->roles[0]->name == "VENTAS") {
             if ($this->tp != "") {
                 $ventas = DB::table('ventas')
                     // ->leftJoin('pagos', 'pagos.venta_id', '=', 'ventas.id')
@@ -76,7 +76,7 @@ class Listado extends Component
                     ->get();
             }
         }
-        if (Auth::user()->roles[0]->name== "Admin") {
+        if (Auth::user()->roles[0]->name == "Admin") {
             if ($this->tp != "") {
                 $ventas = DB::table('ventas')
                     // ->leftJoin('pagos', 'pagos.venta_id', '=', 'ventas.id')
@@ -143,9 +143,11 @@ class Listado extends Component
 
             $venta->estado = 0;
             $venta->save();
+            if ($pago) {
+                $pago->estado = 0;
+                $pago->save();
+            }
 
-            $pago->estado = 0;
-            $pago->save();
 
             $bonoanual = Bonoanuale::where('venta_id', $id)->first();
             $bonomensual = Bonofecha::where('venta_id', $id)->first();

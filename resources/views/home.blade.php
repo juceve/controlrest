@@ -164,7 +164,8 @@
                                         <th class="text-end">QR Bs.</th>
                                         <th class="text-end">CR Bs.</th>
                                         <th class="text-end">GA Bs.</th>
-                                        <th class="text-end">TOTAL Bs.</th>
+                                        <th class="text-end">TOTAL Bs. <br> PAGADOS</th>
+                                        <th class="text-end">TOTAL Bs. <br> POR PAGAR</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -176,6 +177,7 @@
                                         $totalCR = 0;
                                         $totalGA = 0;
                                         $ttotal = 0;
+                                        $ttotalpp = 0;
                                         foreach ($misVentas as $item) {
                                             echo "<tr align='right'>
                                         <td align='left'>$item[0]</td>
@@ -200,6 +202,9 @@
                                         <td>" .
                                                 number_format($item[7], 2) .
                                                 "</td>
+                                        <td>" .
+                                                number_format($item[8], 2) .
+                                                "</td>
                                     </tr>";
                                             $totalOp += $item[1];
                                             $totalEFE += $item[2];
@@ -208,6 +213,7 @@
                                             $totalCR += $item[5];
                                             $totalGA += $item[6];
                                             $ttotal += $item[7];
+                                            $ttotalpp += $item[8];
                                         }
                                     @endphp
                                 </tbody>
@@ -221,6 +227,7 @@
                                         <td>{{ number_format($totalCR, 2) }}</td>
                                         <td>{{ number_format($totalGA, 2) }}</td>
                                         <td>{{ number_format($ttotal, 2) }}</td>
+                                        <td>{{ number_format($ttotalpp, 2) }}</td>
                                     </tr>
                                 </tfoot>
                             </table>

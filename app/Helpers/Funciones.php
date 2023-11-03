@@ -184,7 +184,8 @@ function ventasHoy()
     $productos = Producto::where('id', '<>', 5)->get();
     $arrayVentas = [];
     foreach ($productos as $producto) {
-        $total = 0;
+        $totalpr = 0;
+        $totalpp = 0;
         $cantOperaciones = 0;
         $totalEF =  0;
         $totalTB =  0;
@@ -195,33 +196,65 @@ function ventasHoy()
         foreach ($misventas as $venta) {
             $aVentas = $venta->detalleventas->first();
             if ($aVentas->producto_id == $producto->id) {
-                $total += $venta->importe;
+
                 if ($venta->tipopago_id == 1) {
                     $totalEF += $venta->importe;
+                    if ($venta->estadopago_id == 2) {
+
+                        $totalpr += $venta->importe;
+                    } else {
+
+                        $totalpp += $venta->importe;
+                    }
                 }
                 if ($venta->tipopago_id == 2) {
                     $totalTB += $venta->importe;
+                    if ($venta->estadopago_id == 2) {
+
+                        $totalpr += $venta->importe;
+                    } else {
+
+                        $totalpp += $venta->importe;
+                    }
                 }
                 if ($venta->tipopago_id == 3) {
                     $totalQR += $venta->importe;
+                    if ($venta->estadopago_id == 2) {
+                        $totalpr += $venta->importe;
+                    } else {
+                        $totalpp += $venta->importe;
+                    }
                 }
                 if ($venta->tipopago_id == 4) {
+
                     $totalCR += $venta->importe;
+                    if ($venta->estadopago_id == 2) {
+                        $totalpr += $venta->importe;
+                    } else {
+                        $totalpp += $venta->importe;
+                    }
                 }
                 if ($venta->tipopago_id == 5) {
                     $totalGA += $venta->importe;
+                    if ($venta->estadopago_id == 2) {
+                        $totalpr += $venta->importe;
+                    } else {
+                        $totalpp += $venta->importe;
+                    }
                 }
                 $cantOperaciones++;
             }
         }
         $arrayVentas[] = array(
-            $producto->nombre, $cantOperaciones,
+            $producto->nombre,
+            $cantOperaciones,
             $totalEF,
             $totalTB,
             $totalQR,
             $totalCR,
             $totalGA,
-            $total
+            $totalpr,
+            $totalpp,
         );
     }
     return $arrayVentas;
@@ -237,10 +270,22 @@ function misVentasHoyTotales()
         // ['estadopago_id', 2]
     ])->get();
 
+    // $misventas = DB::table('ventas')
+    // ->leftJoin('pagos','ventas.id','=','pagos.venta_id')
+    // ->where([
+    //     ['ventas.fecha', $hoy],
+    //     ['ventas.user_id', Auth::user()->id],
+    //     ['ventas.estado', 1],
+    //     // ['pagos.tipopago','<>','CREDITO']
+    // ])
+    // ->select('ventas.id','ventas.importe','pagos.tipopago_id')
+    // ->get();
+
     $productos = Producto::where('id', '<>', 5)->get();
     $arrayVentas = [];
     foreach ($productos as $producto) {
-        $total = 0;
+        $totalpr = 0;
+        $totalpp = 0;
         $cantOperaciones = 0;
         $totalEF =  0;
         $totalTB =  0;
@@ -251,33 +296,65 @@ function misVentasHoyTotales()
         foreach ($misventas as $venta) {
             $aVentas = $venta->detalleventas->first();
             if ($aVentas->producto_id == $producto->id) {
-                $total += $venta->importe;
+
                 if ($venta->tipopago_id == 1) {
                     $totalEF += $venta->importe;
+                    if ($venta->estadopago_id == 2) {
+
+                        $totalpr += $venta->importe;
+                    } else {
+
+                        $totalpp += $venta->importe;
+                    }
                 }
                 if ($venta->tipopago_id == 2) {
                     $totalTB += $venta->importe;
+                    if ($venta->estadopago_id == 2) {
+
+                        $totalpr += $venta->importe;
+                    } else {
+
+                        $totalpp += $venta->importe;
+                    }
                 }
                 if ($venta->tipopago_id == 3) {
                     $totalQR += $venta->importe;
+                    if ($venta->estadopago_id == 2) {
+                        $totalpr += $venta->importe;
+                    } else {
+                        $totalpp += $venta->importe;
+                    }
                 }
                 if ($venta->tipopago_id == 4) {
+
                     $totalCR += $venta->importe;
+                    if ($venta->estadopago_id == 2) {
+                        $totalpr += $venta->importe;
+                    } else {
+                        $totalpp += $venta->importe;
+                    }
                 }
                 if ($venta->tipopago_id == 5) {
                     $totalGA += $venta->importe;
+                    if ($venta->estadopago_id == 2) {
+                        $totalpr += $venta->importe;
+                    } else {
+                        $totalpp += $venta->importe;
+                    }
                 }
                 $cantOperaciones++;
             }
         }
         $arrayVentas[] = array(
-            $producto->nombre, $cantOperaciones,
+            $producto->nombre,
+            $cantOperaciones,
             $totalEF,
             $totalTB,
             $totalQR,
             $totalCR,
             $totalGA,
-            $total
+            $totalpr,
+            $totalpp,
         );
     }
     return $arrayVentas;

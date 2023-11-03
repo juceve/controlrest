@@ -161,6 +161,8 @@ class HomeController extends Controller
             WHERE v.estadopago_id = 1
             AND v.fecha = '$hoy'
             AND v.sucursale_id = $sucursale_id
+            AND v.estado = 1
+            AND dv.producto_id = 4
             GROUP BY dv.tipomenu_id
             UNION
             SELECT bf.tipomenu_id, count(*) cantidad FROM bonofechas bf
@@ -169,6 +171,7 @@ class HomeController extends Controller
             AND fechainicio <= '$hoy'
             AND fechafin >= '$hoy'
             AND v.sucursale_id = $sucursale_id
+            AND v.estado = 1
             GROUP BY bf.tipomenu_id
             UNION
             SELECT ba.tipomenu_id, count(*) cantidad from bonoanuales ba
@@ -176,6 +179,7 @@ class HomeController extends Controller
             WHERE v.estadopago_id = 1
             AND gestion = '$gestion'
             AND v.sucursale_id = $sucursale_id
+            AND v.estado = 1
             GROUP BY ba.tipomenu_id
             UNION
             SELECT dl.tipomenu_id, count(*) cantidad FROM detalleloncheras dl
@@ -183,6 +187,7 @@ class HomeController extends Controller
             INNER JOIN ventas v on v.id = l.venta_id
             WHERE dl.fecha = '$hoy'
             AND v.sucursale_id = $sucursale_id
+            AND v.estado = 1
             GROUP BY dl.tipomenu_id) AS res1
             GROUP BY tipomenu_id;";
 

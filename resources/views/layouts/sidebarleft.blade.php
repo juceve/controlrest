@@ -260,6 +260,9 @@
                                 a Profesores</a>
                         </li>
                         {{-- @endcan --}}
+                         <li>
+                            <a href="{{ route('reportes.pagocreditos') }}"><i class="uil-receipt"></i> Pago de Creditos</a>
+                        </li>
                     </ul>
                 </div>
             </li>

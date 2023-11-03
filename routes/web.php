@@ -44,6 +44,7 @@ use App\Http\Livewire\Pedidos\Ppersonales;
 use App\Http\Livewire\Pruebas;
 use App\Http\Livewire\Reportes\Diario;
 use App\Http\Livewire\Reportes\Entregaprofesores;
+use App\Http\Livewire\Reportes\Rpagocreditos;
 use App\Http\Livewire\Reportes\RptVentas;
 use App\Http\Livewire\Reportes\Rventas;
 use App\Http\Livewire\Ventas\Aprobarpedido;
@@ -137,13 +138,15 @@ Route::get('entregas/estadopedidos',Estadopedidos::class)->middleware('auth')->n
 Route::get('entregas/listado',Entregas::class)->middleware('can:entregas.listado')->middleware('auth')->name('entregas.listado');
 Route::get('entregas/noentregados2',Noentregados2::class)->name('noencontrados2');
 
+
 Route::get('pedidos/personales/{estudiante_id}',Ppersonales::class)->middleware('auth')->name('pedidos.personales');
 
 Route::get('reportes/cierrecaja/{id}',[ReporteController::class,'cierrecaja'])->name('reportes.cierrecaja');
 Route::get('reportes/diario',Diario::class)->middleware('auth')->name('reportes.diario');
 Route::get('reportes/ventas',Rventas::class)->middleware('auth')->name('reportes.ventas');
-Route::get('reportes/rptventas',RptVentas::class)->name('reportes.rptventas');
+// Route::get('reportes/rptventas',RptVentas::class)->name('reportes.rptventas');
 Route::get('reportes/entregasprofesores', Entregaprofesores::class)->middleware('auth')->name('reportes.entregasprofesores');
+Route::get('reportes/pagocreditos',Rpagocreditos::class)->name('reportes.pagocreditos');
 Route::get('pagos/profesores', Pagoprofesores::class)->middleware('auth')->name('pagos.profesores');
 Route::get('pagos/sincomprobante',Pagossincomprobante::class)->middleware('auth')->name('pagos.sincomprobante');
 Route::get('pagos/actcomprobante/{pago_id}',PagosActcomprobante::class)->middleware('auth')->name('pagos.actcomprobante');
