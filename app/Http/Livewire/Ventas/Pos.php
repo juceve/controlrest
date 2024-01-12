@@ -196,7 +196,7 @@ class Pos extends Component
                 //     $this->emit('imprimir', $roww);    
                 // }
                 // redirect('http://127.0.0.1/gprinter/public/printPOS1/' . $row); 
-                redirect('http://127.0.0.1:8090/gprinter/public/printPOS1/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE                
+                redirect('http://127.0.0.1/gprinter/public/printPOS1/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE                
                 // return redirect()->route('ventas.pos')->with('success', 'Venta registrada correctamente.');
             } catch (\Throwable $th) {
                 $this->emit('unLoading');

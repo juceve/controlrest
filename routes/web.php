@@ -41,6 +41,7 @@ use App\Http\Livewire\Pagos\Actcomprobante as PagosActcomprobante;
 use App\Http\Livewire\Pagos\Pagoprofesores;
 use App\Http\Livewire\Pagos\Pagossincomprobante;
 use App\Http\Livewire\Pedidos\Ppersonales;
+use App\Http\Livewire\Promociones;
 use App\Http\Livewire\Pruebas;
 use App\Http\Livewire\Reportes\Diario;
 use App\Http\Livewire\Reportes\Entregaprofesores;
@@ -150,6 +151,7 @@ Route::get('reportes/pagocreditos',Rpagocreditos::class)->name('reportes.pagocre
 Route::get('pagos/profesores', Pagoprofesores::class)->middleware('auth')->name('pagos.profesores');
 Route::get('pagos/sincomprobante',Pagossincomprobante::class)->middleware('auth')->name('pagos.sincomprobante');
 Route::get('pagos/actcomprobante/{pago_id}',PagosActcomprobante::class)->middleware('auth')->name('pagos.actcomprobante');
+Route::get('admin/promociones',Promociones::class)->middleware('auth')->middleware('can:admin.promociones')->name('admin.promociones');
 
 Route::get('impresiones/recibo/{data}',function(){
     return view('impresiones.recibos');

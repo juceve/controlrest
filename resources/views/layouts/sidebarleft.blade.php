@@ -177,6 +177,11 @@
                                 <a href="{{ route('estudiantes.index') }}"><i class="uil-book-reader"></i> Estudiantes</a>
                             </li>
                         @endcan
+                        @can('admin.promociones')
+                            <li>
+                                <a href="{{ route('admin.promociones') }}"><i class="uil-exchange"></i> Promociones y Desafiliaciones</a>
+                            </li>
+                        @endcan
                     </ul>
                 </div>
             </li>
