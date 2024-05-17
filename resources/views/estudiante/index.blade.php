@@ -51,7 +51,12 @@ Estudiante
                                         No asignado
                                         @endif
                                     </td>
-                                    <td>{{ $estudiante->curso->nombre.' - '.$estudiante->curso->nivelcurso->nombre }}
+                                    <td>
+                                        @if ($estudiante->curso_id)
+                                        {{ $estudiante->curso->nombre.' - '.$estudiante->curso->nivelcurso->nombre }}
+                                        @else
+                                            Desafiliado
+                                        @endif
                                     </td>
                                     <td align="right">
                                         <form action="{{ route('estudiantes.destroy',$estudiante->id) }}" method="POST"

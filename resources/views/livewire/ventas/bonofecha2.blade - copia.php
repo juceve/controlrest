@@ -1,7 +1,8 @@
 <div>
     @section('template_title')
-        Ventas - Bono Anual
+        Ventas - Rango de Fecha
     @endsection
+
     @if (cajaCerrada(Auth::user()->id, Auth::user()->sucursale_id))
         <div class="alert alert-warning" role="alert">
             <i class="dripicons-warning me-2"></i> <strong>Atención - </strong> La caja se encuentra
@@ -10,7 +11,7 @@
     @endif
     <div class="card">
         <div class="card-body">
-            <h4 class="header-title mb-3">VENTA DE BONO ANUAL</h4>
+            <h4 class="header-title mb-3">VENTA POR RANGO DE FECHA</h4>
             {{-- <form> --}}
 
             <div id="progressbarwizard" wire:ignore>
@@ -77,24 +78,18 @@
                     </div>
 
                     <div class="tab-pane" id="products-tab-2">
+                        {{-- <h2 class="h4 text-primary">RANGO DE FECHA </h2> --}}
+
                         <h2 class="h4 text-primary">SELECCIÓN DE PRODUCTOS </h2>
-                        <div class="form-group mb-3">
-                            <label>GESTIÓN DEL BONO</label>
-                            <select class="form-select" wire:model='gestion'>
-                                <option value="{{ date('Y') }}">{{ date('Y') }}</option>
-                                @php
-                                    $fechaactual = date('Y-m-d');
-                                    $anioSig = date('Y', strtotime($fechaactual . '+ 1 year'));
-                                @endphp
-                                <option value="{{ $anioSig }}">{{ $anioSig }}</option>
-                            </select>
-                        </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-striped" style="font-size: 12px;">
+                            <table class="table table-bordered table-hover table-striped" style="font-size: 12px;"
+                                id="tablaParametros">
                                 <thead class="table-info">
                                     <tr class="text-center">
                                         <th>CLIENTE</th>
-                                        <th>Tipo de Producto</th>
+                                        <th>PRODUCTO</th>
+                                        <th>FECHA INICIO</th>
+                                        <th style="width: 100px;">CANT. ALMUERZOS</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbodyProductos">
@@ -121,9 +116,10 @@
                                         <thead class="table-primary">
                                             <tr align="center">
                                                 <th>ESTUDIANTE</th>
-                                                <th>TUTOR</th>
-                                                <th>GESTION</th>
                                                 <th>PRODUCTO</th>
+                                                <th>FECHA INICIAL</th>
+                                                <th>FECHA FINAL</th>
+                                                <th>CANT. DIAS</th>
                                                 <th>PRECIO</th>
                                             </tr>
                                         </thead>
@@ -180,12 +176,23 @@
                                         </tr>
                                         <tr>
                                             <td style="vertical-align: middle">IMPORTE {{ $moneda->abreviatura }}</td>
-                                            <td><input type="number" step="0.00" min="0"
-                                                    class="form-control" wire:model='importeTotal'></td>
+                                            <td><input type="number" readonly step="0.00" min="0"
+                                                    class="form-control bg-white" wire:model='importeTotal'></td>
                                         </tr>
                                     </tbody>
                                 </table>
-
+                                <div class="row mb-2">
+                                    <div class="col-12 col-md-8"></div>
+                                    <div class="col-12 col-md-6 w-full">
+                                        <div class="form-check text-end">
+                                            <label class="form-check-label fs-4" for="switch1">Aplica
+                                                descuento</label>
+                                            <input type="checkbox" id="switch1" checked data-switch="bool"
+                                                wire:model='condescuento' />
+                                            <label for="switch1" data-on-label="SI" data-off-label="NO"></label>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="finish text-center mb-3 d-grid gap-2">
                                     @if (!cajaCerrada(Auth::user()->id, Auth::user()->sucursale_id))
                                         <button class="btn btn-success" wire:click="registrarCompra"
@@ -336,9 +343,9 @@
 
         })
 
-        // Livewire.on('error', msg => {
-        //     Swal.fire('Error', 'Ha sucedido un error', 'error');
-        // });
+        Livewire.on('error', msg => {
+            Swal.fire('Error', 'Ha sucedido un error', 'error');
+        });
         // FIN TAB PRODUCTOS
 
         //TAB FORMA PAGOS
@@ -364,6 +371,7 @@
 
                 if (isActiveTabPane) {
                     if (activeTabPaneId == "#finish-2") {
+                        generaPedido();
                         $('.next').hide();
                         $('.finish').show();
                         $('#tbodyPagoClientes').empty();
@@ -380,18 +388,34 @@
             Livewire.emit('updBrowse', browseMobile);
         });
 
-        Livewire.on('imprimir', data => {
-            if (browseMobile) {
-                window.open("/impresiones/recibos/mobile/bonoanual.php?data=" + data, "_blank");
-            } else {
-                window.open("/impresiones/recibos/bonoanual.php?data=" + data, "_blank");
-            }
+        function generaPedido() {
+            var tabla = $("#tablaParametros");
 
-        })
+            Livewire.emit('resetPedidos');
+
+            tabla.find("tbody tr").each(function() {
+                var estudiante_id = $(this).find("td:eq(0) input").val();
+                var tipomenu_id = $(this).find("td:eq(1) select").val();
+                var fechaI = $(this).find("td:eq(2) input").val();
+                var cantidadDias = $(this).find("td:eq(3) input").val();
+                Livewire.emit('cargaPedidos', estudiante_id, tipomenu_id, fechaI, cantidadDias)
+            });
+        }
     </script>
     @if (session('finishTransaction'))
         <script>
             Swal.fire("Pedido Registrado!", '{{ session('finishTransaction') }}', 'success');
         </script>
     @endif
+
+    <script>
+        Livewire.on('imprimir', data => {
+            if (browseMobile) {
+                window.open("/impresiones/recibos/mobile/bonofecha.php?data=" + data, "_blank");
+            } else {
+                window.open("/impresiones/recibos/bonofecha.php?data=" + data, "_blank");
+            }
+            // window.open("/impresiones/recibos/bonofecha.php?data=" + data, "_blank");
+        })
+    </script>
 @endsection

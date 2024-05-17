@@ -13,7 +13,7 @@ class Rventas extends Component
 {
 
     public $fechaI = "", $fechaF = "", $tabla1 = null, $tabla2 = null, $tabla3 = null, $tabla4 = null, $tabla5 = null;
-    public $t1= array(), $t2= array(), $t3= array(), $t4= array(), $t5= array();
+    public $t1 = array(), $t2 = array(), $t3 = array(), $t4 = array(), $t5 = array();
     public $tipomenus = null, $sucursale_id;
 
     public function mount()
@@ -31,15 +31,17 @@ class Rventas extends Component
 
     public function generar()
     {
+        $this->reset('tabla1', 'tabla2', 'tabla3', 'tabla4', 'tabla5');
         $sql1 = "SELECT v.tipopago_id, tp.nombre tipopago,count(*) cantidad, SUM(importe) total FROM ventas v
         INNER JOIN tipopagos tp on tp.id = v.tipopago_id
         WHERE v.fecha BETWEEN '" . $this->fechaI . "' AND '" . $this->fechaF . "'
         AND estadopago_id = 2
         AND v.sucursale_id = " . $this->sucursale_id . "
+        AND v.estado = 1
         GROUP BY tipopago_id,tp.nombre";
         $this->tabla1 = DB::select($sql1);
         foreach ($this->tabla1 as $item) {
-            $this->t1[] = array($item->tipopago_id,$item->tipopago,$item->cantidad,$item->total);
+            $this->t1[] = array($item->tipopago_id, $item->tipopago, $item->cantidad, $item->total);
         }
 
         $sql2 = "SELECT v.tipopago_id, tp.nombre tipopago,count(*) cantidad, SUM(importe) total FROM ventas v
@@ -47,10 +49,11 @@ class Rventas extends Component
         WHERE v.fecha BETWEEN '" . $this->fechaI . "' AND '" . $this->fechaF . "'
         AND estadopago_id = 1
         AND v.sucursale_id = " . $this->sucursale_id . "
+        AND v.estado = 1
         GROUP BY tipopago_id,tp.nombre";
         $this->tabla2 = DB::select($sql2);
         foreach ($this->tabla2 as $item) {
-            $this->t2[] = array($item->tipopago_id,$item->tipopago,$item->cantidad,$item->total);
+            $this->t2[] = array($item->tipopago_id, $item->tipopago, $item->cantidad, $item->total);
         }
 
         $sql3 = "SELECT producto_id, plataforma, count(*) cantidad, SUM(importe) importe FROM 
@@ -59,12 +62,13 @@ class Rventas extends Component
         INNER JOIN productos p on p.id = dv.producto_id
         WHERE v.estadopago_id = 2
         AND v.fecha BETWEEN '" . $this->fechaI . "' AND '" . $this->fechaF . "'
-        AND v.sucursale_id = " . $this->sucursale_id . ") as resultado
+        AND v.sucursale_id = " . $this->sucursale_id . "
+        AND v.estado = 1) as resultado
         GROUP BY  producto_id, plataforma";
 
         $this->tabla3 = DB::select($sql3);
         foreach ($this->tabla3 as $item) {
-            $this->t3[] = array($item->producto_id,$item->plataforma,$item->cantidad,$item->importe);
+            $this->t3[] = array($item->producto_id, $item->plataforma, $item->cantidad, $item->importe);
         }
 
         $sql4 = "SELECT producto_id, plataforma, count(*) cantidad, SUM(importe) importe FROM 
@@ -73,24 +77,26 @@ class Rventas extends Component
         INNER JOIN productos p on p.id = dv.producto_id
         WHERE v.estadopago_id = 1
         AND v.fecha BETWEEN '" . $this->fechaI . "' AND '" . $this->fechaF . "'
-        AND v.sucursale_id = " . $this->sucursale_id . ") as resultado
+        AND v.sucursale_id = " . $this->sucursale_id . "
+        AND v.estado = 1) as resultado
         GROUP BY  producto_id, plataforma";
 
         $this->tabla4 = DB::select($sql4);
         foreach ($this->tabla4 as $item) {
-            $this->t4[] = array($item->producto_id,$item->plataforma,$item->cantidad,$item->importe);
+            $this->t4[] = array($item->producto_id, $item->plataforma, $item->cantidad, $item->importe);
         }
 
         $sql5 = "SELECT dv.* FROM ventas v
         INNER JOIN detalleventas dv on dv.venta_id = v.id
         WHERE v.fecha BETWEEN '" . $this->fechaI . "' AND '" . $this->fechaF . "'
         AND v.sucursale_id = " . $this->sucursale_id . "
-        AND tipopago_id = 5";
+        AND tipopago_id = 5
+        AND v.estado = 1";
 
         $this->tabla5 = DB::select($sql5);
 
         foreach ($this->tabla5 as $item) {
-            $this->t5[] = array($item->descripcion,$item->cantidad,$item->subtotal);
+            $this->t5[] = array($item->descripcion, $item->cantidad, $item->subtotal);
         }
 
         // $resultado3 = Venta::where([['fecha', '>=', $this->fechaI], ['fecha', '<=', $this->fechaF]])

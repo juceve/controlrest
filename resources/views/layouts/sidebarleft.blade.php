@@ -107,7 +107,7 @@
                         @can('ventas.index')
                             <li>
                                 <a href="{{ route('ventas.index') }}"><i class="uil-list-ul"></i>
-                                    @if (Auth::user()->roles[0]->name == 'Admin')
+                                    @if (Auth::user()->roles[0]->name == 'Admin' || Auth::user()->roles[0]->name == 'SUPERVISOR')
                                         Listado de Ventas
                                     @else
                                         Mis Ventas
@@ -179,7 +179,8 @@
                         @endcan
                         @can('admin.promociones')
                             <li>
-                                <a href="{{ route('admin.promociones') }}"><i class="uil-exchange"></i> Promociones y Desafiliaciones</a>
+                                <a href="{{ route('admin.promociones') }}"><i class="uil-exchange"></i> Promociones y
+                                    Desafiliaciones</a>
                             </li>
                         @endcan
                     </ul>
@@ -265,8 +266,9 @@
                                 a Profesores</a>
                         </li>
                         {{-- @endcan --}}
-                         <li>
-                            <a href="{{ route('reportes.pagocreditos') }}"><i class="uil-receipt"></i> Pago de Creditos</a>
+                        <li>
+                            <a href="{{ route('reportes.pagocreditos') }}"><i class="uil-receipt"></i> Pago de
+                                Creditos</a>
                         </li>
                     </ul>
                 </div>

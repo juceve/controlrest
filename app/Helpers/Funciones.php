@@ -359,3 +359,31 @@ function misVentasHoyTotales()
     }
     return $arrayVentas;
 }
+
+function ventasGestion($gestion)
+{
+    $sql = "SELECT nombre producto, count(*) cantidad, SUM(importe) importe FROM
+    (SELECT DISTINCT(v.id) ids,dv.producto_id, p.nombre,v.importe FROM ventas v
+    INNER JOIN detalleventas dv ON dv.venta_id = v.id
+    INNER JOIN productos p ON p.id = dv.producto_id
+    WHERE YEAR(v.fecha) = '$gestion'
+    AND v.estado = 1
+    GROUP BY ids,dv.producto_id,p.nombre) as prev
+    GROUP BY nombre";
+
+    $ventas = DB::select($sql);
+
+    return $ventas;
+}
+function ventasGestion2($gestion)
+{
+    $sql = "SELECT tp.nombre tipopago, COUNT(*) cantidad, SUM(v.importe) importe FROM ventas v
+    INNER JOIN tipopagos tp ON tp.id = v.tipopago_id
+    WHERE YEAR(v.fecha) = '$gestion'
+    AND v.estado = 1
+    GROUP BY tp.nombre";
+
+    $ventas = DB::select($sql);
+
+    return $ventas;
+}

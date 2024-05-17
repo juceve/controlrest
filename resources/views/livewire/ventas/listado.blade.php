@@ -19,20 +19,18 @@
                 <select wire:model='tp' class="form-select">
                     <option value="">Todos</option>
                     @foreach ($tps as $tp)
-                        <option value="{{ $tp->id }}">{{ $tp->nombre }}</option>
+                    <option value="{{ $tp->id }}">{{ $tp->nombre }}</option>
                     @endforeach
                 </select>
             </div>
         </div>
-        @if ($ventas->count()>0)
-            <div class="col-12 col-md-2 mb-2 d-grid">
-                <button class="btn btn-danger" wire:click='exportar'>PDF <i
-                        class="mdi mdi-file-pdf-outline"></i></button>
-            </div>
-            <div class="col-12 col-md-2 mb-2 d-grid">
-                <button class="btn btn-success" wire:click='excel'>Excel <i
-                        class="mdi mdi-file-excel-outline"></i></button>
-            </div>
+        @if ($ventas)
+        <div class="col-12 col-md-2 mb-2 d-grid">
+            <button class="btn btn-danger" wire:click='exportar'>PDF <i class="mdi mdi-file-pdf-outline"></i></button>
+        </div>
+        <div class="col-12 col-md-2 mb-2 d-grid">
+            <button class="btn btn-success" wire:click='excel'>Excel <i class="mdi mdi-file-excel-outline"></i></button>
+        </div>
         @endif
 
     </div>
@@ -55,40 +53,44 @@
                 </tr>
             </thead>
             <tbody>
-                @if ($ventas->count() > 0)
-                    @foreach ($ventas as $venta)
-                        <tr>
-                            <td align="center">{{ $venta->id }}</td>
-                            <td align="center">{{ $venta->fecha }}</td>
-                            <td>{{ $venta->cliente }}</td>
-                            <td>{{ traeEstudiantesVenta($venta->id) }}</td>
-                            <td align="center">{{ $venta->tipopago }}</td>
-                            <td align="center">{{ $venta->estadopago }}</td>
-                            <td align="right">{{ $venta->importe }}</td>
+                @if ($ventas)
+                @foreach ($ventas as $venta)
+                <tr>
+                    <td align="center">{{ $venta->id }}</td>
+                    <td align="center">{{ $venta->fecha }}</td>
+                    <td>{{ $venta->cliente }}</td>
+                    <td>{{ traeEstudiantesVenta($venta->id) }}</td>
+                    <td align="center">{{ $venta->tipopago }}</td>
+                    <td align="center">{{ $venta->estadopago }}</td>
+                    <td align="right">{{ $venta->importe }}</td>
 
-                            <td align="right">
-                                {{-- <form action="{{ route('ventas.destroy', $venta->id) }}" --}}
-                                {{-- method="POST" class="anular"> --}}
-                                <a class="btn btn-sm btn-outline-primary " href="{{ route('ventas.show', $venta->id) }}"
-                                    title="Ver info"><i class="uil-eye"></i></a>
-                                @can('ventas.edit')
-                                    <a class="btn btn-sm btn-outline-success"
-                                        href="{{ route('ventas.destroy', $venta->id) }}" title="Editar"><i
-                                            class="uil-edit"></i></a>
-                                @endcan
+                    <td align="right">
+                        {{-- <form action="{{ route('ventas.destroy', $venta->id) }}" --}} {{-- method="POST"
+                            class="anular"> --}}
+                            <button class="btn btn-sm btn-outline-info" title="Reimprimir Recibo"
+                                wire:click='reimprimir({{$venta->id}})'><i class="fas fa-print"></i></button>
+                            <a class="btn btn-sm btn-outline-primary " href="{{ route('ventas.show', $venta->id) }}"
+                                title="Ver info"><i class="uil-eye"></i></a>
+
+                            @can('ventas.edit')
+                            {{-- <a class="btn btn-sm btn-outline-success"
+                                href="{{ route('ventas.destroy', $venta->id) }}" title="Editar"><i
+                                    class="uil-edit"></i></a> --}}
+                            @endcan
 
 
-                                @csrf
-                                @method('DELETE')
-                                @can('ventas.destroy')
-                                    <button type="button" class="btn btn-outline-danger btn-sm" title="Anular Venta"
-                                        onclick="anular({{ $venta->id }})"><i class="uil-trash"></i></button>
-                                @endcan
+                            @csrf
+                            @method('DELETE')
+                            @can('ventas.destroy')
+                            <button type="button" class="btn btn-outline-danger btn-sm" title="Anular Venta"
+                                onclick="anular({{ $venta->id }})"><i class="uil-trash"></i></button>
+                            @endcan
 
-                                {{-- </form> --}}
-                            </td>
-                        </tr>
-                    @endforeach
+                            {{--
+                        </form> --}}
+                    </td>
+                </tr>
+                @endforeach
                 @endif
             </tbody>
         </table>
@@ -98,8 +100,16 @@
     </div>
 </div>
 @section('js')
-    <script>
-        function anular(id) {
+<script>
+    var browseMobile = "";
+        $(document).ready(function() {
+            browseMobile = isMobile();
+            // console.log(browseMobile);
+            Livewire.emit('updBrowse', browseMobile);
+        });
+</script>
+<script>
+    function anular(id) {
             Swal.fire({
                 title: 'Anular Venta',
                 text: "Esta seguro de realizar esta operación?",
@@ -115,5 +125,15 @@
                 }
             })
         }
-    </script>
+</script>
+<script>
+    Livewire.on('imprimirbf', data => {
+            if (browseMobile) {
+                window.open("/impresiones/recibos/mobile/bonofecha.php?data=" + data, "_blank");
+            } else {
+                window.open("/impresiones/recibos/bonofecha2.php?data=" + data, "_blank");
+            }
+            // window.open("/impresiones/recibos/bonofecha.php?data=" + data, "_blank");
+        })
+</script>
 @endsection

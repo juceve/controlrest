@@ -26,12 +26,15 @@ class MenuController extends Controller
 
     public function index()
     {
-        
+
         $sucursale_id = Auth::user()->sucursale_id;
-        if($sucursale_id){
-            $menus = Menu::where('sucursale_id',$sucursale_id)->get();
-        }else{
-           $menus = Menu::get(); 
+        if ($sucursale_id) {
+            $menus = Menu::join('tipomenus', 'tipomenus.id', '=', 'menus.tipomenu_id')
+                ->where([['menus.sucursale_id', $sucursale_id], ['tipomenus.status', 1]])
+                ->select('menus.*')
+                ->get();
+        } else {
+            $menus = Menu::get();
         }
         return view('menu.index', compact('menus'));
     }
@@ -43,7 +46,7 @@ class MenuController extends Controller
      */
     public function create()
     {
-        
+
         $menu = new Menu();
         $tipos = Tipomenu::all()->pluck('nombre', 'id');
         return view('menu.create', compact('menu', 'tipos'));

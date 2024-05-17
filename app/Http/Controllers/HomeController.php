@@ -280,10 +280,10 @@ class HomeController extends Controller
             if (Auth::user()->roles[0]->name == "VENTAS") {
                 $misVentas = misVentasHoyTotales();
             }
-            if (Auth::user()->roles[0]->name == "Admin") {
+            if (Auth::user()->roles[0]->name == "Admin" || Auth::user()->roles[0]->name == "SUPERVISOR") {
                 $misVentas = ventasHoy();
             }
-            
+
 
             return view('home', compact('moneda',  'reservas', 'arrPos', 'arrProf', 'arrPP', 'arrEntregas', 'misVentas'));
         } else {

@@ -28,13 +28,13 @@ class Estadopedidos extends Component
             ->where('nivelcursos.sucursale_id', $this->sucursale_id)
             ->select('cursos.id', 'cursos.nombre')
             ->orderBy('cursos.nombre', 'ASC')->get();
-        $this->emit('datatableRender');
+        $this->emit('datatableRenderButton');
         return view('livewire.entregas.estadopedidos', compact('cursos'))->extends('layouts.app');
     }
 
     public function buscar()
     {
-        $this->reset('totalSaldos','tabla');
+        $this->reset('totalSaldos', 'tabla');
         if ($this->selCurso != "") {
             $hoy = date('Y-m-d');
             $this->curso = Curso::find($this->selCurso);
@@ -46,11 +46,12 @@ class Estadopedidos extends Component
             $this->tabla = $tabla;
         }
         // dd($tabla);
+        $this->emit('datatableRenderButton');
     }
 
     public function totalSaldos()
     {
-        $this->reset('totalSaldos','tabla');
+        $this->reset('totalSaldos', 'tabla');
         $totalsaldos = 0;
         $estudiantes = Estudiante::where('esestudiante', 1)->get();
         foreach ($estudiantes as $estudiante) {
@@ -69,5 +70,6 @@ class Estadopedidos extends Component
             fn () => print($pdf),
             "EstadoPedidos_" . date('YmdHi') . ".pdf"
         );
+        $this->emit('datatableRenderButton');
     }
 }

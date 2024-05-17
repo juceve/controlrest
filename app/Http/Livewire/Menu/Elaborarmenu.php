@@ -36,7 +36,7 @@ class Elaborarmenu extends Component
                 $this->itemsMenu[] = $row;
             }
         }
-        $this->tipos = Tipomenu::all()->pluck('nombre', 'id');
+        $this->tipos = Tipomenu::where('status', 1)->pluck('nombre', 'id');
         $this->items = Item::all();
         $this->categorias = Catitem::all();
     }

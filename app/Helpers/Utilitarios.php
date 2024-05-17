@@ -133,7 +133,7 @@ function tieneLicencia($estudiante_id, $fecha)
 function tieneEntrega($estudiante_id, $fecha)
 {
     $entrega = Entregalounch::where('estudiante_id', $estudiante_id)
-        ->whereDate('fechaentrega', $fecha)->where('estado',1)->first();
+        ->whereDate('fechaentrega', $fecha)->where('estado', 1)->first();
     if ($entrega) {
         return true;
     } else {
@@ -157,6 +157,12 @@ function precioMenu($menu_id)
 {
     $menu = Menu::find($menu_id);
     $precio = Preciomenu::where('tipomenu_id', $menu->tipomenu_id)->where('sucursale_id', Auth::user()->sucursale_id)->first();
+    return $precio;
+}
+
+function precioTipoMenu($tipomenu_id)
+{
+    $precio = Preciomenu::where('tipomenu_id', $tipomenu_id)->where('sucursale_id', Auth::user()->sucursale_id)->first();
     return $precio;
 }
 
@@ -197,14 +203,14 @@ function estadoPedidoEstudiante($estudiante_id)
     // ENTREGAS DE PRODUCTOS
     $entregas = 0;
 
-    $rs2 = Entregalounch::where('estudiante_id', $estudiante_id)->where('fechaentrega', '>=', $fechaInicio)->where('estado',1)->get();
+    $rs2 = Entregalounch::where('estudiante_id', $estudiante_id)->where('fechaentrega', '>=', $fechaInicio)->where('estado', 1)->get();
     foreach ($rs2 as $resultado) {
         $entregas++;
     }
 
     $restantes = $pagado - $entregas;
 
-    $tabla = array("estudiante" => $estudiante->nombre, "pagados" => $pagado, "entregas" => $entregas, "restantes" => $restantes,"codigo"=>$estudiante->codigo,"bonoanual"=>$bonoanual,"bonofecha"=>$bonofecha,"reservas"=>$reservas);
+    $tabla = array("estudiante" => $estudiante->nombre, "pagados" => $pagado, "entregas" => $entregas, "restantes" => $restantes, "codigo" => $estudiante->codigo, "bonoanual" => $bonoanual, "bonofecha" => $bonofecha, "reservas" => $reservas);
     return $tabla;
 }
 
@@ -245,14 +251,14 @@ function estadoPedidoEstudianteHoy($estudiante_id)
     // ENTREGAS DE PRODUCTOS
     $entregas = 0;
 
-    $rs2 = Entregalounch::where('estudiante_id', $estudiante_id)->where('fechaentrega', '>=', $hoy)->where('estado',1)->get();
+    $rs2 = Entregalounch::where('estudiante_id', $estudiante_id)->where('fechaentrega', '>=', $hoy)->where('estado', 1)->get();
     foreach ($rs2 as $resultado) {
         $entregas++;
     }
 
     $restantes = $pagado - $entregas;
 
-    $tabla = array("codigo"=>$estudiante->codigo,"estudiante" => $estudiante->nombre, "restantes" => $restantes,"bonoanual"=>$bonoanual,"bonofecha"=>$bonofecha,"reservas"=>$reservas);
+    $tabla = array("codigo" => $estudiante->codigo, "estudiante" => $estudiante->nombre, "restantes" => $restantes, "bonoanual" => $bonoanual, "bonofecha" => $bonofecha, "reservas" => $reservas);
     return $tabla;
 }
 

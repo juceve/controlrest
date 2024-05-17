@@ -1,6 +1,6 @@
 <div>
     @section('template_title')
-        Estado de Saldos
+    Estado de Saldos
     @endsection
     <div class="card">
         <div class="card-header bg-info text-white">
@@ -14,9 +14,9 @@
                         <select class="form-select" wire:model='selCurso'>
                             <option value="">Elija una opción</option>
                             @if ($cursos)
-                                @foreach ($cursos as $curso)
-                                    <option value="{{ $curso->id }}">{{ $curso->nombre }}</option>
-                                @endforeach
+                            @foreach ($cursos as $curso)
+                            <option value="{{ $curso->id }}">{{ $curso->nombre }}</option>
+                            @endforeach
                             @endif
                         </select>
                     </div>
@@ -28,14 +28,14 @@
                         </div></button>
                 </div>
                 @if ($tabla)
-                    <div class="col-12 col-md-3 d-grid">
+                <div class="col-12 col-md-3 d-grid">
 
-                        <button class="btn btn-danger" wire:click='pdf'><i class="mdi mdi-file-pdf"></i> PDF <div
-                                wire:loading wire:target="pdf">
-                                <div class="spinner-border spinner-border-sm" role="status"></div>
-                            </div></button>
+                    <button class="btn btn-danger" wire:click='pdf'><i class="mdi mdi-file-pdf"></i> PDF <div
+                            wire:loading wire:target="pdf">
+                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                        </div></button>
 
-                    </div>
+                </div>
                 @endif
                 <div class="col-12 col-md-2 d-grid">
                     <button class="btn btn-success" wire:click='totalSaldos'><i class="uil-search"></i> Saldo
@@ -48,51 +48,75 @@
     </div>
 
     @if ($totalSaldos)
-        <div class="card">
-            <div class="card-body">
-                <label>Saldo Total: </label>
-                <input type="text" class="form-control" wire:model='totalSaldos' readonly>
-            </div>
+    <div class="card">
+        <div class="card-body">
+            <label>Saldo Total: </label>
+            <input type="text" class="form-control" wire:model='totalSaldos' readonly>
         </div>
+    </div>
     @endif
 
     @if ($tabla)
 
-        <div class="card">
-            <div class="card-body">
-                <h4 class="text-center">ESTADO DE PEDIDOS POR ALUMNOS</h4>
-                <hr>
-                <div class="table-responsive">
-                    <div class="">
-                        <label class="text-warning"><i>Cantidad de reservas pendientes de entrega</i></label>
-                    </div>
-
-                    <table class="table table-bordered table-sm table-striped dataTable">
-                        <thead class="table-primary">
-                            <tr align="center">
-                                <th>CODIGO</th>
-                                <th>NOMBRE</th>
-                                <th>ALMUERZOS PAGADOS</th>
-                                <th>ENTREGAS</th>
-                                <th>RESTANTES</th>
-                            </tr>
-                        </thead>
-                        <tbody> @php
-                            $i = 1;
-                        @endphp
-                            @foreach ($tabla as $item)
-                                <tr>
-                                    <td align="center">{{ $item['codigo'] }}</td>
-                                    <td>{{ $item['estudiante'] }}</td>
-                                    <td align="center">{{ $item['pagados'] }}</td>
-                                    <td align="center">{{ $item['entregas'] }}</td>
-                                    <td align="center">{{ $item['restantes'] }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="text-center">ESTADO DE PEDIDOS POR ALUMNOS</h4>
+            <hr>
+            <div class="table-responsive">
+                <div class="">
+                    <label class="text-warning"><i>Cantidad de reservas pendientes de entrega</i></label>
                 </div>
+
+                <table class="table table-bordered table-sm table-striped" id="tablaEstados">
+                    <thead class="table-primary">
+                        <tr align="center">
+                            <th>CODIGO</th>
+                            <th>NOMBRE</th>
+                            <th>ALMUERZOS PAGADOS</th>
+                            <th>ENTREGAS</th>
+                            <th>RESTANTES</th>
+                        </tr>
+                    </thead>
+                    <tbody> @php
+                        $i = 1;
+                        @endphp
+                        @foreach ($tabla as $item)
+                        <tr>
+                            <td align="center">{{ $item['codigo'] }}</td>
+                            <td>{{ $item['estudiante'] }}</td>
+                            <td align="center">{{ $item['pagados'] }}</td>
+                            <td align="center">{{ $item['entregas'] }}</td>
+                            <td align="center">{{ $item['restantes'] }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
     @endif
 </div>
+@section('js')
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+<script>
+    Livewire.on('datatableRenderButton',()=>{
+        $('#tablaEstados').DataTable( {
+            destroy:true,
+        dom: 'Bfrtip',
+        buttons: [
+            'excel'
+        ],
+        
+    } );
+    $('.buttons-excel').addClass('btn btn-success');
+    });
+
+
+    $(document).ready(function() {
+    
+} );
+</script>
+@endsection

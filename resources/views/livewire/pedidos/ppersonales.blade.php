@@ -36,7 +36,7 @@
             </div>
             <div class="form-group">
                 <label>Curso:</label>
-                <input type="text" class="form-control bg-white mb-2" readonly value="{{$estudiante->curso->nombre}}">
+                <input type="text" class="form-control bg-white mb-2" readonly value="{{$estudiante->curso_id?$estudiante->curso->nombre:'Desafiliado'}}">
             </div>
             <hr>
 

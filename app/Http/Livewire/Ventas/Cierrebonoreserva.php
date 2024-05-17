@@ -31,8 +31,9 @@ class Cierrebonoreserva extends Component
         AND v.sucursale_id = $sucursale
         GROUP BY p.nombre,dv.observacion,tp.abreviatura";
         $ingresosHOY = DB::select($sql);
+
         $this->ingresos = $ingresosHOY;
-       
+
         $sql2 = "SELECT tp.nombre, tp.id tipopago_id, COUNT(DISTINCT(v.id)) cantidad, SUM(dv.subtotal) total FROM ventas v
         INNER JOIN tipopagos tp on tp.id = v.tipopago_id
         INNER JOIN detalleventas dv on v.id = dv.venta_id
@@ -57,13 +58,13 @@ class Cierrebonoreserva extends Component
             ->get();
 
         $this->emit('datatableRender');
-        return view('livewire.ventas.cierrebonoreserva', compact('ingresosHOY', 'cierres','montosHOY'))->extends('layouts.app');
+        return view('livewire.ventas.cierrebonoreserva', compact('ingresosHOY', 'cierres', 'montosHOY'))->extends('layouts.app');
     }
 
 
 
 
-    public $totalpr = 0, $totalpp = 0, $encaja = 0, $faltante = 0, $ingresos,$montos;
+    public $totalpr = 0, $totalpp = 0, $encaja = 0, $faltante = 0, $ingresos, $montos;
 
     public function updatedEncaja()
     {
@@ -160,11 +161,10 @@ class Cierrebonoreserva extends Component
                     break;
             }
         }
-        $pdf = Pdf::loadView('reports.cierrecaja2', compact('cierre', 'detalles', 'totalEfectivo', 'totalQr', 'totalTr','totalGa'))->output();
+        $pdf = Pdf::loadView('reports.cierrecaja2', compact('cierre', 'detalles', 'totalEfectivo', 'totalQr', 'totalTr', 'totalGa'))->output();
         return response()->streamDownload(
             fn () => print($pdf),
             "Reporte_OperacionesBonoReservas_" . $cierre->fecha . ".pdf"
         );
-        
     }
 }

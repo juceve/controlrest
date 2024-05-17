@@ -16,12 +16,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Pos extends Component
 {
-    public $productos = [], $total = 0, $tipopagos = null, $selTipo = 1, $condescuento = false, $indicador = 0;
+    use WithFileUploads;
+    public $productos = [], $total = 0, $tipopagos = null, $selTipo = 1, $condescuento = false, $indicador = 0, $browseMobile, $comprobante = null;
 
-    protected $listeners = ['calcular'];
+    protected $listeners = ['calcular', 'updBrowse'];
 
     public function updatedCondescuento()
     {
@@ -74,6 +76,13 @@ class Pos extends Component
         // }
     }
 
+
+    public function updBrowse($status)
+    {
+        $this->browseMobile = $status;
+        // dd($this->browseMobile);
+    }
+
     public function render()
     {
         return view('livewire.ventas.pos')->extends('layouts.app');
@@ -84,11 +93,14 @@ class Pos extends Component
         if ($cantidad == "") {
             $cantidad = 0;
         }
-        $this->productos[$i][4] = number_format($this->productos[$i][2] * $cantidad, 2);
+        $this->productos[$i][4] = $this->productos[$i][2] * $cantidad;
         $this->productos[$i][3] = $cantidad;
         $this->reset(['total']);
         foreach ($this->productos as $item) {
-            $this->total = number_format($this->total + $item[4], 2);
+
+            $aux = $this->total + $item[4];
+
+            $this->total = number_format($aux, 2);
         }
         $this->emit('subtotal', array($i, $this->productos[$i][4]));
 
@@ -99,9 +111,18 @@ class Pos extends Component
 
     public function registrar()
     {
+
+        if ($this->selTipo == 2 || $this->selTipo == 3) {
+            if (is_null($this->comprobante)) {
+                $this->emit('warning', 'Debe adjuntar un comprobante.');
+                return "";
+            }
+        }
+
         $this->emit('loading');
         if ($this->total > 0) {
             DB::beginTransaction();
+            $tipopago = Tipopago::find($this->selTipo);
             $observaciones = null;
             if ($this->condescuento) {
                 $observaciones = "Aplica Descuento";
@@ -111,7 +132,7 @@ class Pos extends Component
                 $venta = Venta::create([
                     "fecha" => date('Y-m-d'),
                     "cliente" => 'VENTA POS',
-                    "estadopago_id" => 2,
+                    "estadopago_id" => 1,
                     "tipopago_id" => $tipo->id,
                     "importe" => ($this->total * $tipo->factor),
                     "sucursale_id" => Auth::user()->sucursale_id,
@@ -122,19 +143,113 @@ class Pos extends Component
 
 
 
-                $pago = Pago::create([
-                    "fecha" => date('Y-m-d'),
-                    "recibo" => '0',
-                    "tipopago_id" => $tipo->id,
-                    "tipopago" => $tipo->nombre,
-                    "sucursal_id" => Auth::user()->sucursale_id,
-                    "sucursal" => Auth::user()->sucursale->nombre,
-                    "importe" => ($this->total * $tipo->factor),
-                    "venta_id" => $venta->id,
-                    "estadopago_id" => 2,
-                    "tipoinicial" => $tipo->nombre,
-                    "user_id" => Auth::user()->id,
-                ]);
+                switch ($tipopago->nombre) {
+
+                    case 'EFECTIVO - LOCAL': {
+                            $pago = Pago::create([
+                                "fecha" => date('Y-m-d'),
+                                "recibo" => '0',
+                                "tipopago_id" => $tipo->id,
+                                "tipopago" => $tipo->nombre,
+                                "sucursal_id" => Auth::user()->sucursale_id,
+                                "sucursal" => Auth::user()->sucursale->nombre,
+                                "importe" => ($this->total * $tipo->factor),
+                                "venta_id" => $venta->id,
+                                "estadopago_id" => 2,
+                                "tipoinicial" => $tipo->nombre,
+                                "user_id" => Auth::user()->id,
+                            ]);
+
+
+                            $venta->estadopago_id = 2;
+                            $venta->save();
+                        }
+
+                        break;
+                    case 'GASTO ADMINISTRATIVO':
+                        $pago = Pago::create([
+                            "fecha" => date('Y-m-d'),
+                            "recibo" => '0',
+                            "tipopago_id" => $tipo->id,
+                            "tipopago" => $tipo->nombre,
+                            "sucursal_id" => Auth::user()->sucursale_id,
+                            "sucursal" => Auth::user()->sucursale->nombre,
+                            "importe" => ($this->total * $tipo->factor),
+                            "venta_id" => $venta->id,
+                            "estadopago_id" => 2,
+                            "tipoinicial" => $tipo->nombre,
+                            "user_id" => Auth::user()->id,
+                        ]);
+                        $venta->estadopago_id = 2;
+                        $venta->save();
+                        $pago->estadopago_id = 2;
+                        $pago->save();
+                        break;
+                    case "PAGO QR": {
+                            $pago = Pago::create([
+                                "fecha" => date('Y-m-d'),
+                                "recibo" => '0',
+                                "tipopago_id" => $tipo->id,
+                                "tipopago" => $tipo->nombre,
+                                "sucursal_id" => Auth::user()->sucursale_id,
+                                "sucursal" => Auth::user()->sucursale->nombre,
+                                "importe" => ($this->total * $tipo->factor),
+                                "venta_id" => $venta->id,
+                                "estadopago_id" => 2,
+                                "tipoinicial" => $tipo->nombre,
+                                "user_id" => Auth::user()->id,
+                            ]);
+                            $file = $this->comprobante->storeAs('depositos/' . $tipopago->abreviatura, $pago->id . "." . $this->comprobante->extension());
+                            $comprobante = 'storage/depositos/' . $tipopago->abreviatura . '/' . $pago->id . "." . $this->comprobante->extension();
+
+                            $venta->estadopago_id = 2;
+                            $venta->save();
+                            $pago->estadopago_id = 2;
+                            $pago->comprobante = $comprobante;
+                            $pago->save();
+                        }
+                        break;
+                    case "TRANSFERENCIA BANCARIA": {
+
+
+                            $pago = Pago::create([
+                                "fecha" => date('Y-m-d'),
+                                "recibo" => '0',
+                                "tipopago_id" => $tipo->id,
+                                "tipopago" => $tipo->nombre,
+                                "sucursal_id" => Auth::user()->sucursale_id,
+                                "sucursal" => Auth::user()->sucursale->nombre,
+                                "importe" => ($this->total * $tipo->factor),
+                                "venta_id" => $venta->id,
+                                "estadopago_id" => 2,
+                                "tipoinicial" => $tipo->nombre,
+                                "user_id" => Auth::user()->id,
+                            ]);
+                            $file = $this->comprobante->storeAs('depositos/' . $tipopago->abreviatura, $pago->id . "." . $this->comprobante->extension());
+                            $comprobante = 'storage/depositos/' . $tipopago->abreviatura . '/' .  $pago->id . "." . $this->comprobante->extension();
+
+                            $venta->estadopago_id = 2;
+                            $venta->save();
+                            $pago->estadopago_id = 2;
+                            $pago->comprobante = $comprobante;
+                            $pago->save();
+                        }
+                        break;
+                }
+
+                // $pago = Pago::create([
+                //     "fecha" => date('Y-m-d'),
+                //     "recibo" => '0',
+                //     "tipopago_id" => $tipo->id,
+                //     "tipopago" => $tipo->nombre,
+                //     "sucursal_id" => Auth::user()->sucursale_id,
+                //     "sucursal" => Auth::user()->sucursale->nombre,
+                //     "importe" => ($this->total * $tipo->factor),
+                //     "venta_id" => $venta->id,
+                //     "estadopago_id" => 2,
+                //     "tipoinicial" => $tipo->nombre,
+                //     "user_id" => Auth::user()->id,
+                // ]);
 
                 //configurar impresion de ticket
                 //redirect('http://127.0.0.1/gprinter/public/print/' . $datos); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE
@@ -165,7 +280,7 @@ class Pos extends Component
 
                             $row = $row . $entrega->id . "|" . $producto[8] . "|Venta POS|" . $entrega->fechaentrega . "|" . $producto[1] . "|" . Auth::user()->name . "|" . $preciou . "~";
                         }
-                        $detalleventa[] = array($menu->tipomenu->nombre, $producto[3], $preciou, $producto[4], $observacion,$menu->tipomenu_id);
+                        $detalleventa[] = array($menu->tipomenu->nombre, $producto[3], $preciou, $producto[4], $observacion, $menu->tipomenu_id);
                     }
                 }
 
@@ -182,6 +297,10 @@ class Pos extends Component
 
                     ]);
                 }
+
+
+
+
                 $row =  substr($row, 0, -1);
                 DB::commit();
                 // dd($row);
@@ -193,10 +312,21 @@ class Pos extends Component
 
                 // $datos = explode('~',$row);
                 // foreach ($datos as $roww) {
-                //     $this->emit('imprimir', $roww);    
+                //     $this->emit('imprimir', $roww);
                 // }
-                // redirect('http://127.0.0.1/gprinter/public/printPOS1/' . $row); 
-                redirect('http://127.0.0.1/gprinter/public/printPOS1/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE                
+                // redirect('http://127.0.0.1/gprinter/public/printPOS1/' . $row);
+
+                if ($this->browseMobile) {
+
+                    $this->emit('imprimir', $row);
+                    redirect()->route('ventas.pos')->with('success2', 'Venta registrada correctamente.');
+                } else {
+                    //redirect('http://127.0.0.1/gprinter/public/printPOS1/' . $row); //IMPRESION MEDIANTE LOCALHOST DEL CLIENTE
+                    $this->emit('imprimir', $row);
+                    redirect()->route('ventas.pos')->with('success2', 'Venta registrada correctamente.'); //impresion temporal
+                }
+
+
                 // return redirect()->route('ventas.pos')->with('success', 'Venta registrada correctamente.');
             } catch (\Throwable $th) {
                 $this->emit('unLoading');
@@ -205,6 +335,14 @@ class Pos extends Component
             }
         } else {
             $this->emit('warning', 'No se ha seleccionado ningun producto.');
+        }
+    }
+    public function updatedSelTipo()
+    {
+        if ($this->selTipo == 2 || $this->selTipo == 3) {
+            $this->emit('comprobante', 'show');
+        } else {
+            $this->emit('comprobante', 'hide');
         }
     }
 }

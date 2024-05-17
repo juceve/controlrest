@@ -69,7 +69,14 @@
                             <td>{{$item->codigo}}</td>
                             <td>{{$item->nombre}}</td>
                             <td>{{$item->cedula}}</td>
-                            <td>{{$item->curso->nombre . ' - ' . $item->curso->nivelcurso->nombre }}</td>
+                            <td>
+                                @if ($item->curso_id)
+                                {{$item->curso->nombre . ' - ' . $item->curso->nivelcurso->nombre }}
+                                @else
+                                    Desafiliado
+                                @endif
+                            
+                            </td>
                             <td align="right">
                                 <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false" style="width: 100%">Opciones</button>

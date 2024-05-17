@@ -23,7 +23,8 @@
                                         <strong>ID</strong>
                                     </td>
                                     <td>
-                                        <a href="{{route('ventas.show',$venta->id)}}" target="_blank" rel="noopener" class="btn btn-link btn-sm" title="Mas Info">{{$venta->id}}</a>
+                                        <a href="{{ route('ventas.show', $venta->id) }}" target="_blank" rel="noopener"
+                                            class="btn btn-link btn-sm" title="Mas Info">{{ $venta->id }}</a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -183,6 +184,8 @@
                                     @endif
                                 </div>
                                 <hr>
+                                <form action="/file-upload" class="dropzone" id="my-awesome-dropzone"></form>
+
                             @endif
 
                         </div>
@@ -235,7 +238,20 @@
         </div>
     </div>
 </div>
+@section('css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.3/dropzone.min.css" />
+@endsection
 @section('js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.3/dropzone.min.js"></script>
+    <script>
+        < script >
+            Dropzone.options.myAwesomeDropzone = { // camelized version of the `id`
+               
+                dictDefaultMessage: "Arrastre su comprobante.",
+              
+            };
+    </script>
+    </script>
     <script>
         function confirmar() {
             Swal.fire({

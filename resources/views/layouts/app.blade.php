@@ -17,8 +17,45 @@
     <link href="{{ asset('assets/css/app-dark.min.css') }}" rel="stylesheet" type="text/css" id="dark-style">
     <link href="{{ asset('assets/css/vendor/dataTables.bootstrap5.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/vendor /responsive.bootstrap5.css') }}" rel="stylesheet" type="texto/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
     <!-- Fullcalendar -->
     <link type="text/css" href="{{ asset('vendor/fullcalendar/lib/main.css') }}" rel="stylesheet">
+    {{-- <style>
+        .loading-overlay {
+            display: none;
+            /* Oculto por defecto */
+            position: fixed;
+            /* Posicionamiento fijo en la pantalla */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Fondo negro con opacidad */
+            z-index: 9999;
+            /* Asegura que esté sobre otros elementos */
+            justify-content: center;
+            /* Centra horizontalmente */
+            align-items: center;
+            /* Centra verticalmente */
+            display: flex;
+            /* Usa flexbox para el centrado */
+        }
+
+        .loading-image {
+            width: 50px;
+            /* O el tamaño que prefieras para tu imagen de carga */
+            height: 50px;
+            /* Asegura que la imagen mantenga su aspecto */
+        }
+
+        .active {
+            display: flex;
+            /* Se muestra cuando Livewire está cargando */
+        }
+    </style> --}}
+    @yield('css')
     @livewireStyles
 
 </head>
@@ -60,8 +97,13 @@
     <!-- ============================================================== -->
     <!-- End Page content -->
     <!-- ============================================================== -->
-
-
+    {{--
+    <div class="" wire:loading>
+        <div wire:loading.class="active" class="loading-overlay fs-3">
+            <div class="spinner-border text-warning " role="status">
+            </div> <span class="text-warning">Cargando...</span>
+        </div>
+    </div> --}}
     </div>
     <!-- END wrapper -->
 
@@ -81,14 +123,16 @@
         src="{{ asset('assets/js/vendor/dataTables.responsive.min.js') }}"></script>
     <script language="JavaScript" type="text/javascript"
         src="{{ asset('assets/js/vendor/responsive.bootstrap5.min.js') }}"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
     <!-- Fullcalendar -->
     <script src="{{ asset('vendor/fullcalendar/lib/main.js') }}"></script>
     @livewireScripts
-    @yield('js')
+
     @if (session('success'))
-        <script>
-            // Swal.fire("Excelente!", '{{ session('success') }}','success');
+    <script>
+        // Swal.fire("Excelente!", '{{ session('success') }}','success');
             Swal.fire({
                 icon: 'success',
                 title: 'Excelente',
@@ -96,12 +140,22 @@
                 showConfirmButton: false,
                 timer: 1500
             })
-        </script>
+    </script>
+    @endif
+    @if (session('success2'))
+    <script>
+        // Swal.fire("Excelente!", '{{ session('success') }}','success');
+            Swal.fire({
+                icon: 'success',
+                title: 'Excelente',
+                text: '{{ session('success2') }}',
+            })
+    </script>
     @endif
     @if (session('error'))
-        <script>
-            Swal.fire("Error!", '{{ session('error') }}', 'error');
-        </script>
+    <script>
+        Swal.fire("Error!", '{{ session('error') }}', 'error');
+    </script>
     @endif
     <script>
         $(document).ready(function() {
@@ -211,7 +265,7 @@
         });
 
         Livewire.on('success', message => {
-            // Swal.fire('Excelente!',message,'success');  
+            // Swal.fire('Excelente!',message,'success');
             Swal.fire({
                 icon: 'success',
                 title: 'Excelente',
@@ -238,7 +292,7 @@
                         next: "<i class='mdi mdi-chevron-right'>",
                     }
                 },
-                
+
                 drawCallback: function() {
                     $(".dataTables_paginate > .pagination").addClass("pagination-rounded")
                 }
@@ -263,6 +317,25 @@
             $.unblockUI();
         });
     </script>
+
+    <script>
+        function isMobile() {
+            if (navigator.userAgent.match(/Android/i) ||
+                navigator.userAgent.match(/webOS/i) ||
+                navigator.userAgent.match(/iPhone/i) ||
+                navigator.userAgent.match(/iPad/i) ||
+                navigator.userAgent.match(/iPod/i) ||
+                navigator.userAgent.match(/BlackBerry/i) ||
+                navigator.userAgent.match(/Windows Phone/i)) {
+                a = true;
+            } else {
+                a = false;
+            }
+            return a;
+        }
+    </script>
+
+    @yield('js')
 </body>
 
 </html>

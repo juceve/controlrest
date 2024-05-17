@@ -137,7 +137,7 @@ class Bonofecha2 extends Component
         // ============ AREA CLIENTES ===============================================================================
         $html = "";
 
-        $tipomenus = Tipomenu::where([['sucursale_id', Auth::user()->sucursale_id], ['status', 1]])->get();
+        $tipomenus = Tipomenu::where('sucursale_id', Auth::user()->sucursale_id)->get();
         // FIN DE LINEA
         $htmlProductos = "";
         $i = 0;
@@ -283,16 +283,16 @@ class Bonofecha2 extends Component
                     $cantmin = $precioTipoMenu->cantmin;
                     $cantidadDias = contarDiasSemana($pedido[2], $pedido[3]);
                     // if ($cantidadDias >= $cantmin && count($this->checks) >= 2) {
-                    // if (count($this->arrPedidos) >= 2) {
-                    //     $importeEstudiante = $cantidadDias * $precioTipoMenu->preciopm;
-                    //     if ($precioTipoMenu->preciopm != $precioTipoMenu->precio) {
-                    //         $descuento = "SI";
-                    //     }
-                    //     $preciounitario = $precioTipoMenu->preciopm;
-                    // } else {
-                    $importeEstudiante = $cantidadDias * $precioTipoMenu->precio;
-                    $preciounitario = $precioTipoMenu->precio;
-                    // }
+                    if (count($this->arrPedidos) >= 2) {
+                        $importeEstudiante = $cantidadDias * $precioTipoMenu->preciopm;
+                        if ($precioTipoMenu->preciopm != $precioTipoMenu->precio) {
+                            $descuento = "SI";
+                        }
+                        $preciounitario = $precioTipoMenu->preciopm;
+                    } else {
+                        $importeEstudiante = $cantidadDias * $precioTipoMenu->precio;
+                        $preciounitario = $precioTipoMenu->precio;
+                    }
 
 
                     $tbodyPagoClientes = $tbodyPagoClientes . "<tr>
@@ -516,23 +516,23 @@ class Bonofecha2 extends Component
 
 
 
-                // if ($this->browseMobile) {
+                if ($this->browseMobile) {
 
-                $detalleRecibo = "";
+                    $detalleRecibo = "";
 
-                foreach ($this->contenedor as $item) {
-                    $detalleRecibo .= $item;
-                    $detalleRecibo .= "^";
+                    foreach ($this->contenedor as $item) {
+                        $detalleRecibo .= $item;
+                        $detalleRecibo .= "^";
+                    }
+
+                    $detalleRecibo = substr($detalleRecibo, 0, -1);
+
+                    $this->emit('imprimir', $this->datosVentaRecibo . "~" . $detalleRecibo);
+                } else {
+                    foreach ($this->contenedor as $item) {
+                        $this->emit('imprimir', $this->datosVentaRecibo . "~" . $item);
+                    }
                 }
-
-                $detalleRecibo = substr($detalleRecibo, 0, -1);
-
-                $this->emit('imprimir', $this->datosVentaRecibo . "~" . $detalleRecibo);
-                // } else {
-                //     foreach ($this->contenedor as $item) {
-                //         $this->emit('imprimir', $this->datosVentaRecibo . "~" . $item);
-                //     }
-                // }
 
                 return redirect()->route('ventas.bonofecha')
                     ->with('finishTransaction', 'Los datos fueron registrados correctamente');

@@ -14,12 +14,12 @@ use Livewire\Component;
 
 class Events extends Component
 {
-    public $menus, $menu_id,  $fecha, $idEvento = 0, $arrMenus = array(),$tipomenus;
+    public $menus, $menu_id,  $fecha, $idEvento = 0, $arrMenus = array(), $tipomenus;
 
     public function mount()
     {
-        $this->menus = Menu::where('sucursale_id',Auth::user()->sucursale_id)->get();
-        $this->tipomenus = Tipomenu::all();
+        $this->menus = Menu::where('sucursale_id', Auth::user()->sucursale_id)->get();
+        $this->tipomenus = Tipomenu::where('status', 1)->get();
     }
 
     public function render()
@@ -27,18 +27,18 @@ class Events extends Component
         return view('livewire.menu.events')->extends('layouts.app');
     }
 
-    public function updatedFecha(){
-        $eventosFecha = Evento::where('fecha',$this->fecha)->get();
-        
-        if($eventosFecha->count()>0){
+    public function updatedFecha()
+    {
+        $eventosFecha = Evento::where('fecha', $this->fecha)->get();
+
+        if ($eventosFecha->count() > 0) {
             foreach ($eventosFecha as $event) {
-                
+
                 $detalles = $event->detalleeventos;
                 $this->idEvento = $event->id;
                 foreach ($detalles as $detalle) {
                     $this->arrMenus[] = array("id" => $detalle->menu->id, "nombre" => $detalle->menu->nombre, "descripcion" => $detalle->menu->descripcion, "tipomenu" => $detalle->menu->tipomenu->nombre);
                 }
-                
             }
             $this->emit('onDelete');
         }
@@ -89,7 +89,7 @@ class Events extends Component
             } catch (\Throwable $th) {
                 DB::rollBack();
                 $this->reset('idEvento');
-                $this->emit('error',$th->getMessage());
+                $this->emit('error', $th->getMessage());
                 // $this->emit('error', 'No se registro el Evento.');
             }
         } else {

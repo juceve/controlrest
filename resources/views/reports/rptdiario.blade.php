@@ -69,28 +69,28 @@
                                 </thead>
                                 <tbody>
                                     @php
-                                        $i = 1;
-                                        $tpagados = 0;
-                                        $tservidos = 0;
-                                        $tausencias = 0;
-                                        $tlicencias = 0;
+                                    $i = 1;
+                                    $tpagados = 0;
+                                    $tservidos = 0;
+                                    $tausencias = 0;
+                                    $tlicencias = 0;
                                     @endphp
                                     @foreach ($tabla1 as $item)
-                                        <tr>
-                                            <td align="center">{{ $i }}</td>
-                                            <td>{{ $item[1] }}</td>
-                                            <td align="center">{{ $item[2] }}</td>
-                                            <td align="center">{{ $item[3] }}</td>
-                                            <td align="center">{{ $item[4] }}</td>
-                                            <td align="center">{{ $item[5] }}</td>
-                                        </tr>
-                                        @php
-                                            $i++;
-                                            $tpagados = $tpagados + $item[2];
-                                            $tservidos = $tservidos + $item[3];
-                                            $tausencias = $tausencias + $item[4];
-                                            $tlicencias = $tlicencias + $item[5];
-                                        @endphp
+                                    <tr>
+                                        <td align="center">{{ $i }}</td>
+                                        <td>{{ $item[1] }}</td>
+                                        <td align="center">{{ $item[2] }}</td>
+                                        <td align="center">{{ $item[3] }}</td>
+                                        <td align="center">{{ $item[4] }}</td>
+                                        <td align="center">{{ $item[5] }}</td>
+                                    </tr>
+                                    @php
+                                    $i++;
+                                    $tpagados = $tpagados + $item[2];
+                                    $tservidos = $tservidos + $item[3];
+                                    $tausencias = $tausencias + $item[4];
+                                    $tlicencias = $tlicencias + $item[5];
+                                    @endphp
                                     @endforeach
 
                                 </tbody>
@@ -109,40 +109,40 @@
                             <h6>RESUMEN PAGADOS POR PLATAFORMA</h6>
                             <div class="table-responsive">
                                 @if ($tabla11)
-                                    <table class="table table-striped table-bordered table-sm table-hover"
-                                        style="font-size: 12px;">
-                                        <thead class="table-secondary" style="background-color: lightgray">
-                                            <tr align="center">
-                                                <td>NRO</td>
-                                                <td>PLATAFORMA</td>
-                                                <td>CANTIDAD</td>
-                                            </tr>
+                                <table class="table table-striped table-bordered table-sm table-hover"
+                                    style="font-size: 12px;">
+                                    <thead class="table-secondary" style="background-color: lightgray">
+                                        <tr align="center">
+                                            <td>NRO</td>
+                                            <td>PLATAFORMA</td>
+                                            <td>CANTIDAD</td>
+                                        </tr>
 
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                $i = 1;
-                                                $total = 0;
-                                            @endphp
-                                            @foreach ($tabla11 as $item)
-                                                <tr>
-                                                    <td align="center">{{ $i }}</td>
-                                                    <td>{{ $item[0] }}</td>
-                                                    <td align="center">{{ $item[1] }}</td>
-                                                </tr>
-                                                @php
-                                                    $i++;
-                                                    $total = $total + $item[1];
-                                                @endphp
-                                            @endforeach
-                                        </tbody>
-                                        <tfoot>
-                                            <tr class="table-success">
-                                                <td colspan="2" align="right"><strong>TOTAL</strong></td>
-                                                <td align="center"><strong>{{ $total }}</strong></td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                        $i = 1;
+                                        $total = 0;
+                                        @endphp
+                                        @foreach ($tabla11 as $item)
+                                        <tr>
+                                            <td align="center">{{ $i }}</td>
+                                            <td>{{ $item[0] }}</td>
+                                            <td align="center">{{ $item[1] }}</td>
+                                        </tr>
+                                        @php
+                                        $i++;
+                                        $total = $total + $item[1];
+                                        @endphp
+                                        @endforeach
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="table-success">
+                                            <td colspan="2" align="right"><strong>TOTAL</strong></td>
+                                            <td align="center"><strong>{{ $total }}</strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                                 @endif
                             </div>
                         </div>
@@ -160,8 +160,8 @@
                                             <th>A. COMP. PAGADOS</th>
                                             <th>A. COMP. SERVIDOS</th>
                                             {{-- <th>SUBTOTAL</th> --}}
-                                            <th>A. SIMPLE PAGADOS</th>
-                                            <th>A. SIMPLE SERVIDOS</th>
+                                            {{-- <th>A. SIMPLE PAGADOS</th>
+                                            <th>A. SIMPLE SERVIDOS</th> --}}
                                             {{-- <th>SUBTOTAL</th> --}}
                                             <th>EXTRA PAGADO</th>
                                             <th>EXTRA SERVIDO</th>
@@ -172,53 +172,53 @@
                                     </thead>
                                     <tbody style="font-size: 12px;">
                                         @php
-                                            $licencias = 0;
-                                            $completoPagado = 0;
-                                            $completoServido = 0;
-                                            $simplePagado = 0;
-                                            $simpleServido = 0;
-                                            $extraPagado = 0;
-                                            $extraServido = 0;
-                                            $i = 1;
+                                        $licencias = 0;
+                                        $completoPagado = 0;
+                                        $completoServido = 0;
+                                        $simplePagado = 0;
+                                        $simpleServido = 0;
+                                        $extraPagado = 0;
+                                        $extraServido = 0;
+                                        $i = 1;
                                         @endphp
                                         @foreach ($tabla2 as $item)
-                                            @php
-                                                $totalpagados = 0;
-                                                $totalservidos = 0;
-                                                $data = $item[2];
-                                                $completoPagado = $completoPagado + $data[0][2];
-                                                $completoServido = $completoServido + $data[0][3];
-                                                $simplePagado = $simplePagado + $data[1][2];
-                                                $simpleServido = $simpleServido + $data[1][3];
-                                                $extraPagado = $extraPagado + $data[2][2];
-                                                $extraServido = $extraServido + $data[2][3];
-                                            @endphp
-                                            @if ($data[0][2] || $data[0][3] || $data[1][2] || $data[1][3] || $data[2][2] || $data[2][3])
-                                                @php
-                                                    $totalpagados = $totalpagados + $data[0][2] + $data[1][2] + $data[2][2];
-                                                    $totalservidos = $totalservidos + $data[0][3] + $data[1][3] + $data[2][3];
-                                                    $licencias = $licencias + $item[3];
-                                                @endphp
-                                                <tr align="center">
-                                                    <td>{{ $i }}</td>
-                                                    <td>{{ $item[1] }}</td>
-                                                    <td>{{ $item[3] }}</td>
-                                                    <td>{{ $data[0][2] }}</td>
-                                                    <td>{{ $data[0][3] }}</td>
-                                                    {{-- <td>6</td> --}}
-                                                    <td>{{ $data[1][2] }}</td>
-                                                    <td>{{ $data[1][3] }}</td>
-                                                    {{-- <td>9</td> --}}
-                                                    <td>{{ $data[2][2] }}</td>
-                                                    <td>{{ $data[2][3] }}</td>
-                                                    {{-- <td>112</td> --}}
-                                                    <td>{{ $totalpagados }}</td>
-                                                    <td>{{ $totalservidos }}</td>
-                                                </tr>
-                                                @php
-                                                    $i++;
-                                                @endphp
-                                            @endif
+                                        @php
+                                        $totalpagados = 0;
+                                        $totalservidos = 0;
+                                        $data = $item[2];
+                                        $completoPagado = $completoPagado + $data[0][2];
+                                        $completoServido = $completoServido + $data[0][3];
+                                        // $simplePagado = $simplePagado + $data[1][2];
+                                        // $simpleServido = $simpleServido + $data[1][3];
+                                        $extraPagado = $extraPagado + $data[1][2];
+                                        $extraServido = $extraServido + $data[1][3];
+                                        @endphp
+                                        @if ($data[0][2] || $data[0][3] || $data[1][2] || $data[1][3])
+                                        @php
+                                        $totalpagados = $totalpagados + $data[0][2] + $data[1][2];
+                                        $totalservidos = $totalservidos + $data[0][3] + $data[1][3];
+                                        $licencias = $licencias + $item[3];
+                                        @endphp
+                                        <tr align="center">
+                                            <td>{{ $i }}</td>
+                                            <td>{{ $item[1] }}</td>
+                                            <td>{{ $item[3] }}</td>
+                                            <td>{{ $data[0][2] }}</td>
+                                            <td>{{ $data[0][3] }}</td>
+                                            {{-- <td>6</td> --}}
+                                            <td>{{ $data[1][2] }}</td>
+                                            <td>{{ $data[1][3] }}</td>
+                                            {{-- <td>9</td> --}}
+                                            {{-- <td>{{ $data[2][2] }}</td>
+                                            <td>{{ $data[2][3] }}</td> --}}
+                                            {{-- <td>112</td> --}}
+                                            <td>{{ $totalpagados }}</td>
+                                            <td>{{ $totalservidos }}</td>
+                                        </tr>
+                                        @php
+                                        $i++;
+                                        @endphp
+                                        @endif
                                         @endforeach
 
                                     </tbody>
@@ -229,15 +229,15 @@
                                             <td>{{ $completoPagado }}</td>
                                             <td>{{ $completoServido }}</td>
                                             {{-- <td>2</td> --}}
-                                            <td>{{ $simplePagado }}</td>
-                                            <td>{{ $simpleServido }}</td>
+                                            {{-- <td>{{ $simplePagado }}</td>
+                                            <td>{{ $simpleServido }}</td> --}}
                                             {{-- <td>6</td> --}}
                                             <td>{{ $extraPagado }}</td>
                                             <td>{{ $extraServido }}</td>
                                             {{-- <td>7</td> --}}
                                             @php
-                                                $totalpagados1 = $completoPagado + $simplePagado + $extraPagado;
-                                                $totalservidos1 = $completoServido + $simpleServido + $extraServido;
+                                            $totalpagados1 = $completoPagado + $simplePagado + $extraPagado;
+                                            $totalservidos1 = $completoServido + $simpleServido + $extraServido;
                                             @endphp
                                             <td>{{ $totalpagados1 }}</td>
                                             <td>{{ $totalservidos1 }}</td>
@@ -258,8 +258,8 @@
                                             <th>A. COMP. PAGADOS</th>
                                             <th>A. COMP. SERVIDOS</th>
                                             {{-- <th>SUBTOTAL</th> --}}
-                                            <th>A. SIMPLE PAGADOS</th>
-                                            <th>A. SIMPLE SERVIDOS</th>
+                                            {{-- <th>A. SIMPLE PAGADOS</th>
+                                            <th>A. SIMPLE SERVIDOS</th> --}}
                                             {{-- <th>SUBTOTAL</th> --}}
                                             <th>EXTRA PAGADO</th>
                                             <th>EXTRA SERVIDO</th>
@@ -270,53 +270,53 @@
                                     </thead>
                                     <tbody style="font-size: 12px;">
                                         @php
-                                            $licencias = 0;
-                                            $completoPagado = 0;
-                                            $completoServido = 0;
-                                            $simplePagado = 0;
-                                            $simpleServido = 0;
-                                            $extraPagado = 0;
-                                            $extraServido = 0;
-                                            $i = 1;
+                                        $licencias = 0;
+                                        $completoPagado = 0;
+                                        $completoServido = 0;
+                                        $simplePagado = 0;
+                                        $simpleServido = 0;
+                                        $extraPagado = 0;
+                                        $extraServido = 0;
+                                        $i = 1;
                                         @endphp
                                         @foreach ($tabla3 as $item)
-                                            @php
-                                                $totalpagados = 0;
-                                                $totalservidos = 0;
-                                                $data = $item[2];
-                                                $completoPagado = $completoPagado + $data[0][2];
-                                                $completoServido = $completoServido + $data[0][3];
-                                                $simplePagado = $simplePagado + $data[1][2];
-                                                $simpleServido = $simpleServido + $data[1][3];
-                                                $extraPagado = $extraPagado + $data[2][2];
-                                                $extraServido = $extraServido + $data[2][3];
-                                            @endphp
-                                            @if ($data[0][2] || $data[0][3] || $data[1][2] || $data[1][3] || $data[2][2] || $data[2][3])
-                                                @php
-                                                    $totalpagados = $totalpagados + $data[0][2] + $data[1][2] + $data[2][2];
-                                                    $totalservidos = $totalservidos + $data[0][3] + $data[1][3] + $data[2][3];
-                                                    $licencias = $licencias + $item[3];
-                                                @endphp
-                                                <tr align="center">
-                                                    <td>{{ $i }}</td>
-                                                    <td>{{ $item[1] }}</td>
-                                                    <td>{{ $item[3] }}</td>
-                                                    <td>{{ $data[0][2] }}</td>
-                                                    <td>{{ $data[0][3] }}</td>
-                                                    {{-- <td>6</td> --}}
-                                                    <td>{{ $data[1][2] }}</td>
-                                                    <td>{{ $data[1][3] }}</td>
-                                                    {{-- <td>9</td> --}}
-                                                    <td>{{ $data[2][2] }}</td>
-                                                    <td>{{ $data[2][3] }}</td>
-                                                    {{-- <td>112</td> --}}
-                                                    <td>{{ $totalpagados }}</td>
-                                                    <td>{{ $totalservidos }}</td>
-                                                </tr>
-                                                @php
-                                                    $i++;
-                                                @endphp
-                                            @endif
+                                        @php
+                                        $totalpagados = 0;
+                                        $totalservidos = 0;
+                                        $data = $item[2];
+                                        $completoPagado = $completoPagado + $data[0][2];
+                                        $completoServido = $completoServido + $data[0][3];
+                                        // $simplePagado = $simplePagado + $data[1][2];
+                                        // $simpleServido = $simpleServido + $data[1][3];
+                                        $extraPagado = $extraPagado + $data[1][2];
+                                        $extraServido = $extraServido + $data[1][3];
+                                        @endphp
+                                        @if ($data[0][2] || $data[0][3] || $data[1][2] || $data[1][3])
+                                        @php
+                                        $totalpagados = $totalpagados + $data[0][2] + $data[1][2];
+                                        $totalservidos = $totalservidos + $data[0][3] + $data[1][3];
+                                        $licencias = $licencias + $item[3];
+                                        @endphp
+                                        <tr align="center">
+                                            <td>{{ $i }}</td>
+                                            <td>{{ $item[1] }}</td>
+                                            <td>{{ $item[3] }}</td>
+                                            <td>{{ $data[0][2] }}</td>
+                                            <td>{{ $data[0][3] }}</td>
+                                            {{-- <td>6</td> --}}
+                                            <td>{{ $data[1][2] }}</td>
+                                            <td>{{ $data[1][3] }}</td>
+                                            {{-- <td>9</td> --}}
+                                            {{-- <td>{{ $data[2][2] }}</td>
+                                            <td>{{ $data[2][3] }}</td> --}}
+                                            {{-- <td>112</td> --}}
+                                            <td>{{ $totalpagados }}</td>
+                                            <td>{{ $totalservidos }}</td>
+                                        </tr>
+                                        @php
+                                        $i++;
+                                        @endphp
+                                        @endif
                                         @endforeach
 
                                     </tbody>
@@ -327,15 +327,15 @@
                                             <td>{{ $completoPagado }}</td>
                                             <td>{{ $completoServido }}</td>
                                             {{-- <td>2</td> --}}
-                                            <td>{{ $simplePagado }}</td>
-                                            <td>{{ $simpleServido }}</td>
+                                            {{-- <td>{{ $simplePagado }}</td>
+                                            <td>{{ $simpleServido }}</td> --}}
                                             {{-- <td>6</td> --}}
                                             <td>{{ $extraPagado }}</td>
                                             <td>{{ $extraServido }}</td>
                                             {{-- <td>7</td> --}}
                                             @php
-                                                $totalpagados1 = $completoPagado + $simplePagado + $extraPagado;
-                                                $totalservidos1 = $completoServido + $simpleServido + $extraServido;
+                                            $totalpagados1 = $completoPagado + $simplePagado + $extraPagado;
+                                            $totalservidos1 = $completoServido + $simpleServido + $extraServido;
                                             @endphp
                                             <td>{{ $totalpagados1 }}</td>
                                             <td>{{ $totalservidos1 }}</td>
@@ -356,8 +356,8 @@
                                             <th>A. COMP. PAGADOS</th>
                                             <th>A. COMP. SERVIDOS</th>
                                             {{-- <th>SUBTOTAL</th> --}}
-                                            <th>A. SIMPLE PAGADOS</th>
-                                            <th>A. SIMPLE SERVIDOS</th>
+                                            {{-- <th>A. SIMPLE PAGADOS</th>
+                                            <th>A. SIMPLE SERVIDOS</th> --}}
                                             {{-- <th>SUBTOTAL</th> --}}
                                             <th>EXTRA PAGADO</th>
                                             <th>EXTRA SERVIDO</th>
@@ -368,53 +368,53 @@
                                     </thead>
                                     <tbody style="font-size: 12px;">
                                         @php
-                                            $licencias = 0;
-                                            $completoPagado = 0;
-                                            $completoServido = 0;
-                                            $simplePagado = 0;
-                                            $simpleServido = 0;
-                                            $extraPagado = 0;
-                                            $extraServido = 0;
-                                            $i = 1;
+                                        $licencias = 0;
+                                        $completoPagado = 0;
+                                        $completoServido = 0;
+                                        $simplePagado = 0;
+                                        $simpleServido = 0;
+                                        $extraPagado = 0;
+                                        $extraServido = 0;
+                                        $i = 1;
                                         @endphp
                                         @foreach ($tabla4 as $item)
-                                            @php
-                                                $totalpagados = 0;
-                                                $totalservidos = 0;
-                                                $data = $item[2];
-                                                $completoPagado = $completoPagado + $data[0][2];
-                                                $completoServido = $completoServido + $data[0][3];
-                                                $simplePagado = $simplePagado + $data[1][2];
-                                                $simpleServido = $simpleServido + $data[1][3];
-                                                $extraPagado = $extraPagado + $data[2][2];
-                                                $extraServido = $extraServido + $data[2][3];
-                                            @endphp
-                                            @if ($data[0][2] || $data[0][3] || $data[1][2] || $data[1][3] || $data[2][2] || $data[2][3])
-                                                @php
-                                                    $totalpagados = $totalpagados + $data[0][2] + $data[1][2] + $data[2][2];
-                                                    $totalservidos = $totalservidos + $data[0][3] + $data[1][3] + $data[2][3];
-                                                    $licencias = $licencias + $item[3];
-                                                @endphp
-                                                <tr align="center">
-                                                    <td>{{ $i }}</td>
-                                                    <td>{{ substr($item[1], 0, 4) }}</td>
-                                                    <td>{{ $item[3] }}</td>
-                                                    <td>{{ $data[0][2] }}</td>
-                                                    <td>{{ $data[0][3] }}</td>
-                                                    {{-- <td>6</td> --}}
-                                                    <td>{{ $data[1][2] }}</td>
-                                                    <td>{{ $data[1][3] }}</td>
-                                                    {{-- <td>9</td> --}}
-                                                    <td>{{ $data[2][2] }}</td>
-                                                    <td>{{ $data[2][3] }}</td>
-                                                    {{-- <td>112</td> --}}
-                                                    <td>{{ $totalpagados }}</td>
-                                                    <td>{{ $totalservidos }}</td>
-                                                </tr>
-                                                @php
-                                                    $i++;
-                                                @endphp
-                                            @endif
+                                        @php
+                                        $totalpagados = 0;
+                                        $totalservidos = 0;
+                                        $data = $item[2];
+                                        $completoPagado = $completoPagado + $data[0][2];
+                                        $completoServido = $completoServido + $data[0][3];
+                                        // $simplePagado = $simplePagado + $data[1][2];
+                                        // $simpleServido = $simpleServido + $data[1][3];
+                                        $extraPagado = $extraPagado + $data[1][2];
+                                        $extraServido = $extraServido + $data[1][3];
+                                        @endphp
+                                        @if ($data[0][2] || $data[0][3] || $data[1][2] || $data[1][3])
+                                        @php
+                                        $totalpagados = $totalpagados + $data[0][2] + $data[1][2] ;
+                                        $totalservidos = $totalservidos + $data[0][3] + $data[1][3];
+                                        $licencias = $licencias + $item[3];
+                                        @endphp
+                                        <tr align="center">
+                                            <td>{{ $i }}</td>
+                                            <td>{{ substr($item[1], 0, 4) }}</td>
+                                            <td>{{ $item[3] }}</td>
+                                            <td>{{ $data[0][2] }}</td>
+                                            <td>{{ $data[0][3] }}</td>
+                                            {{-- <td>6</td> --}}
+                                            <td>{{ $data[1][2] }}</td>
+                                            <td>{{ $data[1][3] }}</td>
+                                            {{-- <td>9</td> --}}
+                                            {{-- <td>{{ $data[2][2] }}</td>
+                                            <td>{{ $data[2][3] }}</td> --}}
+                                            {{-- <td>112</td> --}}
+                                            <td>{{ $totalpagados }}</td>
+                                            <td>{{ $totalservidos }}</td>
+                                        </tr>
+                                        @php
+                                        $i++;
+                                        @endphp
+                                        @endif
                                         @endforeach
 
                                     </tbody>
@@ -425,15 +425,15 @@
                                             <td>{{ $completoPagado }}</td>
                                             <td>{{ $completoServido }}</td>
                                             {{-- <td>2</td> --}}
-                                            <td>{{ $simplePagado }}</td>
-                                            <td>{{ $simpleServido }}</td>
+                                            {{-- <td>{{ $simplePagado }}</td>
+                                            <td>{{ $simpleServido }}</td> --}}
                                             {{-- <td>6</td> --}}
                                             <td>{{ $extraPagado }}</td>
                                             <td>{{ $extraServido }}</td>
                                             {{-- <td>7</td> --}}
                                             @php
-                                                $totalpagados1 = $completoPagado + $simplePagado + $extraPagado;
-                                                $totalservidos1 = $completoServido + $simpleServido + $extraServido;
+                                            $totalpagados1 = $completoPagado + $simplePagado + $extraPagado;
+                                            $totalservidos1 = $completoServido + $simpleServido + $extraServido;
                                             @endphp
                                             <td>{{ $totalpagados1 }}</td>
                                             <td>{{ $totalservidos1 }}</td>

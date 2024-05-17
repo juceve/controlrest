@@ -19,6 +19,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SucursaleController;
 use App\Http\Controllers\TipomenuController;
+use App\Http\Controllers\UploadController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\VentasconfigController;
 use App\Http\Livewire\Clientes\Tutores;
@@ -30,6 +31,7 @@ use App\Http\Livewire\Entregas\Porcurso;
 use App\Http\Livewire\Entregas\Profesores;
 use App\Http\Livewire\Entregas\Estadopedidos;
 use App\Http\Livewire\Entregas\Noentregados2;
+use App\Http\Livewire\Generapagos;
 use App\Http\Livewire\Masivos;
 use App\Http\Livewire\Menu\Elaborarmenu;
 use App\Http\Livewire\Menu\Events;
@@ -37,6 +39,7 @@ use App\Http\Livewire\Menu\Finish;
 use App\Http\Livewire\Menu\Formapago;
 use App\Http\Livewire\Menu\Pedido;
 use App\Http\Livewire\Menu\Resumen;
+use App\Http\Livewire\NewPos;
 use App\Http\Livewire\Pagos\Actcomprobante as PagosActcomprobante;
 use App\Http\Livewire\Pagos\Pagoprofesores;
 use App\Http\Livewire\Pagos\Pagossincomprobante;
@@ -80,15 +83,15 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->middleware('auth')->middleware('can:home')->name('home');
 
-Route::post('users/resetPassword/{id}',[UserController::class,'resetPassword'])->name('admin.users.resetPassword');
-Route::get('users/asignaRol/{user}',[UserController::class,'asinaRol'])->name('admin.users.asignaRol');
-Route::put('users/updateRol/{user}', [UserController::class,'updateRol'])->name('admin.users.updateRol');
-Route::resource('users',UserController::class)->middleware('auth')->names('admin.users');
+Route::post('users/resetPassword/{id}', [UserController::class, 'resetPassword'])->name('admin.users.resetPassword');
+Route::get('users/asignaRol/{user}', [UserController::class, 'asinaRol'])->name('admin.users.asignaRol');
+Route::put('users/updateRol/{user}', [UserController::class, 'updateRol'])->name('admin.users.updateRol');
+Route::resource('users', UserController::class)->middleware('auth')->names('admin.users');
 
-Route::resource('monedas',MonedaController::class)->middleware('auth')->names('monedas');
+Route::resource('monedas', MonedaController::class)->middleware('auth')->names('monedas');
 Route::resource('tipomenus', TipomenuController::class)->names('tipomenus');
 
-Route::resource('empresas',EmpresaController::class)->middleware('auth')->names('admin.empresas');
+Route::resource('empresas', EmpresaController::class)->middleware('auth')->names('admin.empresas');
 Route::resource('roles', RoleController::class)->middleware('auth')->names('admin.roles');
 Route::resource('sucursales', SucursaleController::class)->middleware('auth')->names('admin.sucursales');
 
@@ -114,48 +117,50 @@ Route::get('resumenpedido', Resumen::class)->middleware('auth')->name('resumenpe
 Route::get('formapago/{tipoBusqueda}', Formapago::class)->middleware('auth')->name('formapago');
 Route::get('fintransc/{id}', Finish::class)->middleware('auth')->name('fintransc');
 
-Route::get('masivos',Masivos::class)->middleware('auth')->name('masivos');
+Route::get('masivos', Masivos::class)->middleware('auth')->name('masivos');
 
-Route::get('ventas/cierrecaja',Cierrecaja::class)->middleware('can:ventas.cierrecaja')->middleware('auth')->name('ventas.cierrecaja');
-Route::get('ventas/cierres',Cierrebonoreserva::class)->middleware('can:ventas.cierrecaja')->middleware('auth')->name('ventas.cierres');
-Route::get('ventas/bonofecha',Bonofecha2::class)->middleware('can:ventas.bonos')->middleware('auth')->name('ventas.bonofecha');
-Route::get('ventas/bonomensual',Bonomensual::class)->middleware('auth')->name('ventas.bonomensual');
-Route::get('ventas/bonoanual',Bonoanual::class)->middleware('can:ventas.bonos')->middleware('auth')->name('ventas.bonoanual');
-Route::get('ventas/pos/{indicador?}',Pos::class)->middleware('auth')->name('ventas.pos');
-Route::get('ventas/nueva/{id}',Nueva::class)->middleware('auth')->name('ventas.nueva');
-Route::get('reservas/nueva',Reservas::class)->middleware('auth')->middleware('can:reservas.nueva')->name('reservas.nueva');
+Route::get('ventas/cierrecaja', Cierrecaja::class)->middleware('can:ventas.cierrecaja')->middleware('auth')->name('ventas.cierrecaja');
+Route::get('ventas/cierres', Cierrebonoreserva::class)->middleware('can:ventas.cierrecaja')->middleware('auth')->name('ventas.cierres');
+Route::get('ventas/bonofecha', Bonofecha2::class)->middleware('can:ventas.bonos')->middleware('auth')->name('ventas.bonofecha');
+Route::get('ventas/bonomensual', Bonomensual::class)->middleware('auth')->name('ventas.bonomensual');
+Route::get('ventas/bonoanual', Bonoanual::class)->middleware('can:ventas.bonos')->middleware('auth')->name('ventas.bonoanual');
+Route::get('ventas/pos/{indicador?}', Pos::class)->middleware('auth')->name('ventas.pos');
+Route::get('ventas/nueva/{id}', Nueva::class)->middleware('auth')->name('ventas.nueva');
+Route::get('reservas/nueva', Reservas::class)->middleware('auth')->middleware('can:reservas.nueva')->name('reservas.nueva');
 Route::get('ventas/vpagos', Verificacionpedidos::class)->middleware('auth')->middleware('can:ventas.vpagos')->name('ventas.vpagos');
 Route::get('ventas/appedido/{venta_id}', Aprobarpedido::class)->middleware('auth')->middleware('can:ventas.appedido')->name('ventas.appedido');
-Route::get('ventas/listado',Listado::class)->middleware('auth')->name('ventas.listado');
+Route::get('ventas/listado', Listado::class)->middleware('auth')->name('ventas.listado');
 Route::resource('ventas', VentaController::class)->middleware('auth')->names('ventas');
-Route::resource('ventasconfigs',VentasconfigController::class)->middleware('auth')->names('ventasconfigs');
-Route::resource('feriados',FeriadoController::class)->middleware('auth')->names('feriados');
+Route::resource('ventasconfigs', VentasconfigController::class)->middleware('auth')->names('ventasconfigs');
+Route::resource('feriados', FeriadoController::class)->middleware('auth')->names('feriados');
 
 Route::get('entregas/individual/{indicador?}', Individual::class)->middleware('auth')->middleware('can:entregas.individual')->name('entregas.individual');
 Route::get('entregas/porcurso', Porcurso::class)->middleware('auth')->middleware('can:entregas.porcurso')->name('entregas.porcurso');
-Route::get('entregas/profesores/{indicador?}',Profesores::class)->middleware('can:entregas.profesores')->middleware('auth')->name('entregas.profesores');
-Route::get('entregas/noentregados',Noentregados::class)->middleware('can:entregas.porcurso')->name('entregas.noentregados');
-Route::get('entregas/estadopedidos',Estadopedidos::class)->middleware('auth')->name('entregas.estadopedidos');
-Route::get('entregas/listado',Entregas::class)->middleware('can:entregas.listado')->middleware('auth')->name('entregas.listado');
-Route::get('entregas/noentregados2',Noentregados2::class)->name('noencontrados2');
+Route::get('entregas/profesores/{indicador?}', Profesores::class)->middleware('can:entregas.profesores')->middleware('auth')->name('entregas.profesores');
+Route::get('entregas/noentregados', Noentregados::class)->middleware('can:entregas.porcurso')->name('entregas.noentregados');
+Route::get('entregas/estadopedidos', Estadopedidos::class)->middleware('auth')->name('entregas.estadopedidos');
+Route::get('entregas/listado', Entregas::class)->middleware('can:entregas.listado')->middleware('auth')->name('entregas.listado');
+Route::get('entregas/noentregados2', Noentregados2::class)->name('noencontrados2');
 
 
-Route::get('pedidos/personales/{estudiante_id}',Ppersonales::class)->middleware('auth')->name('pedidos.personales');
+Route::get('pedidos/personales/{estudiante_id}', Ppersonales::class)->middleware('auth')->name('pedidos.personales');
 
-Route::get('reportes/cierrecaja/{id}',[ReporteController::class,'cierrecaja'])->name('reportes.cierrecaja');
-Route::get('reportes/diario',Diario::class)->middleware('auth')->name('reportes.diario');
-Route::get('reportes/ventas',Rventas::class)->middleware('auth')->name('reportes.ventas');
+Route::get('reportes/cierrecaja/{id}', [ReporteController::class, 'cierrecaja'])->name('reportes.cierrecaja');
+Route::get('reportes/diario', Diario::class)->middleware('auth')->name('reportes.diario');
+Route::get('reportes/ventas', Rventas::class)->middleware('auth')->name('reportes.ventas');
 // Route::get('reportes/rptventas',RptVentas::class)->name('reportes.rptventas');
 Route::get('reportes/entregasprofesores', Entregaprofesores::class)->middleware('auth')->name('reportes.entregasprofesores');
-Route::get('reportes/pagocreditos',Rpagocreditos::class)->name('reportes.pagocreditos');
+Route::get('reportes/pagocreditos', Rpagocreditos::class)->name('reportes.pagocreditos');
 Route::get('pagos/profesores', Pagoprofesores::class)->middleware('auth')->name('pagos.profesores');
-Route::get('pagos/sincomprobante',Pagossincomprobante::class)->middleware('auth')->name('pagos.sincomprobante');
-Route::get('pagos/actcomprobante/{pago_id}',PagosActcomprobante::class)->middleware('auth')->name('pagos.actcomprobante');
-Route::get('admin/promociones',Promociones::class)->middleware('auth')->middleware('can:admin.promociones')->name('admin.promociones');
+Route::get('pagos/sincomprobante', Pagossincomprobante::class)->middleware('auth')->name('pagos.sincomprobante');
+Route::get('pagos/actcomprobante/{pago_id}', PagosActcomprobante::class)->middleware('auth')->name('pagos.actcomprobante');
+Route::get('admin/promociones', Promociones::class)->middleware('auth')->middleware('can:admin.promociones')->name('admin.promociones');
 
-Route::get('impresiones/recibo/{data}',function(){
+Route::get('impresiones/recibo/{data}', function () {
     return view('impresiones.recibos');
 });
 
-Route::get('pruebas',Pruebas::class)->name('pruebas');
+// Route::get('pruebas', NewPos::class)->name('pruebas');
 
+Route::post('/uploadfileinput', [UploadController::class, 'upload'])->name('uploadfileinput');
+Route::get('generapagos', Generapagos::class)->name('generapagos');

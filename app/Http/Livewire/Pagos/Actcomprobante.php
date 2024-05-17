@@ -29,7 +29,7 @@ class Actcomprobante extends Component
             if ($this->comprobante) {
                 $this->emit('loading');
                 $file = $this->comprobante->storeAs('depositos/' . $this->pago->venta->tipopago->abreviatura, $this->pago->id . "." . $this->comprobante->extension());
-                $comprobante = 'depositos/' . $this->pago->venta->tipopago->abreviatura . '/' . $this->pago->id . "." . $this->comprobante->extension();
+                $comprobante = 'storage/depositos/' . $this->pago->venta->tipopago->abreviatura . '/' . $this->pago->id . "." . $this->comprobante->extension();
                 $this->pago->comprobante = $comprobante;
                 $this->pago->save();
             }

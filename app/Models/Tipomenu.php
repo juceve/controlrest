@@ -21,9 +21,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Tipomenu extends Model
 {
-    
+
     static $rules = [
-		'nombre' => 'required',
+        'nombre' => 'required',
     ];
 
     protected $perPage = 20;
@@ -33,7 +33,7 @@ class Tipomenu extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre','sucursale_id','abr'];
+    protected $fillable = ['nombre', 'sucursale_id', 'abr', 'status'];
 
 
     /**
@@ -43,7 +43,7 @@ class Tipomenu extends Model
     {
         return $this->hasMany('App\Models\Bonoanuale', 'tipomenu_id', 'id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -51,7 +51,7 @@ class Tipomenu extends Model
     {
         return $this->hasMany('App\Models\Menu', 'tipomenu_id', 'id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -59,6 +59,4 @@ class Tipomenu extends Model
     {
         return $this->hasMany('App\Models\Preciomenu', 'tipomenu_id', 'id');
     }
-    
-
 }
