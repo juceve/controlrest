@@ -117,7 +117,7 @@
                                         <td align="center">{{ $i }}</td>
                                         <td>{{ $item->nombre }}</td>
                                         <td align="center">{{ $item->cantidad }}</td>
-                                        <td align="right">{{ $item->total }}</td>
+                                        <td align="right">{{ number_format($item->total,2,'.',',') }}</td>
                                     </tr>
                                     @php
                                         $i++;
@@ -233,7 +233,7 @@
                         @if ($montosHOY)
                         @foreach ($montosHOY as $item)
                              <div class="row">
-                                <div class="col-12 col-md-5"><strong>{{$item->nombre}}</strong></div>                                
+                                <div class="col-12 col-md-5"><strong>{{$item->nombre}}</strong></div>
                                 <div class="col-12 col-md-3">{{ number_format($item->total, 2, '.', ',') }}</div>
                             </div>
                         @endforeach
@@ -248,7 +248,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CERRAR</button>
-                    
+
                 </div>
             </div>
         </div>

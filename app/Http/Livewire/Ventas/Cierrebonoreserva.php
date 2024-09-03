@@ -18,29 +18,30 @@ class Cierrebonoreserva extends Component
         $hoy = date('Y-m-d');
         $user = Auth::user()->id;
         $sucursale = Auth::user()->sucursale_id;
-        $sql = "SELECT p.nombre as tipo, COUNT(DISTINCT(v.id)) cantidad,tp.abreviatura tipopago,IF(dv.observacion='DESCUENTO','SI','NO') descuento,SUM(dv.subtotal) subtotal
-        from detalleventas dv
+        $sql = "SELECT pr.nombre as tipo, COUNT(DISTINCT(v.id)) cantidad,tp.abreviatura tipopago,IF(dv.observacion='DESCUENTO','SI','NO') descuento,SUM(dv.subtotal) subtotal
+       from detalleventas dv
         INNER JOIN ventas v on v.id = dv.venta_id
-        INNER JOIN tipopagos tp on tp.id = v.tipopago_id
-        INNER JOIN productos p on p.id = dv.producto_id
-        WHERE v.user_id = $user
-        AND v.fecha = '$hoy'
-        AND v.estadopago_id = 2
-        AND v.estado = 1
-        AND dv.producto_id <> 4
-        AND v.sucursale_id = $sucursale
-        GROUP BY p.nombre,dv.observacion,tp.abreviatura";
+        INNER JOIN pagos p ON p.venta_id = v.id
+        INNER JOIN tipopagos tp ON tp.id = p.tipopago_id
+        INNER JOIN productos pr ON pr.id = dv.producto_id
+        WHERE dv.producto_id <> 4
+        AND p.user_id = " . Auth::user()->id . "
+        AND p.sucursal_id = " . Auth::user()->sucursale_id . "
+        AND p.fecha = '" . date('Y-m-d') . "'
+        AND p.estado = 1
+        GROUP BY pr.nombre, tp.abreviatura, descuento";
         $ingresosHOY = DB::select($sql);
 
         $this->ingresos = $ingresosHOY;
 
         $sql2 = "SELECT tp.nombre, tp.id tipopago_id, COUNT(DISTINCT(v.id)) cantidad, SUM(dv.subtotal) total FROM ventas v
+        INNER JOIN pagos p ON p.venta_id = v.id
         INNER JOIN tipopagos tp on tp.id = v.tipopago_id
         INNER JOIN detalleventas dv on v.id = dv.venta_id
-        WHERE user_id = $user
-        AND fecha = '$hoy'
-        AND estadopago_id = 2
-        AND v.estado = 1
+        WHERE p.user_id = $user
+        AND p.fecha = '$hoy'
+        AND v.estadopago_id = 2
+        AND p.estado = 1
         AND v.sucursale_id = $sucursale
         AND dv.producto_id <> 4
         GROUP BY tp.nombre,tp.id";

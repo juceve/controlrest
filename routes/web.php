@@ -56,6 +56,7 @@ use App\Http\Livewire\Ventas\Bonoanual;
 use App\Http\Livewire\Ventas\Bonofecha2;
 use App\Http\Livewire\Ventas\Bonomensual;
 use App\Http\Livewire\Ventas\Cierrebonoreserva;
+use App\Http\Livewire\Ventas\Cierrebonoreserva2;
 use App\Http\Livewire\Ventas\Cierrecaja;
 use App\Http\Livewire\Ventas\Listado;
 use App\Http\Livewire\Ventas\Nueva;
@@ -121,6 +122,7 @@ Route::get('masivos', Masivos::class)->middleware('auth')->name('masivos');
 
 Route::get('ventas/cierrecaja', Cierrecaja::class)->middleware('can:ventas.cierrecaja')->middleware('auth')->name('ventas.cierrecaja');
 Route::get('ventas/cierres', Cierrebonoreserva::class)->middleware('can:ventas.cierrecaja')->middleware('auth')->name('ventas.cierres');
+Route::get('ventas/cierres2', Cierrebonoreserva2::class)->middleware('auth')->name('ventas.cierres2');
 Route::get('ventas/bonofecha', Bonofecha2::class)->middleware('can:ventas.bonos')->middleware('auth')->name('ventas.bonofecha');
 Route::get('ventas/bonomensual', Bonomensual::class)->middleware('auth')->name('ventas.bonomensual');
 Route::get('ventas/bonoanual', Bonoanual::class)->middleware('can:ventas.bonos')->middleware('auth')->name('ventas.bonoanual');

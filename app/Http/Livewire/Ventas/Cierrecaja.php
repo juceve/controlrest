@@ -31,30 +31,34 @@ class Cierrecaja extends Component
 
     public function render()
     {
-        $sql = "SELECT v.fecha, dv.descripcion,  tp.abreviatura, IF(dv.observacion='','NO','SI') descuento, 
+        $sql = "SELECT v.fecha, dv.descripcion,  tp.abreviatura, IF(dv.observacion='','NO','SI') descuento,
         SUM(dv.cantidad) cantidad, dv.preciounitario, SUM(dv.subtotal) subtotal,
         p.user_id,p.sucursal_id,p.estado
         from detalleventas dv
         INNER JOIN ventas v on v.id = dv.venta_id
         INNER JOIN pagos p ON p.venta_id = v.id
         INNER JOIN tipopagos tp ON tp.id = p.tipopago_id
-        WHERE cliente = 'VENTA POS'        
+        WHERE dv.producto_id = 4
         AND p.user_id = " . Auth::user()->id . "
         AND p.sucursal_id = " . Auth::user()->sucursale_id . "
-        AND v.fecha = '" . date('Y-m-d') . "'
-        AND v.estado = 1
+        AND p.fecha = '" . date('Y-m-d') . "'
+        AND p.estado = 1
         GROUP BY v.fecha,dv.descripcion,tp.abreviatura, dv.preciounitario, dv.observacion,p.user_id,p.sucursal_id,p.estado";
         $ingresosHOY = DB::select($sql);
         $this->ingresos = $ingresosHOY;
 
+
+
         $sql2 = "SELECT p.tipopago_id, p.tipopago, count(*) cantidad, SUM(p.importe) importe from pagos p
         INNER JOIN ventas v on v.id = p.venta_id
+        INNER JOIN detalleventas dv ON dv.venta_id=v.id
         WHERE p.fecha = '" . date('Y-m-d') . "'
-        AND v.cliente = 'VENTA POS'
+        AND dv.producto_id = 4
         AND p.user_id = " . Auth::user()->id . "
         AND p.estado = 1
         GROUP BY p.tipopago_id, p.tipopago";
         $montosHOY = DB::select($sql2);
+
         $this->montos = $montosHOY;
         $this->reset(['totalpr', 'totalpp']);
         foreach ($montosHOY as $ingreso) {
@@ -127,7 +131,7 @@ class Cierrecaja extends Component
         }
         $pdf = Pdf::loadView('reports.cierrecajamontos', compact('cierre', 'detalles'))->output();
         return response()->streamDownload(
-            fn () => print($pdf),
+            fn() => print($pdf),
             "Reporte_CierreCaja_" . $cierre->fecha . ".pdf"
         );
     }
@@ -160,7 +164,7 @@ class Cierrecaja extends Component
         }
         $pdf = Pdf::loadView('reports.cierrecaja', compact('cierre', 'detalles', 'totalEfectivo', 'totalQr', 'totalTr', 'totalGa'))->output();
         return response()->streamDownload(
-            fn () => print($pdf),
+            fn() => print($pdf),
             "Reporte_Operaciones_" . $cierre->fecha . ".pdf"
         );
     }
@@ -170,26 +174,27 @@ class Cierrecaja extends Component
         DB::beginTransaction();
         try {
             $cierre = ModelsCierrecaja::find($cierre_id);
-            $sql = "SELECT v.fecha, dv.descripcion,  tp.abreviatura, IF(dv.observacion='','NO','SI') descuento, 
+            $sql = "SELECT v.fecha, dv.descripcion,  tp.abreviatura, IF(dv.observacion='','NO','SI') descuento,
         SUM(dv.cantidad) cantidad, dv.preciounitario, SUM(dv.subtotal) subtotal,
         p.user_id,p.sucursal_id,p.estado
         from detalleventas dv
         INNER JOIN ventas v on v.id = dv.venta_id
         INNER JOIN pagos p ON p.venta_id = v.id
         INNER JOIN tipopagos tp ON tp.id = p.tipopago_id
-        WHERE cliente = 'VENTA POS'        
+        WHERE dv.producto_id = 4
         AND p.user_id = " . $cierre->user_id . "
         AND p.sucursal_id = " . $cierre->user->sucursale_id . "
-        AND v.fecha = '" . $cierre->fecha . "'
-        AND v.estado = 1
+        AND p.fecha = '" . $cierre->fecha . "'
+        AND p.estado = 1
         GROUP BY v.fecha,dv.descripcion,tp.abreviatura, dv.preciounitario, dv.observacion,p.user_id,p.sucursal_id,p.estado";
             $ingresosHOY = DB::select($sql);
 
 
             $sql2 = "SELECT p.tipopago_id, p.tipopago, count(*) cantidad, SUM(p.importe) importe from pagos p
         INNER JOIN ventas v on v.id = p.venta_id
+        INNER JOIN detalleventas dv ON dv.venta_id=v.id
         WHERE p.fecha = '" . $cierre->fecha . "'
-        AND v.cliente = 'VENTA POS'
+        AND dv.producto_id = 4
         AND p.user_id = " . $cierre->user_id . "
         AND p.estado = 1
         GROUP BY p.tipopago_id, p.tipopago";
