@@ -417,19 +417,7 @@ class Bonofecha2 extends Component
                             $bonofecha->save();
                             break;
                         case 'EFECTIVO - LOCAL': {
-                                $pago = Pago::create([
-                                    "fecha" => date('Y-m-d'),
-                                    "recibo" => 0,
-                                    "tipopago_id" => $tipopago->id,
-                                    "tipopago" => $tipopago->nombre,
-                                    "sucursal_id" => Auth::user()->sucursale_id,
-                                    "sucursal" => Auth::user()->sucursale->nombre,
-                                    "importe" => $this->importeTotal * $tipopago->factor,
-                                    "venta_id" => $venta->id,
-                                    "estadopago_id" => 2,
-                                    "user_id" => Auth::user()->id,
-                                    "tipoinicial" => $tipopago->nombre,
-                                ]);
+
                                 $bonofecha->estado = 1;
                                 $bonofecha->save();
                                 $venta->estadopago_id = 2;
@@ -438,79 +426,117 @@ class Bonofecha2 extends Component
 
                             break;
                         case 'GASTO ADMINISTRATIVO': {
-                                $pago = Pago::create([
-                                    "fecha" => date('Y-m-d'),
-                                    "recibo" => 0,
-                                    "tipopago_id" => $tipopago->id,
-                                    "tipopago" => $tipopago->nombre,
-                                    "sucursal_id" => Auth::user()->sucursale_id,
-                                    "sucursal" => Auth::user()->sucursale->nombre,
-                                    "importe" => $this->importeTotal * $tipopago->factor,
-                                    "venta_id" => $venta->id,
-                                    "estadopago_id" => 2,
-                                    "user_id" => Auth::user()->id,
-                                    "tipoinicial" => $tipopago->nombre,
-                                ]);
-                            }
-                            $bonofecha->estado = 1;
+                              $bonofecha->estado = 1;
                             $bonofecha->save();
                             $venta->estadopago_id = 2;
                             $venta->save();
+                            }
+
                             break;
                         case "PAGO QR": {
-                                $pago = Pago::create([
-                                    "fecha" => date('Y-m-d'),
-                                    "recibo" => 0,
-                                    "tipopago_id" => $tipopago->id,
-                                    "tipopago" => $tipopago->nombre,
-                                    "sucursal_id" => Auth::user()->sucursale_id,
-                                    "sucursal" => Auth::user()->sucursale->nombre,
-                                    "importe" => $this->importeTotal * $tipopago->factor,
-                                    "venta_id" => $venta->id,
-                                    "estadopago_id" => 2,
-                                    "user_id" => Auth::user()->id,
-                                    "tipoinicial" => $tipopago->nombre,
-                                ]);
-                                $file = $this->comprobante->storeAs('depositos/' . $tipopago->abreviatura, $pago->id . "." . $this->comprobante->extension());
-                                $comprobante = 'storage/depositos/' . $tipopago->abreviatura . '/' . $pago->id . "." . $this->comprobante->extension();
 
                                 $bonofecha->estado = 1;
                                 $bonofecha->save();
                                 $venta->estadopago_id = 2;
                                 $venta->save();
-                                $pago->comprobante = $comprobante;
-                                $pago->save();
                             }
                             break;
                         case "TRANSFERENCIA BANCARIA": {
 
-                                $pago = Pago::create([
-                                    "fecha" => date('Y-m-d'),
-                                    "recibo" => 0,
-                                    "tipopago_id" => $tipopago->id,
-                                    "tipopago" => $tipopago->nombre,
-                                    "sucursal_id" => Auth::user()->sucursale_id,
-                                    "sucursal" => Auth::user()->sucursale->nombre,
-                                    "importe" => $this->importeTotal * $tipopago->factor,
-                                    "venta_id" => $venta->id,
-                                    "estadopago_id" => 2,
-                                    "user_id" => Auth::user()->id,
-                                    "tipoinicial" => $tipopago->nombre,
-                                ]);
-                                $file = $this->comprobante->storeAs('depositos/' . $tipopago->abreviatura, $pago->id . "." . $this->comprobante->extension());
-                                $comprobante = 'storage/depositos/' . $tipopago->abreviatura . '/' . $pago->id . "." . $this->comprobante->extension();
 
                                 $bonofecha->estado = 1;
                                 $bonofecha->save();
                                 $venta->estadopago_id = 2;
                                 $venta->save();
-                                $pago->comprobante = $comprobante;
-                                $pago->save();
                             }
                             break;
                     }
                 }
+                switch ($tipopago->nombre) {
+                    case 'CREDITO':
 
+                        break;
+                    case 'EFECTIVO - LOCAL': {
+                            $pago = Pago::create([
+                                "fecha" => date('Y-m-d'),
+                                "recibo" => 0,
+                                "tipopago_id" => $tipopago->id,
+                                "tipopago" => $tipopago->nombre,
+                                "sucursal_id" => Auth::user()->sucursale_id,
+                                "sucursal" => Auth::user()->sucursale->nombre,
+                                "importe" => $this->importeTotal * $tipopago->factor,
+                                "venta_id" => $venta->id,
+                                "estadopago_id" => 2,
+                                "user_id" => Auth::user()->id,
+                                "tipoinicial" => $tipopago->nombre,
+                            ]);
+
+                        }
+
+                        break;
+                    case 'GASTO ADMINISTRATIVO': {
+                            $pago = Pago::create([
+                                "fecha" => date('Y-m-d'),
+                                "recibo" => 0,
+                                "tipopago_id" => $tipopago->id,
+                                "tipopago" => $tipopago->nombre,
+                                "sucursal_id" => Auth::user()->sucursale_id,
+                                "sucursal" => Auth::user()->sucursale->nombre,
+                                "importe" => $this->importeTotal * $tipopago->factor,
+                                "venta_id" => $venta->id,
+                                "estadopago_id" => 2,
+                                "user_id" => Auth::user()->id,
+                                "tipoinicial" => $tipopago->nombre,
+                            ]);
+                        }
+
+                        break;
+                    case "PAGO QR": {
+                            $pago = Pago::create([
+                                "fecha" => date('Y-m-d'),
+                                "recibo" => 0,
+                                "tipopago_id" => $tipopago->id,
+                                "tipopago" => $tipopago->nombre,
+                                "sucursal_id" => Auth::user()->sucursale_id,
+                                "sucursal" => Auth::user()->sucursale->nombre,
+                                "importe" => $this->importeTotal * $tipopago->factor,
+                                "venta_id" => $venta->id,
+                                "estadopago_id" => 2,
+                                "user_id" => Auth::user()->id,
+                                "tipoinicial" => $tipopago->nombre,
+                            ]);
+                            $file = $this->comprobante->storeAs('depositos/' . $tipopago->abreviatura, $pago->id . "." . $this->comprobante->extension());
+                            $comprobante = 'storage/depositos/' . $tipopago->abreviatura . '/' . $pago->id . "." . $this->comprobante->extension();
+
+
+                            $pago->comprobante = $comprobante;
+                            $pago->save();
+                        }
+                        break;
+                    case "TRANSFERENCIA BANCARIA": {
+
+                            $pago = Pago::create([
+                                "fecha" => date('Y-m-d'),
+                                "recibo" => 0,
+                                "tipopago_id" => $tipopago->id,
+                                "tipopago" => $tipopago->nombre,
+                                "sucursal_id" => Auth::user()->sucursale_id,
+                                "sucursal" => Auth::user()->sucursale->nombre,
+                                "importe" => $this->importeTotal * $tipopago->factor,
+                                "venta_id" => $venta->id,
+                                "estadopago_id" => 2,
+                                "user_id" => Auth::user()->id,
+                                "tipoinicial" => $tipopago->nombre,
+                            ]);
+                            $file = $this->comprobante->storeAs('depositos/' . $tipopago->abreviatura, $pago->id . "." . $this->comprobante->extension());
+                            $comprobante = 'storage/depositos/' . $tipopago->abreviatura . '/' . $pago->id . "." . $this->comprobante->extension();
+
+
+                            $pago->comprobante = $comprobante;
+                            $pago->save();
+                        }
+                        break;
+                }
 
                 DB::commit();
 
